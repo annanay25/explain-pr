@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Figure — a visual language for pull requests</title>
+    <link rel="stylesheet" href="./lib/figure.css" />
+  </head>
+  <body>
+    <main class="site">
+      <div class="wordmark">Figure</div>
+      <section class="hero">
+        <h1>Explain the change,<br />not the diff.</h1>
+        <p>
+          A small HTML library of abstract glyphs — people, servers, stores, edges —
+          so a model can walk a human through a pull request one claim at a time.
+          No motion. Just Next.
+        </p>
+      </section>
+
+      <fig-deck title="What this library is for">
+        <fig-scene
+          title="A PR is a story about a system"
+          caption="The diff lists files. A walkthrough names the actors and what started happening between them."
+        >
+          <fig-row>
+            <fig-user label="Reader"></fig-user>
+            <fig-edge label="wants"></fig-edge>
+            <fig-box label="Mental model" tone="focus"></fig-box>
+            <fig-edge dir="left" strike label="not this"></fig-edge>
+            <fig-file label="5000-line patch" tone="ghost"></fig-file>
+          </fig-row>
+          <fig-legend></fig-legend>
+        </fig-scene>
+        <fig-scene
+          title="Glyphs stay simple on purpose"
+          caption="Circles, racks, cylinders, diamonds. Tone marks what was added, removed, or merely changed."
+        >
+          <fig-row>
+            <fig-user label="User"></fig-user>
+            <fig-browser label="Client"></fig-browser>
+            <fig-api label="API" tone="changed"></fig-api>
+            <fig-server label="Server"></fig-server>
+            <fig-db label="Store"></fig-db>
+            <fig-cache label="Cache" tone="added" badge="new"></fig-cache>
+          </fig-row>
+        </fig-scene>
+        <fig-scene
+          title="Next is the only transition"
+          caption="Each scene is one claim. The reader clicks through at their own pace — no autoplay, no choreography."
+        >
+          <fig-timeline>
+            <fig-step>Problem</fig-step>
+            <fig-step tone="focus">Old path</fig-step>
+            <fig-step tone="added">Insert</fig-step>
+            <fig-step>New path</fig-step>
+            <fig-step>Proof</fig-step>
+          </fig-timeline>
+          <fig-callout>Write 5–8 scenes. If you need more, the story is not sharp yet.</fig-callout>
+        </fig-scene>
+      </fig-deck>
+
+      <h2>Walkthroughs from real PRs</h2>
+      <div class="cards">
+        <a class="card" href="./walks/react-compiler.html">
+          <div class="meta">react/react · #36173 · +123k −306</div>
+          <h3>Port React Compiler to Rust</h3>
+          <p>Same HIR pipeline, new arena backend, three native integrations.</p>
+        </a>
+        <a class="card" href="./walks/vite-environments.html">
+          <div class="meta">vitejs/vite · #16471 · +8.6k −3.9k</div>
+          <h3>Vite 6 Environment API</h3>
+          <p>One server, many named environments, each with its own module graph.</p>
+        </a>
+        <a class="card" href="./walks/next-ppr.html">
+          <div class="meta">vercel/next.js · #69282 · +318 −102</div>
+          <h3>Partial fallback route shells</h3>
+          <p>After a fallback is served, generate a route shell and reuse it.</p>
+        </a>
+        <a class="card" href="./walks/tailwind-oxide.html">
+          <div class="meta">tailwindlabs/tailwindcss · #19632 · +579 −479</div>
+          <h3>Oxide scanner on large repos</h3>
+          <p>Stop walking twice, go parallel after the first scan, delay mtime.</p>
+        </a>
+      </div>
+
+      <h2>Use it</h2>
+      <div class="cards">
+        <a class="card" href="./catalog.html">
+          <div class="meta">Reference</div>
+          <h3>Glyph catalog</h3>
+          <p>Every shape, layout primitive, and tone on one page.</p>
+        </a>
+        <a class="card" href="./skills/explain-pr/SKILL.md">
+          <div class="meta">Skill</div>
+          <h3>explain-pr</h3>
+          <p>Instructions for Cursor, Codex, or Claude to compose these scenes from a diff.</p>
+        </a>
+      </div>
+    </main>
+    <script src="./lib/figure.js"></script>
+  </body>
+</html>

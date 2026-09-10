@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Figure catalog</title>
+    <link rel="stylesheet" href="./lib/figure.css" />
+  </head>
+  <body>
+    <main class="site">
+      <a class="back" href="./">← Gallery</a>
+      <div class="wordmark" style="margin-top: 18px">Figure</div>
+      <section class="hero">
+        <h1>Catalog</h1>
+        <p>Abstract marks for people, machines, stores, and the arrows between them. Click through the deck, or scan the grid.</p>
+      </section>
+
+      <h2>Actors</h2>
+      <div class="catalog-grid" id="actors"></div>
+      <h2>Machines and stores</h2>
+      <div class="catalog-grid" id="machines"></div>
+      <h2>Signals and artifacts</h2>
+      <div class="catalog-grid" id="signals"></div>
+
+      <h2>Tones</h2>
+      <fig-row>
+        <fig-box label="idle"></fig-box>
+        <fig-box label="added" tone="added" badge="+"></fig-box>
+        <fig-box label="removed" tone="removed" badge="−"></fig-box>
+        <fig-box label="changed" tone="changed" badge="~"></fig-box>
+        <fig-box label="focus" tone="focus"></fig-box>
+        <fig-box label="ghost" tone="ghost"></fig-box>
+      </fig-row>
+
+      <h2>Layout</h2>
+      <fig-compare>
+        <fig-pane label="Before">
+          <fig-row>
+            <fig-user label="Client"></fig-user>
+            <fig-edge></fig-edge>
+            <fig-server label="Origin"></fig-server>
+          </fig-row>
+        </fig-pane>
+        <fig-pane label="After" tone="added">
+          <fig-row>
+            <fig-user label="Client"></fig-user>
+            <fig-edge></fig-edge>
+            <fig-cache label="Edge" tone="added"></fig-cache>
+            <fig-edge></fig-edge>
+            <fig-server label="Origin"></fig-server>
+          </fig-row>
+        </fig-pane>
+      </fig-compare>
+
+      <div style="height: 28px"></div>
+      <fig-cluster label="Request path">
+        <fig-row>
+          <fig-browser label="Page"></fig-browser>
+          <fig-edge label="GET"></fig-edge>
+          <fig-api label="Gateway"></fig-api>
+          <fig-edge dir="down" label="auth"></fig-edge>
+        </fig-row>
+        <fig-row>
+          <fig-lock label="Session"></fig-lock>
+          <fig-edge></fig-edge>
+          <fig-db label="Users"></fig-db>
+        </fig-row>
+      </fig-cluster>
+
+      <h2>Pipeline, stack, time</h2>
+      <fig-pipe>
+        <fig-phase>Parse</fig-phase>
+        <fig-edge></fig-edge>
+        <fig-phase tone="changed">HIR</fig-phase>
+        <fig-edge></fig-edge>
+        <fig-phase tone="added">Emit</fig-phase>
+      </fig-pipe>
+      <div style="height: 24px"></div>
+      <fig-row>
+        <fig-stack>
+          <fig-layer>CDN</fig-layer>
+          <fig-layer tone="added">Resume</fig-layer>
+          <fig-layer>Origin</fig-layer>
+        </fig-stack>
+        <fig-timeline>
+          <fig-step>Build</fig-step>
+          <fig-step tone="focus">First hit</fig-step>
+          <fig-step tone="added">Reuse</fig-step>
+        </fig-timeline>
+      </fig-row>
+
+      <h2>Code and numbers</h2>
+      <fig-code caption="idea, not the patch">
+        <fig-line tone="removed">candidates = scan(); files = walk(sources)</fig-line>
+        <fig-line tone="added">candidates = scan(); files = scanner.files</fig-line>
+      </fig-code>
+      <div style="height: 20px"></div>
+      <fig-row>
+        <fig-metric value="3×" label="faster as a Babel plugin" tone="added"></fig-metric>
+        <fig-dots n="12" on="9" label="9 / 12 fixtures green" tone="focus"></fig-dots>
+        <fig-callout tone="changed">Serialization is still the expensive part of the Babel bridge.</fig-callout>
+      </fig-row>
+    </main>
+    <script src="./lib/figure.js"></script>
+    <script>
+      const groups = {
+        actors: ["user", "users", "browser", "mobile"],
+        machines: ["server", "worker", "db", "bucket", "cache", "queue", "cloud", "api", "box", "globe"],
+        signals: ["file", "folder", "lock", "key", "flag", "test", "event", "token", "clock", "filter", "branch", "transform"],
+      };
+      for (const [id, names] of Object.entries(groups)) {
+        const root = document.getElementById(id);
+        for (const name of names) {
+          const item = document.createElement("div");
+          item.className = "catalog-item";
+          item.innerHTML = `<fig-${name} label="${name}"></fig-${name}><code>&lt;fig-${name}&gt;</code>`;
+          root.appendChild(item);
+        }
+      }
+    </script>
+  </body>
+</html>

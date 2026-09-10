@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>vercel/next.js #69282 — Partial fallback route shells</title>
+    <link rel="stylesheet" href="../lib/figure.css" />
+  </head>
+  <body class="fig-page">
+    <div class="site" style="padding-bottom: 0">
+      <a class="back" href="../">← Gallery</a>
+    </div>
+    <fig-deck
+      title="Partial fallback route shells"
+      repo="vercel/next.js"
+      pr="69282"
+      href="https://github.com/vercel/next.js/pull/69282"
+      added="318"
+      removed="102"
+      files="20"
+    >
+      <fig-scene
+        title="PPR already splits a page into a shell and holes"
+        caption="At build time Next can prerender a static HTML shell and postpone the bits that need request data. The browser gets one stream: shell first, dynamic holes later."
+      >
+        <fig-stack>
+          <fig-layer tone="focus">Static shell · nav, layout, skeleton</fig-layer>
+          <fig-layer tone="changed">Dynamic holes · cookies, search, user</fig-layer>
+        </fig-stack>
+        <fig-row>
+          <fig-browser label="One HTTP stream"></fig-browser>
+          <fig-dots n="10" on="6" label="shell bytes first" tone="focus"></fig-dots>
+        </fig-row>
+      </fig-scene>
+
+      <fig-scene
+        title="Before this PR: a fallback shell never grew up"
+        caption="Partial fallback prerendering could serve a generic fallback. The next visitor still paid for that cold shape. The fallback did not promote itself into a reusable route shell."
+      >
+        <fig-timeline>
+          <fig-step>Build</fig-step>
+          <fig-step tone="changed">Fallback served</fig-step>
+          <fig-step tone="removed">Still a fallback</fig-step>
+          <fig-step tone="removed">Next request repeats</fig-step>
+        </fig-timeline>
+        <fig-row>
+          <fig-user label="Visitor A"></fig-user>
+          <fig-edge></fig-edge>
+          <fig-cloud label="Fallback shell" tone="changed"></fig-cloud>
+          <fig-edge strike label="no promote"></fig-edge>
+          <fig-cache label="Route shell" tone="ghost"></fig-cache>
+        </fig-row>
+      </fig-scene>
+
+      <fig-scene
+        title="After a fallback is served, generate the route shell"
+        caption="Wyatt Johnson’s change: once the fallback has gone out, Next renders the real route shell and stores it. The fallback is a one-time cold start, not a permanent personality."
+      >
+        <fig-row>
+          <fig-user label="First visitor"></fig-user>
+          <fig-edge label="miss"></fig-edge>
+          <fig-cloud label="Fallback" tone="changed"></fig-cloud>
+          <fig-edge dir="down" label="then"></fig-edge>
+        </fig-row>
+        <fig-row>
+          <fig-worker label="Generate route shell" tone="added" badge="new"></fig-worker>
+          <fig-edge label="store"></fig-edge>
+          <fig-cache label="Route shell" tone="added"></fig-cache>
+        </fig-row>
+      </fig-scene>
+
+      <fig-scene
+        title="Later requests skip the cold path"
+        caption="Visitor B is served the route shell immediately. Dynamic holes still resume on the origin; the static frame no longer has to be invented again."
+      >
+        <fig-row>
+          <fig-user label="Visitor B"></fig-user>
+          <fig-edge label="GET"></fig-edge>
+          <fig-cloud label="CDN shell" tone="added" badge="hit"></fig-cloud>
+          <fig-edge label="holes"></fig-edge>
+          <fig-server label="Origin resume"></fig-server>
+          <fig-edge></fig-edge>
+          <fig-db label="Request data"></fig-db>
+        </fig-row>
+        <fig-callout tone="added">Future requests use this new route shell instead of the fallback.</fig-callout>
+      </fig-scene>
+
+      <fig-scene
+        title="A small, surgical diff in the fallback pipeline"
+        caption="+318 / −102 across 20 files, stacked on Partial Fallback Prerendering (#68958). Review the cache after fallback, not a new rendering model."
+      >
+        <fig-code caption="behaviour">
+          <fig-line>serve fallback shell</fig-line>
+          <fig-line tone="added">generate route shell in the background</fig-line>
+          <fig-line tone="added">cache route shell for this path</fig-line>
+          <fig-line tone="removed">keep serving fallback forever</fig-line>
+        </fig-code>
+        <fig-legend></fig-legend>
+      </fig-scene>
+    </fig-deck>
+    <script src="../lib/figure.js"></script>
+  </body>
+</html>

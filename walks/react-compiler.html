@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>react/react #36173 — Port React Compiler to Rust</title>
+    <link rel="stylesheet" href="../lib/figure.css" />
+  </head>
+  <body class="fig-page">
+    <div class="site" style="padding-bottom: 0">
+      <a class="back" href="../">← Gallery</a>
+    </div>
+    <fig-deck
+      title="Port React Compiler to Rust"
+      repo="facebook/react"
+      pr="36173"
+      href="https://github.com/facebook/react/pull/36173"
+      added="123289"
+      removed="306"
+      files="461"
+    >
+      <fig-scene
+        title="A pass-by-pass port, not a new compiler"
+        caption="Joseph Savona’s PR moves the TypeScript React Compiler into Rust with the same HIR, CFG, SSA, and pass order. The public shape is still “Babel-like AST in, AST out.”"
+      >
+        <fig-row>
+          <fig-metric value="1,725" label="fixtures match TS output" tone="added"></fig-metric>
+          <fig-metric value="3×" label="faster as a Babel plugin" tone="focus"></fig-metric>
+          <fig-metric value="10×" label="transform itself, before serialize" tone="changed"></fig-metric>
+        </fig-row>
+        <fig-callout>Early numbers: the Rust backend is already fast; the Babel bridge still pays a serialization tax.</fig-callout>
+      </fig-scene>
+
+      <fig-scene
+        title="Before: one TypeScript plugin behind Babel"
+        caption="Source is parsed by Babel. The TS compiler relies on Babel’s scope analysis, lowers to HIR, runs passes, and writes JavaScript back through Babel."
+      >
+        <fig-row>
+          <fig-file label="Component.jsx"></fig-file>
+          <fig-edge label="parse"></fig-edge>
+          <fig-box label="Babel AST + scopes"></fig-box>
+          <fig-edge label="compile"></fig-edge>
+          <fig-transform label="TS compiler" tone="focus"></fig-transform>
+          <fig-edge label="emit"></fig-edge>
+          <fig-file label="memoized JS"></fig-file>
+        </fig-row>
+      </fig-scene>
+
+      <fig-scene
+        title="After: one Rust core, three front doors"
+        caption="Integrations convert native ASTs into the Rust Babel-AST plus scope info, call the compiler, and convert back. Babel is a guest now, not the only host."
+      >
+        <fig-row>
+          <fig-cluster label="Hosts">
+            <fig-row>
+              <fig-box label="Babel" tone="changed"></fig-box>
+              <fig-box label="OXC" tone="added" badge="new"></fig-box>
+              <fig-box label="SWC" tone="added" badge="new"></fig-box>
+            </fig-row>
+          </fig-cluster>
+          <fig-edge label="AST + scopes"></fig-edge>
+          <fig-worker label="Rust compiler" tone="added" note="react_compiler"></fig-worker>
+          <fig-edge label="AST out"></fig-edge>
+          <fig-file label="same JS"></fig-file>
+        </fig-row>
+        <fig-callout tone="focus">Each host will keep a thin crate in the React repo so the integration layer can change without waiting on those projects.</fig-callout>
+      </fig-scene>
+
+      <fig-scene
+        title="Inside, the pipeline is the old one"
+        caption="AST lowers to a high-level IR with a control-flow graph and SSA. Passes run in the same order as TypeScript. Rust mainly changes how values are stored: arenas and indices instead of a web of pointers."
+      >
+        <fig-pipe>
+          <fig-phase>AST</fig-phase>
+          <fig-edge label="lower"></fig-edge>
+          <fig-phase tone="focus">HIR · CFG · SSA</fig-phase>
+          <fig-edge label="passes"></fig-edge>
+          <fig-phase>HIR'</fig-phase>
+          <fig-edge label="codegen"></fig-edge>
+          <fig-phase>AST</fig-phase>
+        </fig-pipe>
+        <fig-row>
+          <fig-box label="TS: pointers" tone="ghost"></fig-box>
+          <fig-edge label="becomes"></fig-edge>
+          <fig-box label="Rust: arena + index" tone="added"></fig-box>
+        </fig-row>
+      </fig-scene>
+
+      <fig-scene
+        title="Correctness was checked at two depths"
+        caption="yarn snap --rust compares final JS and errors. A separate script diffs compiler state after every pass, which is how the port was kept honest."
+      >
+        <fig-compare>
+          <fig-pane label="Output">
+            <fig-col>
+              <fig-test label="1,725 snap fixtures" tone="added"></fig-test>
+              <fig-file label="codegen + errors" note="Babel plugin vs TS"></fig-file>
+            </fig-col>
+          </fig-pane>
+          <fig-pane label="Each pass" tone="focus">
+            <fig-col>
+              <fig-transform label="IR after pass N" tone="focus"></fig-transform>
+              <fig-test label="test-rust-port.sh" note="ids normalized"></fig-test>
+            </fig-col>
+          </fig-pane>
+        </fig-compare>
+        <fig-callout>The e2e script also runs the OXC and SWC examples against TS, comparing final code only.</fig-callout>
+      </fig-scene>
+
+      <fig-scene
+        title="What to watch next"
+        caption="Scope analysis still comes from the host. Returning a whole program should become a list of patches. Native OXC/SWC paths should beat the Babel plugin once serialization is out of the way."
+      >
+        <fig-row>
+          <fig-box label="Host scopes" tone="changed" note="still required"></fig-box>
+          <fig-box label="Full AST replace" tone="removed" note="planned: patches"></fig-box>
+          <fig-box label="Babel serialize" tone="changed" note="the remaining tax"></fig-box>
+          <fig-box label="OXC / SWC" tone="added" note="should be faster still"></fig-box>
+        </fig-row>
+        <fig-legend></fig-legend>
+      </fig-scene>
+    </fig-deck>
+    <script src="../lib/figure.js"></script>
+  </body>
+</html>

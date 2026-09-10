@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>vitejs/vite #16471 — Environment API</title>
+    <link rel="stylesheet" href="../lib/figure.css" />
+  </head>
+  <body class="fig-page">
+    <div class="site" style="padding-bottom: 0">
+      <a class="back" href="../">← Gallery</a>
+    </div>
+    <fig-deck
+      title="Vite 6 Environment API"
+      repo="vitejs/vite"
+      pr="16471"
+      href="https://github.com/vitejs/vite/pull/16471"
+      added="8602"
+      removed="3878"
+      files="165"
+    >
+      <fig-scene
+        title="Vite 5 hid two environments inside one server"
+        caption="There was always a client, and optionally SSR. They shared too much implicit state: one mental model, two module graphs stuffed into server internals."
+      >
+        <fig-row>
+          <fig-browser label="Client" tone="focus"></fig-browser>
+          <fig-edge label="implicit"></fig-edge>
+          <fig-server label="Vite server"></fig-server>
+          <fig-edge label="optional"></fig-edge>
+          <fig-server label="SSR" note="same Node process"></fig-server>
+        </fig-row>
+        <fig-callout>Frameworks that needed an extra runtime — edge, workerd, a second worker — had to fight the internals.</fig-callout>
+      </fig-scene>
+
+      <fig-scene
+        title="The problem: production has more rooms than client and SSR"
+        caption="A modern app is a set of runtimes. Vite 6 makes that set a first-class map instead of a boolean."
+      >
+        <fig-row>
+          <fig-browser label="Browser"></fig-browser>
+          <fig-server label="Node SSR"></fig-server>
+          <fig-cloud label="Edge" tone="added"></fig-cloud>
+          <fig-worker label="workerd" tone="added"></fig-worker>
+        </fig-row>
+        <fig-callout tone="focus">If production has four places code can run, the dev server should be able to name all four.</fig-callout>
+      </fig-scene>
+
+      <fig-scene
+        title="After: one process, N named environments"
+        caption="server.environments.client and .ssr stay. Authors can add more. Each environment has its own module graph, transform pipeline, and options."
+      >
+        <fig-cluster label="Vite server">
+          <fig-row>
+            <fig-box label="client" note="module graph"></fig-box>
+            <fig-box label="ssr" note="module graph"></fig-box>
+            <fig-box label="edge" tone="added" note="module graph" badge="new"></fig-box>
+            <fig-box label="rsc" tone="added" note="module graph" badge="new"></fig-box>
+          </fig-row>
+        </fig-cluster>
+      </fig-scene>
+
+      <fig-scene
+        title="Work happens on an environment, not on “the server”"
+        caption="environment.transformRequest(url) resolves, loads, and transforms against that graph. Plugins see which environment they are in instead of guessing from ssr flags."
+      >
+        <fig-row>
+          <fig-file label="/src/App.tsx"></fig-file>
+          <fig-edge label="url"></fig-edge>
+          <fig-api label="transformRequest" tone="changed"></fig-api>
+          <fig-edge dir="down" label="this env"></fig-edge>
+        </fig-row>
+        <fig-row>
+          <fig-transform label="plugin pipeline"></fig-transform>
+          <fig-edge label="record"></fig-edge>
+          <fig-box label="env module graph" tone="focus"></fig-box>
+          <fig-edge label="store"></fig-edge>
+          <fig-cache label="transform result"></fig-cache>
+        </fig-row>
+      </fig-scene>
+
+      <fig-scene
+        title="Runtimes are factories, not hard-coded Node"
+        caption="A runtime provider packages how code executes: browser via /@vite/client, Node via a module runner, or Cloudflare’s workerd. Frameworks should not have to invent this each time."
+      >
+        <fig-compare>
+          <fig-pane label="Dev, client">
+            <fig-col>
+              <fig-browser label="Browser env"></fig-browser>
+              <fig-event label="HMR channel"></fig-event>
+            </fig-col>
+          </fig-pane>
+          <fig-pane label="Dev, custom" tone="added">
+            <fig-col>
+              <fig-worker label="Runnable env" tone="added"></fig-worker>
+              <fig-cloud label="Fetchable env" tone="added" note="workerd / edge"></fig-cloud>
+            </fig-col>
+          </fig-pane>
+        </fig-compare>
+      </fig-scene>
+
+      <fig-scene
+        title="Compatibility is the release strategy"
+        caption="The Vite 5 server API is not ripped out. Ecosystem packages that poked internals (VitePress and import glob maps, plugins reading config.build) need a migration, but apps can take Vite 6 without rewriting plugins on day one."
+      >
+        <fig-timeline>
+          <fig-step>Ship Vite 6</fig-step>
+          <fig-step tone="focus">Keep old server API</fig-step>
+          <fig-step tone="changed">Plugins migrate</fig-step>
+          <fig-step tone="added">Environments as default</fig-step>
+        </fig-timeline>
+        <fig-callout tone="changed">Read this PR as plumbing: +8.6k / −3.9k across 165 files, so frameworks can model production faithfully.</fig-callout>
+      </fig-scene>
+    </fig-deck>
+    <script src="../lib/figure.js"></script>
+  </body>
+</html>

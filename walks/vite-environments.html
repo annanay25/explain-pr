@@ -64,19 +64,21 @@
         title="Work happens on an environment, not on “the server”"
         caption="environment.transformRequest(url) resolves, loads, and transforms against that graph. Plugins see which environment they are in instead of guessing from ssr flags."
       >
-        <fig-row>
-          <fig-file label="/src/App.tsx"></fig-file>
-          <fig-edge label="url"></fig-edge>
-          <fig-api label="transformRequest" tone="changed"></fig-api>
+        <fig-col>
+          <fig-row>
+            <fig-file label="/src/App.tsx"></fig-file>
+            <fig-edge label="url"></fig-edge>
+            <fig-api label="transformRequest" tone="changed"></fig-api>
+          </fig-row>
           <fig-edge dir="down" label="this env"></fig-edge>
-        </fig-row>
-        <fig-row>
-          <fig-transform label="plugin pipeline"></fig-transform>
-          <fig-edge label="record"></fig-edge>
-          <fig-box label="env module graph" tone="focus"></fig-box>
-          <fig-edge label="store"></fig-edge>
-          <fig-cache label="transform result"></fig-cache>
-        </fig-row>
+          <fig-row>
+            <fig-transform label="plugin pipeline"></fig-transform>
+            <fig-edge label="record"></fig-edge>
+            <fig-box label="env module graph" tone="focus"></fig-box>
+            <fig-edge label="store"></fig-edge>
+            <fig-cache label="transform result"></fig-cache>
+          </fig-row>
+        </fig-col>
       </fig-scene>
 
       <fig-scene

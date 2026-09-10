@@ -70,4 +70,4 @@ npm run dev   # in another terminal, if not already running
 npm run capture
 ```
 
-PNGs land in `screenshots/`.
+PNGs land in `screenshots/`. Notes from the first real-PR pass are in [`screenshots/REPORT.md`](screenshots/REPORT.md).

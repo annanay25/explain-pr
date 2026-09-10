@@ -427,14 +427,15 @@ fig-step:not(:last-child)::after {
 
 .fig-glyph .fig-chip {
   position: absolute;
-  top: -8px;
-  right: 4px;
+  top: -6px;
+  right: 8px;
   font-family: "IBM Plex Mono", monospace;
   font-size: 10px;
   padding: 2px 6px;
   border-radius: 999px;
   border: 1px solid currentColor;
   background: #fff;
+  z-index: 1;
 }
 
 .fig-glyph[tone="added"], fig-layer[tone="added"], fig-phase[tone="added"], fig-step[tone="added"] { color: var(--fig-added); }
@@ -603,7 +604,7 @@ fig-metric[tone="focus"] { color: var(--fig-focus); }
 fig-callout {
   display: block;
   max-width: 640px;
-  margin: 0 auto;
+  margin: 4px auto 0;
   padding: 12px 16px;
   border-left: 3px solid var(--fig-ink);
   background: #fff;
@@ -626,10 +627,9 @@ fig-dots {
 
 .fig-dotgrid {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
   justify-content: center;
-  max-width: 180px;
 }
 
 .fig-datapoint {
@@ -657,6 +657,7 @@ fig-legend {
   justify-content: center;
   font-size: 12px;
   color: var(--fig-muted);
+  margin-top: 8px;
 }
 
 fig-legend span {

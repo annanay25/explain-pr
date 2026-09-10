@@ -48,6 +48,7 @@ If this repo is not on disk, inline `figure.css` and `figure.js` from the librar
 3. Split the story into scenes. Each scene has **one claim**.
 4. Prefer before → after, then the mechanism, then the consequence.
 5. Stop at 8 scenes. If you need more, you do not understand it yet.
+6. To stack two flows, wrap them in `fig-col` with `<fig-edge dir="down">` **between** the rows. A down-edge at the end of a `fig-row` does not connect to the next row.
 
 Typical arc:
 

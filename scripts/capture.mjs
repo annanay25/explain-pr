@@ -8,7 +8,7 @@ const outDir = join(root, "..", "screenshots");
 const base = process.env.FIGURE_BASE || "http://127.0.0.1:43147";
 
 const pages = [
-  { id: "gallery", path: "/", title: "Gallery" },
+  { id: "gallery", path: "/", title: "Gallery", fullPage: true },
   { id: "catalog", path: "/catalog.html", title: "Catalog", fullPage: true },
   { id: "react-compiler", path: "/walks/react-compiler.html", title: "react/react #36173", deck: true },
   { id: "vite-environments", path: "/walks/vite-environments.html", title: "vitejs/vite #16471", deck: true },

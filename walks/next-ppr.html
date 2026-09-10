@@ -56,17 +56,19 @@
         title="After a fallback is served, generate the route shell"
         caption="Wyatt Johnson’s change: once the fallback has gone out, Next renders the real route shell and stores it. The fallback is a one-time cold start, not a permanent personality."
       >
-        <fig-row>
-          <fig-user label="First visitor"></fig-user>
-          <fig-edge label="miss"></fig-edge>
-          <fig-cloud label="Fallback" tone="changed"></fig-cloud>
+        <fig-col>
+          <fig-row>
+            <fig-user label="First visitor"></fig-user>
+            <fig-edge label="miss"></fig-edge>
+            <fig-cloud label="Fallback" tone="changed"></fig-cloud>
+          </fig-row>
           <fig-edge dir="down" label="then"></fig-edge>
-        </fig-row>
-        <fig-row>
-          <fig-worker label="Generate route shell" tone="added" badge="new"></fig-worker>
-          <fig-edge label="store"></fig-edge>
-          <fig-cache label="Route shell" tone="added"></fig-cache>
-        </fig-row>
+          <fig-row>
+            <fig-worker label="Generate route shell" tone="added" badge="new"></fig-worker>
+            <fig-edge label="store"></fig-edge>
+            <fig-cache label="Route shell" tone="added"></fig-cache>
+          </fig-row>
+        </fig-col>
       </fig-scene>
 
       <fig-scene

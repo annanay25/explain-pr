@@ -4,126 +4,188 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>tailwindlabs/tailwindcss #19632 — Oxide on large repos</title>
-    <link rel="stylesheet" href="/lib/figure.css" />
+    <link rel="stylesheet" href="../figure.css" />
   </head>
   <body class="fig-page">
     <div class="site" style="padding-bottom: 0">
-      <a class="back" href="../">← Gallery</a>
+      <a class="back" href="../index.html">← Gallery</a>
     </div>
-    <fig-deck
-      title="Oxide scanner on large repos"
-      repo="tailwindlabs/tailwindcss"
-      pr="19632"
-      href="https://github.com/tailwindlabs/tailwindcss/pull/19632"
-      added="579"
-      removed="479"
-      files="28"
-    >
-      <fig-scene
-        title="Adapters ask the scanner for three things"
-        caption="Robin Malfait’s Oxide API is small: scan() for class candidates, then files and globs so PostCSS, Vite, and webpack know what to watch."
-      >
-        <fig-row>
-          <fig-folder label="sources"></fig-folder>
-          <fig-edge></fig-edge>
-          <fig-worker label="Scanner" tone="focus"></fig-worker>
-        </fig-row>
-        <fig-row>
-          <fig-token label="candidates" note="scan()"></fig-token>
-          <fig-file label="files" note="watch list"></fig-file>
-          <fig-filter label="globs" note="watch list"></fig-filter>
-        </fig-row>
-        <fig-callout>Candidates are potential utilities. Files and globs are only there so the bundler invalidates the right things.</fig-callout>
-      </fig-scene>
-
-      <fig-scene
-        title="Bug 1: walking the tree twice"
-        caption="Calling scan() already walked the filesystem. Reading .files afterwards walked it again. Small projects hid this behind mtime checks. Thousands of files did not."
-      >
-        <fig-col>
-          <fig-row>
-            <fig-worker label="scan()"></fig-worker>
-            <fig-edge label="walk #1"></fig-edge>
-            <fig-folder label="repo"></fig-folder>
-          </fig-row>
-          <fig-row>
-            <fig-file label=".files" tone="removed"></fig-file>
-            <fig-edge label="walk #2" tone="removed"></fig-edge>
-            <fig-folder label="repo again" tone="removed"></fig-folder>
-          </fig-row>
-        </fig-col>
-        <fig-callout tone="removed">Even a walk that only checks mtimes is expensive once the tree is huge.</fig-callout>
-      </fig-scene>
-
-      <fig-scene
-        title="Bug 2: parallel walkers have a cover charge"
-        caption="A parallel filesystem walk helps a large repo and costs 20–50ms of overhead. That overhead is loud on a small repo. Oxide cannot see the future size of your tree."
-      >
-        <fig-compare>
-          <fig-pane label="Tiny app">
-            <fig-col>
-              <fig-folder label="few files"></fig-folder>
-              <fig-metric value="+40ms" label="parallel overhead" tone="removed"></fig-metric>
-            </fig-col>
-          </fig-pane>
-          <fig-pane label="Monorepo" tone="changed">
-            <fig-col>
-              <fig-folder label="thousands of files"></fig-folder>
-              <fig-metric value="win" label="parallelism pays off" tone="added"></fig-metric>
-            </fig-col>
-          </fig-pane>
-        </fig-compare>
-      </fig-scene>
-
-      <fig-scene
-        title="Fix: sync the first time, parallel after that"
-        caption="Initial scan uses a synchronous walker — fast when the tree is small. Later scans (dev mode) switch to a parallel walker. CLI skips the walk entirely when it already knows the changed files."
-      >
-        <fig-timeline>
-          <fig-step tone="focus">First scan · sync</fig-step>
-          <fig-step tone="added">Later scans · parallel</fig-step>
-          <fig-step>mtime skip</fig-step>
-        </fig-timeline>
-        <fig-row>
-          <fig-box label="@tailwindcss/cli" note="already has the file list"></fig-box>
-          <fig-edge strike label="no walk"></fig-edge>
-          <fig-folder label="tree" tone="ghost"></fig-folder>
-        </fig-row>
-      </fig-scene>
-
-      <fig-scene
-        title="mtime is tracked only after the first pass"
-        caption="A single production build should not pay to remember timestamps it will never read. Dev mode starts recording mtime on the second scan, then only re-extracts files that actually changed."
-      >
-        <fig-pipe>
-          <fig-phase>Scan 1 · no mtime</fig-phase>
-          <fig-edge></fig-edge>
-          <fig-phase tone="changed">Scan 2 · start mtime</fig-phase>
-          <fig-edge></fig-edge>
-          <fig-phase tone="added">Scan 3+ · dirty only</fig-phase>
-        </fig-pipe>
-        <fig-row>
-          <fig-clock label="mtime map" tone="added" note="lazy"></fig-clock>
-          <fig-dots n="12" on="2" label="2 files actually re-extracted" tone="focus"></fig-dots>
-        </fig-row>
-        <fig-callout tone="changed">Scan 2 still re-reads everything. That is the trade: a cheaper first build, one warm-up pass in dev.</fig-callout>
-      </fig-scene>
-
-      <fig-scene
-        title="The rest is smaller, hotter code"
-        caption="Normalized source patterns, fewer allocations in pre_process_input (owned Vec instead of to_vec ~92% of the time), and a slimmer Cursor used on every byte of extraction."
-      >
-        <fig-row>
-          <fig-filter label="pre-normalized globs" tone="added"></fig-filter>
-          <fig-transform label="owned input Vec" tone="changed"></fig-transform>
-          <fig-box label="smaller Cursor" tone="added"></fig-box>
-        </fig-row>
-        <fig-code caption="extractor">
-          <fig-line tone="removed">pre_process_input(content.to_vec())</fig-line>
-          <fig-line tone="added">pre_process_input(owned_bytes)</fig-line>
-        </fig-code>
-      </fig-scene>
-    </fig-deck>
-    <script src="/lib/figure.js"></script>
+    <article class="fig-deck">
+      <div class="fig-shell">
+            <header class="fig-mast">
+        <div>
+          <p class="fig-kicker">Figure · PR walk</p>
+          <h1>Oxide scanner on large repos</h1>
+          <div class="fig-repo"><a href="https://github.com/tailwindlabs/tailwindcss/pull/19632">tailwindlabs/tailwindcss #19632</a></div>
+        </div>
+        <div class="fig-mast-side">
+          <span class="fig-stat added">+579</span>
+          <span class="fig-stat removed">−479</span>
+          <span class="fig-stat">28 files</span>
+        </div>
+      </header>
+      <input type="radio" name="walk" id="s1" checked>
+      <input type="radio" name="walk" id="s2">
+      <input type="radio" name="walk" id="s3">
+      <input type="radio" name="walk" id="s4">
+      <input type="radio" name="walk" id="s5">
+      <input type="radio" name="walk" id="s6">
+      <div class="fig-scenes">
+        <section class="fig-scene">
+          <div class="fig-stage">
+            <div class="fig-scene-head">
+              <div class="fig-index">01</div>
+              <div>
+                <h2>Adapters ask the scanner for three things</h2>
+                <p>Robin Malfait’s Oxide API is small: scan() for class candidates, then files and globs so PostCSS, Vite, and webpack know what to watch.</p>
+              </div>
+            </div>
+            <div class="fig-canvas">
+              <div class="fig-row">
+                <div class="fig-folder" data-label="sources"></div>
+                <div class="fig-edge"></div>
+                <div class="fig-worker" data-label="Scanner" data-tone="focus"></div>
+              </div>
+              <div class="fig-row">
+                <div class="fig-token" data-label="candidates" data-note="scan()"></div>
+                <div class="fig-file" data-label="files" data-note="watch list"></div>
+                <div class="fig-filter" data-label="globs" data-note="watch list"></div>
+              </div>
+              <div class="fig-callout">Candidates are potential utilities. Files and globs are only there so the bundler invalidates the right things.</div>
+            </div>
+          </div>
+          <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
+        </section>
+        <section class="fig-scene">
+          <div class="fig-stage">
+            <div class="fig-scene-head">
+              <div class="fig-index">02</div>
+              <div>
+                <h2>Bug 1: walking the tree twice</h2>
+                <p>Calling scan() already walked the filesystem. Reading .files afterwards walked it again. Small projects hid this behind mtime checks. Thousands of files did not.</p>
+              </div>
+            </div>
+            <div class="fig-canvas">
+              <div class="fig-col">
+                <div class="fig-row">
+                  <div class="fig-worker" data-label="scan()"></div>
+                  <div class="fig-edge" data-label="walk #1"></div>
+                  <div class="fig-folder" data-label="repo"></div>
+                </div>
+                <div class="fig-row">
+                  <div class="fig-file" data-label=".files" data-tone="removed"></div>
+                  <div class="fig-edge" data-label="walk #2" data-tone="removed"></div>
+                  <div class="fig-folder" data-label="repo again" data-tone="removed"></div>
+                </div>
+              </div>
+              <div class="fig-callout" data-tone="removed">Even a walk that only checks mtimes is expensive once the tree is huge.</div>
+            </div>
+          </div>
+          <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
+        </section>
+        <section class="fig-scene">
+          <div class="fig-stage">
+            <div class="fig-scene-head">
+              <div class="fig-index">03</div>
+              <div>
+                <h2>Bug 2: parallel walkers have a cover charge</h2>
+                <p>A parallel filesystem walk helps a large repo and costs 20–50ms of overhead. That overhead is loud on a small repo. Oxide cannot see the future size of your tree.</p>
+              </div>
+            </div>
+            <div class="fig-canvas">
+              <div class="fig-compare">
+                <div class="fig-pane" data-label="Tiny app">
+                  <div class="fig-col">
+                    <div class="fig-folder" data-label="few files"></div>
+                    <div class="fig-metric" data-value="+40ms" data-tone="removed">parallel overhead</div>
+                  </div>
+                </div>
+                <div class="fig-pane" data-label="Monorepo" data-tone="changed">
+                  <div class="fig-col">
+                    <div class="fig-folder" data-label="thousands of files"></div>
+                    <div class="fig-metric" data-value="win" data-tone="added">parallelism pays off</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
+        </section>
+        <section class="fig-scene">
+          <div class="fig-stage">
+            <div class="fig-scene-head">
+              <div class="fig-index">04</div>
+              <div>
+                <h2>Fix: sync the first time, parallel after that</h2>
+                <p>Initial scan uses a synchronous walker — fast when the tree is small. Later scans (dev mode) switch to a parallel walker. CLI skips the walk entirely when it already knows the changed files.</p>
+              </div>
+            </div>
+            <div class="fig-canvas">
+              <div class="fig-timeline">
+                <div class="fig-step" data-tone="focus">First scan · sync</div>
+                <div class="fig-step" data-tone="added">Later scans · parallel</div>
+                <div class="fig-step">mtime skip</div>
+              </div>
+              <div class="fig-row">
+                <div class="fig-box" data-label="@tailwindcss/cli" data-note="already has the file list"></div>
+                <div class="fig-edge strike" data-label="no walk"></div>
+                <div class="fig-folder" data-label="tree" data-tone="ghost"></div>
+              </div>
+            </div>
+          </div>
+          <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
+        </section>
+        <section class="fig-scene">
+          <div class="fig-stage">
+            <div class="fig-scene-head">
+              <div class="fig-index">05</div>
+              <div>
+                <h2>mtime is tracked only after the first pass</h2>
+                <p>A single production build should not pay to remember timestamps it will never read. Dev mode starts recording mtime on the second scan, then only re-extracts files that actually changed.</p>
+              </div>
+            </div>
+            <div class="fig-canvas">
+              <div class="fig-pipe">
+                <div class="fig-phase">Scan 1 · no mtime</div>
+                <div class="fig-edge"></div>
+                <div class="fig-phase" data-tone="changed">Scan 2 · start mtime</div>
+                <div class="fig-edge"></div>
+                <div class="fig-phase" data-tone="added">Scan 3+ · dirty only</div>
+              </div>
+              <div class="fig-row">
+                <div class="fig-clock" data-label="mtime map" data-tone="added" data-note="lazy"></div>
+                <div class="fig-datapoints" data-label="2 files actually re-extracted" data-tone="focus"><div class="fig-dotgrid"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+              </div>
+              <div class="fig-callout" data-tone="changed">Scan 2 still re-reads everything. That is the trade: a cheaper first build, one warm-up pass in dev.</div>
+            </div>
+          </div>
+          <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s6">Next</label></nav>
+        </section>
+        <section class="fig-scene">
+          <div class="fig-stage">
+            <div class="fig-scene-head">
+              <div class="fig-index">06</div>
+              <div>
+                <h2>The rest is smaller, hotter code</h2>
+                <p>Normalized source patterns, fewer allocations in pre_process_input (owned Vec instead of to_vec ~92% of the time), and a slimmer Cursor used on every byte of extraction.</p>
+              </div>
+            </div>
+            <div class="fig-canvas">
+              <div class="fig-row">
+                <div class="fig-filter" data-label="pre-normalized globs" data-tone="added"></div>
+                <div class="fig-transform" data-label="owned input Vec" data-tone="changed"></div>
+                <div class="fig-box" data-label="smaller Cursor" data-tone="added"></div>
+              </div>
+              <div class="fig-code" data-caption="extractor">
+                <span class="fig-line removed">pre_process_input(content.to_vec())</span>
+                <span class="fig-line added">pre_process_input(owned_bytes)</span>
+              </div>
+            </div>
+          </div>
+          <nav class="fig-nav"><label class="fig-btn" for="s5">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot is-current" for="s6"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+        </section>
+      </div>
+      </div>
+    </article>
   </body>
 </html>

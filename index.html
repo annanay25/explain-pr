@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Figure — a visual language for pull requests</title>
-    <link rel="stylesheet" href="/lib/figure.css" />
+    <link rel="stylesheet" href="figure.css" />
   </head>
   <body>
     <main class="site">
@@ -12,72 +12,136 @@
       <section class="hero">
         <h1>Explain the change,<br />not the diff.</h1>
         <p>
-          A small HTML library of abstract glyphs — people, servers, stores, edges —
+          One CSS file of abstract glyphs — people, servers, stores, edges —
           so a model can walk a human through a pull request one claim at a time.
-          No motion. Just Next.
+          No Node, no npm, no JavaScript. Just HTML, CSS, and Next.
         </p>
       </section>
 
-      <fig-deck title="What this library is for">
-        <fig-scene
-          title="A PR is a story about a system"
-          caption="The diff lists files. A walkthrough names the actors and what started happening between them."
-        >
-          <fig-row>
-            <fig-user label="Reader"></fig-user>
-            <fig-edge label="wants"></fig-edge>
-            <fig-box label="Mental model" tone="focus"></fig-box>
-            <fig-edge dir="left" strike label="not this"></fig-edge>
-            <fig-file label="5000-line patch" tone="ghost"></fig-file>
-          </fig-row>
-        </fig-scene>
-        <fig-scene
-          title="Glyphs stay simple on purpose"
-          caption="Circles, racks, cylinders, diamonds. Tone marks what was added, removed, or merely changed."
-        >
-          <fig-row>
-            <fig-user label="User"></fig-user>
-            <fig-browser label="Client"></fig-browser>
-            <fig-api label="API" tone="changed"></fig-api>
-            <fig-server label="Server"></fig-server>
-            <fig-db label="Store"></fig-db>
-            <fig-cache label="Cache" tone="added" badge="new"></fig-cache>
-          </fig-row>
-          <fig-legend></fig-legend>
-        </fig-scene>
-        <fig-scene
-          title="Next is the only transition"
-          caption="Each scene is one claim. The reader clicks through at their own pace — no autoplay, no choreography."
-        >
-          <fig-timeline>
-            <fig-step>Problem</fig-step>
-            <fig-step tone="focus">Old path</fig-step>
-            <fig-step tone="added">Insert</fig-step>
-            <fig-step>New path</fig-step>
-            <fig-step>Proof</fig-step>
-          </fig-timeline>
-          <fig-callout>Write 5–8 scenes. If you need more, the story is not sharp yet.</fig-callout>
-        </fig-scene>
-      </fig-deck>
+      <article class="fig-deck">
+        <div class="fig-shell">
+          <header class="fig-mast">
+            <div>
+              <p class="fig-kicker">Figure · PR walk</p>
+              <h1>What this library is for</h1>
+            </div>
+          </header>
+          <input type="radio" name="intro" id="s1" checked>
+          <input type="radio" name="intro" id="s2">
+          <input type="radio" name="intro" id="s3">
+          <div class="fig-scenes">
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">01</div>
+                  <div>
+                    <h2>A PR is a story about a system</h2>
+                    <p>The diff lists files. A walkthrough names the actors and what started happening between them.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <div class="fig-user" data-label="Reader"></div>
+                    <div class="fig-edge" data-label="wants"></div>
+                    <div class="fig-box" data-label="Mental model" data-tone="focus"></div>
+                    <div class="fig-edge strike" data-label="not this"></div>
+                    <div class="fig-file" data-label="5000-line patch" data-tone="ghost"></div>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav">
+                <span class="fig-btn is-disabled">Back</span>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot is-current" for="s1"></label>
+                  <label class="fig-dot" for="s2"></label>
+                  <label class="fig-dot" for="s3"></label>
+                </div>
+                <label class="fig-btn fig-next" for="s2">Next</label>
+              </nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">02</div>
+                  <div>
+                    <h2>Glyphs stay simple on purpose</h2>
+                    <p>Circles, racks, cylinders, diamonds. Tone marks what was added, removed, or merely changed.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <div class="fig-user" data-label="User"></div>
+                    <div class="fig-browser" data-label="Client"></div>
+                    <div class="fig-api" data-label="API" data-tone="changed"></div>
+                    <div class="fig-server" data-label="Server"></div>
+                    <div class="fig-db" data-label="Store"></div>
+                    <div class="fig-cache" data-label="Cache" data-tone="added"><b class="fig-chip">new</b></div>
+                  </div>
+                  <div class="fig-legend"><span><i class="add"></i> added</span><span><i class="rem"></i> removed</span><span><i class="chg"></i> changed</span><span><i class="foc"></i> focus</span></div>
+                </div>
+              </div>
+              <nav class="fig-nav">
+                <label class="fig-btn" for="s1">Back</label>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot" for="s1"></label>
+                  <label class="fig-dot is-current" for="s2"></label>
+                  <label class="fig-dot" for="s3"></label>
+                </div>
+                <label class="fig-btn fig-next" for="s3">Next</label>
+              </nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">03</div>
+                  <div>
+                    <h2>Next is the only transition</h2>
+                    <p>Each scene is one claim. The reader clicks through at their own pace — no autoplay, no choreography, no JavaScript.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-timeline">
+                    <div class="fig-step">Problem</div>
+                    <div class="fig-step" data-tone="focus">Old path</div>
+                    <div class="fig-step" data-tone="added">Insert</div>
+                    <div class="fig-step">New path</div>
+                    <div class="fig-step">Proof</div>
+                  </div>
+                  <div class="fig-callout">Write 5–8 scenes. If you need more, the story is not sharp yet.</div>
+                </div>
+              </div>
+              <nav class="fig-nav">
+                <label class="fig-btn" for="s2">Back</label>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot" for="s1"></label>
+                  <label class="fig-dot" for="s2"></label>
+                  <label class="fig-dot is-current" for="s3"></label>
+                </div>
+                <span class="fig-btn fig-next is-disabled">Done</span>
+              </nav>
+            </section>
+          </div>
+        </div>
+      </article>
 
       <h2>Walkthroughs from real PRs</h2>
       <div class="cards">
-        <a class="card" href="./walks/react-compiler.html">
+        <a class="card" href="walks/react-compiler.html">
           <div class="meta">react/react · #36173 · +123k −306</div>
           <h3>Port React Compiler to Rust</h3>
           <p>Same HIR pipeline, new arena backend, three native integrations.</p>
         </a>
-        <a class="card" href="./walks/vite-environments.html">
+        <a class="card" href="walks/vite-environments.html">
           <div class="meta">vitejs/vite · #16471 · +8.6k −3.9k</div>
           <h3>Vite 6 Environment API</h3>
           <p>One server, many named environments, each with its own module graph.</p>
         </a>
-        <a class="card" href="./walks/next-ppr.html">
+        <a class="card" href="walks/next-ppr.html">
           <div class="meta">vercel/next.js · #69282 · +318 −102</div>
           <h3>Partial fallback route shells</h3>
           <p>After a fallback is served, generate a route shell and reuse it.</p>
         </a>
-        <a class="card" href="./walks/tailwind-oxide.html">
+        <a class="card" href="walks/tailwind-oxide.html">
           <div class="meta">tailwindlabs/tailwindcss · #19632 · +579 −479</div>
           <h3>Oxide scanner on large repos</h3>
           <p>Stop walking twice, go parallel after the first scan, delay mtime.</p>
@@ -86,18 +150,17 @@
 
       <h2>Use it</h2>
       <div class="cards">
-        <a class="card" href="./catalog.html">
+        <a class="card" href="catalog.html">
           <div class="meta">Reference</div>
           <h3>Glyph catalog</h3>
           <p>Every shape, layout primitive, and tone on one page.</p>
         </a>
-        <a class="card" href="./skills/explain-pr/SKILL.md">
+        <a class="card" href="skills/explain-pr/SKILL.md">
           <div class="meta">Skill</div>
           <h3>explain-pr</h3>
-          <p>Instructions for Cursor, Codex, or Claude to compose these scenes from a diff.</p>
+          <p>Copy <code>figure.css</code> next to an HTML file. That is the whole runtime.</p>
         </a>
       </div>
     </main>
-    <script src="/lib/figure.js"></script>
   </body>
 </html>

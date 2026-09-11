@@ -1,73 +1,40 @@
 # Figure
 
-A tiny HTML library of abstract glyphs for explaining pull requests. An LLM (or a human) composes scenes; the reader clicks **Next**.
+A visual language for explaining pull requests. **One CSS file. Plain HTML. No JavaScript, no npm, no build.**
 
-This repo is the library, a Cursor/Codex/Claude skill, and four walkthroughs built from real open-source PRs.
+`figure.css` already contains Fraunces and IBM Plex (woff2, inlined) plus the glyph icons. A skill that uses this library only needs to copy that file next to an HTML page.
 
-## Run locally
+## Open it
 
-```bash
-npm install
-npm run dev
-```
-
-Open [http://127.0.0.1:43147](http://127.0.0.1:43147). The gallery, glyph catalog, and PR walks are all static pages.
+Double-click `index.html`, or from this folder:
 
 ```bash
-npm run build
-npm run preview
+python3 -m http.server 43147 --bind 127.0.0.1
 ```
 
-## Use it in an HTML page
+Then open [http://127.0.0.1:43147](http://127.0.0.1:43147).
 
-```html
-<link rel="stylesheet" href="/lib/figure.css" />
-<fig-deck title="Add a request cache" repo="acme/app" pr="812" added="140" removed="33" files="6">
-  <fig-scene title="Reads used to hit Postgres every time" caption="The handler had no memory.">
-    <fig-row>
-      <fig-user label="Client"></fig-user>
-      <fig-edge></fig-edge>
-      <fig-server label="API"></fig-server>
-      <fig-edge></fig-edge>
-      <fig-db label="Postgres" tone="changed"></fig-db>
-    </fig-row>
-  </fig-scene>
-  <fig-scene title="A cache now sits on the hot path" caption="Misses still reach the database.">
-    <fig-row>
-      <fig-user label="Client"></fig-user>
-      <fig-edge></fig-edge>
-      <fig-cache label="Cache" tone="added" badge="new"></fig-cache>
-      <fig-edge label="miss"></fig-edge>
-      <fig-db label="Postgres"></fig-db>
-    </fig-row>
-  </fig-scene>
-</fig-deck>
-<script src="/lib/figure.js"></script>
-```
-
-Tones: `added`, `removed`, `changed`, `focus`, `ghost`. Full glyph list: [catalog](/catalog.html). Composition rules for models: [`skills/explain-pr/SKILL.md`](skills/explain-pr/SKILL.md).
+There is nothing to install.
 
 ## Skill
 
-Load `skills/explain-pr/SKILL.md` into Cursor, Codex, or Claude. The model should read a PR, then emit a Figure HTML page — 5 to 8 scenes, one claim each, Next as the only transition.
+Load `skills/explain-pr/SKILL.md` into Cursor, Codex, or Claude. The model emits HTML that links `figure.css` and steps through scenes with Next labels.
 
 ## Walkthroughs
 
-These pages were written the way the skill instructs, from merged PRs:
+| Page | PR |
+|------|----|
+| [walks/react-compiler.html](walks/react-compiler.html) | [react/react #36173](https://github.com/facebook/react/pull/36173) |
+| [walks/vite-environments.html](walks/vite-environments.html) | [vitejs/vite #16471](https://github.com/vitejs/vite/pull/16471) |
+| [walks/next-ppr.html](walks/next-ppr.html) | [vercel/next.js #69282](https://github.com/vercel/next.js/pull/69282) |
+| [walks/tailwind-oxide.html](walks/tailwind-oxide.html) | [tailwindlabs/tailwindcss #19632](https://github.com/tailwindlabs/tailwindcss/pull/19632) |
 
-| PR | What the walkthrough argues |
-|----|-----------------------------|
-| [react/react #36173](https://github.com/facebook/react/pull/36173) | React Compiler ported to Rust; same HIR passes; Babel/OXC/SWC doors |
-| [vitejs/vite #16471](https://github.com/vitejs/vite/pull/16471) | Vite 6 names N environments, each with its own module graph |
-| [vercel/next.js #69282](https://github.com/vercel/next.js/pull/69282) | After a PPR fallback is served, promote a reusable route shell |
-| [tailwindlabs/tailwindcss #19632](https://github.com/tailwindlabs/tailwindcss/pull/19632) | Oxide stops double-walking; sync first scan, parallel later |
+## Rebuild the stylesheet
 
-## Screenshots
+Fonts live in `fonts/`. After changing icons or typefaces:
 
 ```bash
-npx playwright install chromium
-npm run dev   # in another terminal, if not already running
-npm run capture
+python3 scripts/build-css.py
 ```
 
-PNGs land in `screenshots/`. Notes from the first real-PR pass are in [`screenshots/REPORT.md`](screenshots/REPORT.md).
+That is optional. Using Figure does not require Python either — only `figure.css` and an HTML file.

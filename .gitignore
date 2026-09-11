@@ -1,7 +1,3 @@
-node_modules
-dist
-test-results
-playwright-report
 agent-tools
 .DS_Store
 *.log

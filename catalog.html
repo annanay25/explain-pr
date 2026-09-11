@@ -4,117 +4,128 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Figure catalog</title>
-    <link rel="stylesheet" href="/lib/figure.css" />
+    <link rel="stylesheet" href="figure.css" />
   </head>
   <body>
     <main class="site">
-      <a class="back" href="./">← Gallery</a>
+      <a class="back" href="index.html">← Gallery</a>
       <div class="wordmark" style="margin-top: 18px">Figure</div>
       <section class="hero">
         <h1>Catalog</h1>
-        <p>Abstract marks for people, machines, stores, and the arrows between them. Click through the deck, or scan the grid.</p>
+        <p>Abstract marks for people, machines, stores, and the arrows between them. One stylesheet. No JavaScript.</p>
       </section>
 
       <h2>Actors</h2>
-      <div class="catalog-grid" id="actors"></div>
+      <div class="catalog-grid">
+        <div class="catalog-item"><div class="fig-user" data-label="user"></div><code>.fig-user</code></div>
+        <div class="catalog-item"><div class="fig-users" data-label="users"></div><code>.fig-users</code></div>
+        <div class="catalog-item"><div class="fig-browser" data-label="browser"></div><code>.fig-browser</code></div>
+        <div class="catalog-item"><div class="fig-mobile" data-label="mobile"></div><code>.fig-mobile</code></div>
+      </div>
       <h2>Machines and stores</h2>
-      <div class="catalog-grid" id="machines"></div>
+      <div class="catalog-grid">
+        <div class="catalog-item"><div class="fig-server" data-label="server"></div><code>.fig-server</code></div>
+        <div class="catalog-item"><div class="fig-worker" data-label="worker"></div><code>.fig-worker</code></div>
+        <div class="catalog-item"><div class="fig-db" data-label="db"></div><code>.fig-db</code></div>
+        <div class="catalog-item"><div class="fig-bucket" data-label="bucket"></div><code>.fig-bucket</code></div>
+        <div class="catalog-item"><div class="fig-cache" data-label="cache"></div><code>.fig-cache</code></div>
+        <div class="catalog-item"><div class="fig-queue" data-label="queue"></div><code>.fig-queue</code></div>
+        <div class="catalog-item"><div class="fig-cloud" data-label="cloud"></div><code>.fig-cloud</code></div>
+        <div class="catalog-item"><div class="fig-api" data-label="api"></div><code>.fig-api</code></div>
+        <div class="catalog-item"><div class="fig-box" data-label="box"></div><code>.fig-box</code></div>
+        <div class="catalog-item"><div class="fig-globe" data-label="globe"></div><code>.fig-globe</code></div>
+      </div>
       <h2>Signals and artifacts</h2>
-      <div class="catalog-grid" id="signals"></div>
+      <div class="catalog-grid">
+        <div class="catalog-item"><div class="fig-file" data-label="file"></div><code>.fig-file</code></div>
+        <div class="catalog-item"><div class="fig-folder" data-label="folder"></div><code>.fig-folder</code></div>
+        <div class="catalog-item"><div class="fig-lock" data-label="lock"></div><code>.fig-lock</code></div>
+        <div class="catalog-item"><div class="fig-key" data-label="key"></div><code>.fig-key</code></div>
+        <div class="catalog-item"><div class="fig-flag" data-label="flag"></div><code>.fig-flag</code></div>
+        <div class="catalog-item"><div class="fig-test" data-label="test"></div><code>.fig-test</code></div>
+        <div class="catalog-item"><div class="fig-event" data-label="event"></div><code>.fig-event</code></div>
+        <div class="catalog-item"><div class="fig-token" data-label="token"></div><code>.fig-token</code></div>
+        <div class="catalog-item"><div class="fig-clock" data-label="clock"></div><code>.fig-clock</code></div>
+        <div class="catalog-item"><div class="fig-filter" data-label="filter"></div><code>.fig-filter</code></div>
+        <div class="catalog-item"><div class="fig-branch" data-label="branch"></div><code>.fig-branch</code></div>
+        <div class="catalog-item"><div class="fig-transform" data-label="transform"></div><code>.fig-transform</code></div>
+      </div>
 
       <h2>Tones</h2>
-      <fig-row>
-        <fig-box label="idle"></fig-box>
-        <fig-box label="added" tone="added" badge="+"></fig-box>
-        <fig-box label="removed" tone="removed" badge="−"></fig-box>
-        <fig-box label="changed" tone="changed" badge="~"></fig-box>
-        <fig-box label="focus" tone="focus"></fig-box>
-        <fig-box label="ghost" tone="ghost"></fig-box>
-      </fig-row>
+      <div class="fig-row">
+        <div class="fig-box" data-label="idle"></div>
+        <div class="fig-box" data-label="added" data-tone="added"><b class="fig-chip">+</b></div>
+        <div class="fig-box" data-label="removed" data-tone="removed"><b class="fig-chip">−</b></div>
+        <div class="fig-box" data-label="changed" data-tone="changed"><b class="fig-chip">~</b></div>
+        <div class="fig-box" data-label="focus" data-tone="focus"></div>
+        <div class="fig-box" data-label="ghost" data-tone="ghost"></div>
+      </div>
 
       <h2>Layout</h2>
-      <fig-compare>
-        <fig-pane label="Before">
-          <fig-row>
-            <fig-user label="Client"></fig-user>
-            <fig-edge></fig-edge>
-            <fig-server label="Origin"></fig-server>
-          </fig-row>
-        </fig-pane>
-        <fig-pane label="After" tone="added">
-          <fig-row>
-            <fig-user label="Client"></fig-user>
-            <fig-edge></fig-edge>
-            <fig-cache label="Edge" tone="added"></fig-cache>
-            <fig-edge></fig-edge>
-            <fig-server label="Origin"></fig-server>
-          </fig-row>
-        </fig-pane>
-      </fig-compare>
-
+      <div class="fig-compare">
+        <div class="fig-pane" data-label="Before">
+          <div class="fig-row">
+            <div class="fig-user" data-label="Client"></div>
+            <div class="fig-edge"></div>
+            <div class="fig-server" data-label="Origin"></div>
+          </div>
+        </div>
+        <div class="fig-pane" data-label="After" data-tone="added">
+          <div class="fig-row">
+            <div class="fig-user" data-label="Client"></div>
+            <div class="fig-edge"></div>
+            <div class="fig-cache" data-label="Edge" data-tone="added"></div>
+            <div class="fig-edge"></div>
+            <div class="fig-server" data-label="Origin"></div>
+          </div>
+        </div>
+      </div>
       <div style="height: 28px"></div>
-      <fig-cluster label="Request path">
-        <fig-row>
-          <fig-browser label="Page"></fig-browser>
-          <fig-edge label="GET"></fig-edge>
-          <fig-api label="Gateway"></fig-api>
-          <fig-edge label="auth"></fig-edge>
-          <fig-lock label="Session"></fig-lock>
-          <fig-edge></fig-edge>
-          <fig-db label="Users"></fig-db>
-        </fig-row>
-      </fig-cluster>
+      <div class="fig-cluster" data-label="Request path">
+        <div class="fig-row">
+          <div class="fig-browser" data-label="Page"></div>
+          <div class="fig-edge" data-label="GET"></div>
+          <div class="fig-api" data-label="Gateway"></div>
+          <div class="fig-edge" data-label="auth"></div>
+          <div class="fig-lock" data-label="Session"></div>
+          <div class="fig-edge"></div>
+          <div class="fig-db" data-label="Users"></div>
+        </div>
+      </div>
 
       <h2>Pipeline, stack, time</h2>
-      <fig-pipe>
-        <fig-phase>Parse</fig-phase>
-        <fig-edge></fig-edge>
-        <fig-phase tone="changed">HIR</fig-phase>
-        <fig-edge></fig-edge>
-        <fig-phase tone="added">Emit</fig-phase>
-      </fig-pipe>
+      <div class="fig-pipe">
+        <div class="fig-phase">Parse</div>
+        <div class="fig-edge"></div>
+        <div class="fig-phase" data-tone="changed">HIR</div>
+        <div class="fig-edge"></div>
+        <div class="fig-phase" data-tone="added">Emit</div>
+      </div>
       <div style="height: 24px"></div>
-      <fig-row>
-        <fig-stack>
-          <fig-layer>CDN</fig-layer>
-          <fig-layer tone="added">Resume</fig-layer>
-          <fig-layer>Origin</fig-layer>
-        </fig-stack>
-        <fig-timeline>
-          <fig-step>Build</fig-step>
-          <fig-step tone="focus">First hit</fig-step>
-          <fig-step tone="added">Reuse</fig-step>
-        </fig-timeline>
-      </fig-row>
+      <div class="fig-row">
+        <div class="fig-stack">
+          <div class="fig-layer">CDN</div>
+          <div class="fig-layer" data-tone="added">Resume</div>
+          <div class="fig-layer">Origin</div>
+        </div>
+        <div class="fig-timeline">
+          <div class="fig-step">Build</div>
+          <div class="fig-step" data-tone="focus">First hit</div>
+          <div class="fig-step" data-tone="added">Reuse</div>
+        </div>
+      </div>
 
       <h2>Code and numbers</h2>
-      <fig-code caption="idea, not the patch">
-        <fig-line tone="removed">candidates = scan(); files = walk(sources)</fig-line>
-        <fig-line tone="added">candidates = scan(); files = scanner.files</fig-line>
-      </fig-code>
+      <div class="fig-code" data-caption="idea, not the patch">
+        <span class="fig-line removed">candidates = scan(); files = walk(sources)</span>
+        <span class="fig-line added">candidates = scan(); files = scanner.files</span>
+      </div>
       <div style="height: 20px"></div>
-      <fig-row>
-        <fig-metric value="3×" label="faster as a Babel plugin" tone="added"></fig-metric>
-        <fig-dots n="12" on="9" label="9 / 12 fixtures green" tone="focus"></fig-dots>
-        <fig-callout tone="changed">Serialization is still the expensive part of the Babel bridge.</fig-callout>
-      </fig-row>
+      <div class="fig-row">
+        <div class="fig-metric" data-value="3×" data-tone="added">faster as a Babel plugin</div>
+        <div class="fig-datapoints" data-label="9 / 12 fixtures green" data-tone="focus"><div class="fig-dotgrid"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div></div>
+        <div class="fig-callout" data-tone="changed">Serialization is still the expensive part of the Babel bridge.</div>
+      </div>
     </main>
-    <script src="/lib/figure.js"></script>
-    <script>
-      const groups = {
-        actors: ["user", "users", "browser", "mobile"],
-        machines: ["server", "worker", "db", "bucket", "cache", "queue", "cloud", "api", "box", "globe"],
-        signals: ["file", "folder", "lock", "key", "flag", "test", "event", "token", "clock", "filter", "branch", "transform"],
-      };
-      for (const [id, names] of Object.entries(groups)) {
-        const root = document.getElementById(id);
-        for (const name of names) {
-          const item = document.createElement("div");
-          item.className = "catalog-item";
-          item.innerHTML = `<fig-${name} label="${name}"></fig-${name}><code>&lt;fig-${name}&gt;</code>`;
-          root.appendChild(item);
-        }
-      }
-    </script>
   </body>
 </html>

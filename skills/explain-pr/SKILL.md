@@ -1,17 +1,15 @@
 ---
 name: explain-pr
-description: Explain a pull request as a stepped visual walkthrough using the Figure HTML component library. Use when asked to explain a PR, summarize code changes for humans, produce a change walkthrough, or generate an HTML visualization of what a diff does.
+description: Explain a pull request as a stepped visual walkthrough using Figure (one CSS file, plain HTML, no JavaScript). Use when asked to explain a PR, summarize code changes for humans, produce a change walkthrough, or generate an HTML visualization of what a diff does.
 ---
 
 # Explain a PR with Figure
 
-Produce a single HTML page that walks a human through a pull request, one idea per scene, using the **Figure** library (`lib/figure.css` + `lib/figure.js`).
+Produce a single HTML page. Copy `figure.css` next to it (or link it). That file already contains the fonts and the glyph icons. Do not add JavaScript, npm, or a build step.
 
-Do not write a prose essay. Do not invent animations. Compose abstract glyphs into 5–8 scenes and let the built-in **Next** button advance the story.
+Do not write a prose essay. Compose 5–8 scenes. The reader advances with **Next** (a `<label>` wired to a hidden radio).
 
 ## Output
-
-A complete HTML file. Link the library relatively (or copy the two files next to the page):
 
 ```html
 <!doctype html>
@@ -20,135 +18,124 @@ A complete HTML file. Link the library relatively (or copy the two files next to
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PR title — Figure</title>
-    <link rel="stylesheet" href="/lib/figure.css" />
+    <link rel="stylesheet" href="figure.css" />
   </head>
   <body class="fig-page">
-    <fig-deck
-      title="Short human title"
-      repo="org/repo"
-      pr="1234"
-      href="https://github.com/org/repo/pull/1234"
-      added="318"
-      removed="102"
-      files="20"
-    >
-      <!-- scenes -->
-    </fig-deck>
-    <script src="/lib/figure.js"></script>
+    <article class="fig-deck">
+      <div class="fig-shell">
+        <header class="fig-mast">
+          <div>
+            <p class="fig-kicker">Figure · PR walk</p>
+            <h1>Short human title</h1>
+            <div class="fig-repo"><a href="https://github.com/org/repo/pull/1234">org/repo #1234</a></div>
+          </div>
+          <div class="fig-mast-side">
+            <span class="fig-stat added">+318</span>
+            <span class="fig-stat removed">−102</span>
+            <span class="fig-stat">20 files</span>
+          </div>
+        </header>
+
+        <input type="radio" name="walk" id="s1" checked>
+        <input type="radio" name="walk" id="s2">
+        <input type="radio" name="walk" id="s3">
+
+        <div class="fig-scenes">
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">01</div>
+                <div>
+                  <h2>The static shell is reused after the first miss</h2>
+                  <p>After a fallback is served, the route shell is generated and later requests skip the cold path.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-row">
+                  <div class="fig-user" data-label="Browser"></div>
+                  <div class="fig-edge" data-label="GET /p"></div>
+                  <div class="fig-cloud" data-label="CDN" data-tone="changed"><b class="fig-chip">hit</b></div>
+                  <div class="fig-edge" data-label="holes"></div>
+                  <div class="fig-server" data-label="Origin"></div>
+                </div>
+                <div class="fig-callout" data-tone="focus">Future requests use the new route shell instead of regenerating a fallback.</div>
+              </div>
+            </div>
+            <nav class="fig-nav">
+              <span class="fig-btn is-disabled">Back</span>
+              <div class="fig-dots-nav">
+                <label class="fig-dot is-current" for="s1"></label>
+                <label class="fig-dot" for="s2"></label>
+                <label class="fig-dot" for="s3"></label>
+              </div>
+              <label class="fig-btn fig-next" for="s2">Next</label>
+            </nav>
+          </section>
+          <!-- more scenes: Back is <label class="fig-btn" for="sN">Back</label> -->
+        </div>
+      </div>
+    </article>
   </body>
 </html>
 ```
 
-If this repo is not on disk, inline `figure.css` and `figure.js` from the library files rather than paraphrasing new styles.
+If this repo is not on disk, copy the contents of `figure.css` verbatim. Do not rewrite the stylesheet.
 
 ## How to think
 
 1. Read the PR title, body, and the shape of the diff (not every line).
-2. Name the *system* the change lives in: who talks to whom, what is stored, what runs at build vs request vs client.
-3. Split the story into scenes. Each scene has **one claim**.
+2. Name the *system* the change lives in.
+3. One claim per scene.
 4. Prefer before → after, then the mechanism, then the consequence.
-5. Stop at 8 scenes. If you need more, you do not understand it yet.
-6. To stack two flows, wrap them in `fig-col` with `<fig-edge dir="down">` **between** the rows. A down-edge at the end of a `fig-row` does not connect to the next row.
+5. Stop at 8 scenes (the stylesheet only wires `#s1`–`#s8`).
+6. To stack two flows, wrap them in `.fig-col` with `<div class="fig-edge down">` **between** the rows.
 
-Typical arc:
+## Glyphs
 
-| # | Purpose |
-|---|---------|
-| 1 | What problem existed |
-| 2 | The old path, drawn |
-| 3 | What this PR inserts, removes, or splits |
-| 4 | The new path, drawn |
-| 5 | An important detail (cache, API, data shape) |
-| 6 | How to tell it worked (tests, metrics) |
+`<div class="fig-user" data-label="Browser" data-tone="added" data-note="optional"></div>`
 
-## Scene markup
+Optional chip: `<b class="fig-chip">new</b>` inside the glyph.
 
-```html
-<fig-scene
-  title="The static shell is reused after the first miss"
-  caption="After a fallback is served, the route shell is generated and later requests skip the cold path."
->
-  <fig-row>
-    <fig-user label="Browser"></fig-user>
-    <fig-edge label="GET /p"></fig-edge>
-    <fig-cloud label="CDN" tone="changed" badge="hit"></fig-cloud>
-    <fig-edge label="holes"></fig-edge>
-    <fig-server label="Origin"></fig-server>
-  </fig-row>
-  <fig-callout tone="focus">Future requests use the new route shell instead of regenerating a fallback.</fig-callout>
-</fig-scene>
-```
+Tones on `data-tone`: `added`, `removed`, `changed`, `focus`, `ghost`.
 
-`title` is the claim. `caption` is one or two sentences a reviewer could read aloud.
+| Class | Use for |
+|-------|---------|
+| `.fig-user` / `.fig-users` | Person, requester |
+| `.fig-browser` / `.fig-mobile` | Client |
+| `.fig-server` | Process, origin |
+| `.fig-worker` | Job, compiler backend |
+| `.fig-db` | Database |
+| `.fig-bucket` | Object storage |
+| `.fig-cache` | Cache |
+| `.fig-queue` | Queue |
+| `.fig-cloud` | CDN, edge |
+| `.fig-api` | Gateway |
+| `.fig-box` | Module, package |
+| `.fig-file` / `.fig-folder` | Artifact |
+| `.fig-lock` / `.fig-key` | Auth |
+| `.fig-flag` | Feature flag |
+| `.fig-test` | Check, CI |
+| `.fig-event` | Signal, HMR |
+| `.fig-token` | Ticket, cookie |
+| `.fig-globe` | Network |
+| `.fig-clock` | Time, mtime |
+| `.fig-filter` | Filter |
+| `.fig-branch` | Git / fork |
+| `.fig-transform` | Compiler pass |
 
-## Visual language
+Arrow: `<div class="fig-edge" data-label="GET"></div>`. Add class `down` or `strike`.
 
-Tones (put on glyphs, layers, panes, edges, lines):
+Keep a scene to about 4–7 glyphs.
 
-- `added` — new
-- `removed` — gone or skipped
-- `changed` — same object, new behaviour
-- `focus` — look here
-- `ghost` — present but no longer on the hot path
+## Layout
 
-Keep a scene to about 4–7 glyphs. If you need more, split the scene.
+`.fig-row`, `.fig-col`, `.fig-cluster` (`data-label`), `.fig-compare` + `.fig-pane`, `.fig-stack` + `.fig-layer`, `.fig-pipe` + `.fig-phase`, `.fig-timeline` + `.fig-step`, `.fig-code` (`data-caption`) + `.fig-line.added|.removed`, `.fig-metric` (`data-value`), `.fig-callout`, `.fig-datapoints` with `<i class="on">` dots.
 
-### Actors and machines
-
-| Tag | Use for |
-|-----|---------|
-| `fig-user` / `fig-users` | Person, requester, developer |
-| `fig-browser` / `fig-mobile` | Client surface |
-| `fig-server` | Process, origin, node |
-| `fig-worker` | Background job, thread, compiler backend |
-| `fig-db` | Database |
-| `fig-bucket` | Object storage |
-| `fig-cache` | Cache, memo table |
-| `fig-queue` | Queue, buffer, pending work |
-| `fig-cloud` | CDN, edge, hosted plane |
-| `fig-api` | Gateway, public interface, diamond |
-| `fig-box` | Module, component, package |
-| `fig-file` / `fig-folder` | Source artifact |
-| `fig-lock` / `fig-key` | Auth, secret, permission |
-| `fig-flag` | Feature flag |
-| `fig-test` | Check, CI, assertion |
-| `fig-event` | Signal, pub/sub, HMR ping |
-| `fig-token` | Ticket, cookie, capability |
-| `fig-globe` | Network, public internet |
-| `fig-clock` | Time, TTL, mtime |
-| `fig-filter` | Filter, ignore rules |
-| `fig-branch` | Git, control-flow fork |
-| `fig-transform` | Compiler pass, rewriter |
-| `fig-dots` | Data points (`n`, `on`, `label`) |
-
-Glyph attributes: `label`, `note` (small second line), `tone`, `badge` (tiny chip, e.g. `+`, `hit`, `new`).
-
-### Structure
-
-| Tag | Use for |
-|-----|---------|
-| `fig-row` / `fig-col` | Flow vs stack |
-| `fig-edge` | Arrow. `label`, `dir="down"` or `dir="left"`, `tone`, `strike` for a blocked path |
-| `fig-cluster label="Build time"` | Dashed group |
-| `fig-compare` + `fig-pane label="Before"` | Split |
-| `fig-stack` + `fig-layer` | Layers of a system |
-| `fig-pipe` + `fig-phase` | Named pipeline stages |
-| `fig-timeline` + `fig-step` | Ordered time |
-| `fig-code` + `fig-line tone="added"` | Tiny diff, not a file dump |
-| `fig-metric value="3×" label="faster"` | One number |
-| `fig-callout` | One sentence under the drawing |
-| `fig-legend` | Optional key; auto-fills if empty |
-
-Code samples: at most 6 lines. Show the idea, not the patch.
+Code samples: at most 6 lines.
 
 ## Rules
 
-- Abstract shapes only. No logos, no screenshots of the product, no architecture-tool clipart.
-- No CSS animations, no timers, no autoplay. The Next button is the transition.
-- Real names from the PR (`Scanner`, `postponedState`, `server.environments`). Do not invent subsystems.
-- If unsure, draw fewer boxes and a longer caption.
-- Empty, loading, and error: a deck with no `fig-scene` already shows an empty state. Do not add fake scenes when the PR is unreadable; one scene that says what is missing is enough.
-
-## Done when
-
-A teammate who has not read the diff can click Next and answer: what broke, what was added, and what to watch in review.
+- Abstract shapes only. No logos, no product screenshots.
+- No `<script>`, no CSS animations, no autoplay.
+- Real names from the PR. Do not invent subsystems.
+- Open the HTML file in a browser. Nothing to install.

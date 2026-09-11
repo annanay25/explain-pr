@@ -10,9 +10,10 @@ ROOT = Path(__file__).resolve().parents[1]
 FONTS = ROOT / "fonts"
 OUT = ROOT / "figure.css"
 
+# Distinct silhouettes. Kind names are used as .fig-{name} and data-kind="{name}".
 ICONS = {
-    "user": '<circle cx="32" cy="20" r="8"/><path d="M14 50c2-12 9-18 18-18s16 6 18 18"/>',
-    "users": '<circle cx="24" cy="20" r="7"/><path d="M10 50c2-11 8-16 14-16s12 5 14 16"/><circle cx="42" cy="22" r="6"/><path d="M32 50c1-9 6-14 12-14s11 5 12 14"/>',
+    "user": '<circle cx="32" cy="18" r="8"/><path d="M12 52c3-14 10-20 20-20s17 6 20 20"/>',
+    "users": '<circle cx="24" cy="18" r="7"/><path d="M8 52c3-13 9-18 16-18s13 5 16 18"/><circle cx="44" cy="20" r="6"/><path d="M32 52c2-11 7-16 13-16s12 5 14 16"/>',
     "server": '<rect x="12" y="10" width="40" height="13" rx="2"/><rect x="12" y="26" width="40" height="13" rx="2"/><rect x="12" y="42" width="40" height="13" rx="2"/><circle fill="#1a1714" stroke="none" cx="20" cy="16.5" r="1.8"/><circle fill="#1a1714" stroke="none" cx="20" cy="32.5" r="1.8"/><circle fill="#1a1714" stroke="none" cx="20" cy="48.5" r="1.8"/>',
     "db": '<ellipse cx="32" cy="16" rx="16" ry="7"/><path d="M16 16v26c0 4 7 8 16 8s16-4 16-8V16"/><path d="M16 28c0 4 7 7 16 7s16-3 16-7"/><path d="M16 38c0 4 7 7 16 7s16-3 16-7"/>',
     "box": '<rect x="12" y="12" width="40" height="40" rx="6"/><path d="M32 12v40M12 32h40"/>',
@@ -37,6 +38,47 @@ ICONS = {
     "branch": '<circle cx="20" cy="16" r="6"/><circle cx="20" cy="48" r="6"/><circle cx="46" cy="32" r="6"/><path d="M20 22v20M26 16c12 0 14 8 14 16"/>',
     "bucket": '<path d="M14 20h36l-4 32H18z"/><path d="M12 20c0-6 9-10 20-10s20 4 20 10"/>',
     "transform": '<rect x="18" y="18" width="28" height="28" rx="4"/><path d="M8 32h10M46 32h10"/><path d="M52 26l6 6-6 6"/>',
+    "babel": '<path d="M20 14c-8 0-8 10-8 18s0 18 8 18M44 14c8 0 8 10 8 18s0 18-8 18"/><path d="M28 22h8M28 32h8M28 42h8"/>',
+    "oxc": '<path d="M22 38 34 10l4 16 12-4L32 56l-4-16z"/>',
+    "swc": '<path d="M12 32h22"/><path d="M26 22l16 10-16 10"/><path d="M36 18l16 14-16 14"/>',
+    "rust": '<path d="M32 8 54 20v24L32 56 10 44V20z"/><circle cx="32" cy="32" r="8"/><path d="M32 18v6M32 40v6M18 32h6M40 32h6"/>',
+    "compiler": '<rect x="6" y="22" width="14" height="20" rx="2"/><rect x="44" y="22" width="14" height="20" rx="2"/><circle cx="32" cy="32" r="11"/><path d="M21 32h22"/>',
+    "parser": '<path d="M10 16h18M10 24h18M10 32h12"/><circle cx="44" cy="18" r="5"/><circle cx="34" cy="46" r="5"/><circle cx="54" cy="46" r="5"/><path d="M44 23v12M44 35l-8 6M44 35l8 6"/>',
+    "ast": '<circle cx="32" cy="12" r="6"/><circle cx="32" cy="32" r="5"/><circle cx="14" cy="50" r="6"/><circle cx="50" cy="50" r="6"/><path d="M32 18v9M29 36 17 46M35 36 47 46"/>',
+    "ir": '<rect x="10" y="14" width="44" height="10" rx="2"/><rect x="10" y="28" width="28" height="10" rx="2"/><rect x="10" y="42" width="36" height="10" rx="2"/>',
+    "hir": '<rect x="8" y="14" width="20" height="14" rx="2"/><rect x="36" y="14" width="20" height="14" rx="2"/><rect x="22" y="38" width="20" height="14" rx="2"/><path d="M18 28v6c0 4 8 4 12 4M46 28v6c0 4-8 4-12 4"/>',
+    "plugin": '<rect x="10" y="10" width="26" height="26" rx="4"/><rect x="28" y="28" width="26" height="26" rx="4"/><circle cx="23" cy="23" r="3"/><circle cx="41" cy="41" r="3"/>',
+    "env": '<rect x="18" y="10" width="34" height="20" rx="3"/><rect x="12" y="22" width="34" height="20" rx="3"/><rect x="6" y="34" width="34" height="20" rx="3"/>',
+    "scan": '<circle cx="28" cy="28" r="14"/><path d="M38 38l14 14"/><path d="M28 20v10h10"/>',
+    "crate": '<path d="M12 22 32 12 52 22 52 44 32 54 12 44z"/><path d="M12 22 32 32 52 22M32 32v22"/>',
+    "wasm": '<path d="M32 8 54 21v22L32 56 10 43V21z"/><path d="M32 22v20M22 28h20"/>',
+    "hook": '<circle cx="22" cy="12" r="5"/><path d="M22 17v22a12 12 0 1 0 24 0V30"/>',
+    "runtime": '<path d="M32 8 54 21v22L32 56 10 43V21z"/><path d="M26 22 44 32 26 42z"/>',
+    "doc": '<rect x="14" y="8" width="36" height="48" rx="3"/><path d="M22 20h20M22 28h20M22 36h14"/>',
+    "term": '<rect x="8" y="14" width="48" height="36" rx="4"/><path d="M8 24h48"/><path d="M16 34l7 5-7 5M28 44h14"/>',
+    "fallback": '<path d="M20 10h16l12 12v32H20z" stroke-dasharray="4 3"/><path d="M36 10v12h12" stroke-dasharray="4 3"/>',
+    "route": '<circle cx="12" cy="32" r="5"/><circle cx="52" cy="16" r="5"/><circle cx="52" cy="48" r="5"/><path d="M17 32h12M29 32c8 0 8-16 18-16M29 32c8 0 8 16 18 16"/>',
+    "module": '<rect x="10" y="10" width="18" height="18" rx="3"/><rect x="36" y="10" width="18" height="18" rx="3"/><rect x="10" y="36" width="18" height="18" rx="3"/><rect x="36" y="36" width="18" height="18" rx="3"/>',
+    "graph": '<circle cx="16" cy="18" r="6"/><circle cx="48" cy="18" r="6"/><circle cx="18" cy="48" r="6"/><circle cx="48" cy="46" r="6"/><path d="M22 18h20M19 24l2 18M46 24l1 16M24 48h18"/>',
+    "css": '<path d="M18 16h28M18 32h28M18 48h28M26 10v44M38 10v44"/>',
+    "js": '<path d="M22 14c-10 0-10 10-10 18s0 18 10 18M42 14c10 0 10 10 10 18s0 18-10 18"/>',
+    "snippet": '<path d="M26 18 14 32 26 46M38 18 50 32 38 46M36 16 28 48"/>',
+    "html": '<path d="M24 16 10 32 24 48M40 16 54 32 40 48"/>',
+    "stream": '<path d="M8 22c8 0 8 20 16 20s8-20 16-20 8 20 16 20"/><path d="M8 42c8 0 8-20 16-20s8 20 16 20 8-20 16-20"/>',
+    "arena": '<rect x="10" y="10" width="44" height="44" rx="3"/><path d="M10 32h44M32 10v44M10 21h44M10 43h44M21 10v44M43 10v44"/>',
+    "bundler": '<rect x="14" y="24" width="16" height="16" rx="1"/><rect x="34" y="24" width="16" height="16" rx="1"/><rect x="24" y="12" width="16" height="16" rx="1"/><rect x="24" y="36" width="16" height="16" rx="1"/>',
+    "adapter": '<rect x="6" y="24" width="18" height="16" rx="2"/><rect x="40" y="24" width="18" height="16" rx="2"/><path d="M24 32h16"/><circle cx="20" cy="32" r="2.2"/><circle cx="44" cy="32" r="2.2"/>',
+    "snapshot": '<rect x="18" y="16" width="30" height="36" rx="2"/><rect x="12" y="10" width="30" height="36" rx="2"/><path d="M18 22h18M18 30h12"/>',
+    "tree": '<circle cx="32" cy="12" r="6"/><circle cx="14" cy="50" r="6"/><circle cx="50" cy="50" r="6"/><path d="M32 18v14M32 32 17 46M32 32 47 46"/>',
+    "config": '<path d="M14 20h36M14 32h36M14 44h36"/><circle cx="24" cy="20" r="4"/><circle cx="42" cy="32" r="4"/><circle cx="28" cy="44" r="4"/>',
+    "log": '<path d="M14 16h36M14 28h36M14 40h26M14 50h30"/>',
+    "error": '<path d="M32 10 54 50H10z"/><path d="M32 26v14M32 46v.5"/>',
+    "request": '<path d="M8 32h40"/><path d="M38 22l16 10-16 10"/><rect x="8" y="26" width="8" height="12" rx="1"/>',
+    "response": '<path d="M56 32H16"/><path d="M26 22 10 32l16 10"/><rect x="48" y="26" width="8" height="12" rx="1"/>',
+    "client": '<rect x="10" y="12" width="44" height="28" rx="3"/><path d="M24 40v6M40 40v6M20 52h24"/>',
+    "package": '<path d="M12 22 32 12 52 22v24L32 56 12 46z"/><path d="M12 22h40M32 12v44"/>',
+    "build": '<rect x="10" y="40" width="14" height="12" rx="1"/><rect x="26" y="40" width="14" height="12" rx="1"/><rect x="42" y="40" width="12" height="12" rx="1"/><rect x="18" y="26" width="14" height="12" rx="1"/><rect x="34" y="26" width="14" height="12" rx="1"/><rect x="26" y="12" width="14" height="12" rx="1"/>',
+    "pipeline": '<rect x="6" y="24" width="14" height="16" rx="2"/><rect x="25" y="24" width="14" height="16" rx="2"/><rect x="44" y="24" width="14" height="16" rx="2"/><path d="M20 32h5M39 32h5"/>',
 }
 
 
@@ -62,17 +104,52 @@ def icon_url(inner: str) -> str:
     return "data:image/svg+xml," + quote(svg, safe="")
 
 
-glyph_list = ", ".join(f".fig-{name}" for name in ICONS)
+def comma(template: str) -> str:
+    return ", ".join(template.replace("{n}", n) for n in ICONS)
+
+
+glyph = comma(".fig-{n}")
+glyph_before = comma(".fig-{n}::before")
+glyph_after = comma(".fig-{n}::after")
+glyph_note_after = comma(".fig-{n}[data-note]::after")
+
 icon_rules = "".join(
-    f'.fig-{name}::before {{ background-image: url("{icon_url(inner)}"); }}\n'
+    (
+        f'.fig-{name}::before,\n'
+        f'.fig-node[data-kind="{name}"] > summary > .fig-mark,\n'
+        f'.fig-mark[data-kind="{name}"] {{\n'
+        f'  background-image: url("{icon_url(inner)}");\n'
+        f"}}\n"
+    )
     for name, inner in ICONS.items()
 )
+
 scene_rules = "\n".join(
     f".fig-deck:has(#s{i}:checked) .fig-scene:nth-of-type({i}) {{ display: flex; }}"
     for i in range(1, 9)
 )
 
-css = f"""{font_face("Fraunces", 500, "fraunces.woff2")}{font_face("Fraunces", 600, "fraunces-600.woff2")}{font_face("IBM Plex Sans", 400, "ibm-plex-sans.woff2")}{font_face("IBM Plex Sans", 500, "ibm-plex-sans-500.woff2")}{font_face("IBM Plex Sans", 600, "ibm-plex-sans-600.woff2")}{font_face("IBM Plex Mono", 400, "ibm-plex-mono.woff2")}{font_face("IBM Plex Mono", 500, "ibm-plex-mono-500.woff2")}
+tone_before = {}
+for tone in ("added", "removed", "changed", "focus", "ghost"):
+    tone_before[tone] = (
+        comma(f'.fig-{{n}}[data-tone="{tone}"]::before')
+        + f', .fig-node[data-tone="{tone}"] > summary > .fig-mark'
+        + f', .fig-glyph[data-tone="{tone}"] > .fig-mark'
+    )
+
+fonts = "".join(
+    [
+        font_face("Fraunces", 500, "fraunces.woff2"),
+        font_face("Fraunces", 600, "fraunces-600.woff2"),
+        font_face("IBM Plex Sans", 400, "ibm-plex-sans.woff2"),
+        font_face("IBM Plex Sans", 500, "ibm-plex-sans-500.woff2"),
+        font_face("IBM Plex Sans", 600, "ibm-plex-sans-600.woff2"),
+        font_face("IBM Plex Mono", 400, "ibm-plex-mono.woff2"),
+        font_face("IBM Plex Mono", 500, "ibm-plex-mono-500.woff2"),
+    ]
+)
+
+css = fonts + f"""
 :root {{
   --fig-paper: #f3efe6;
   --fig-paper-2: #ebe4d6;
@@ -106,16 +183,24 @@ body.fig-page {{ min-height: 100vh; }}
 
 .fig-deck {{
   display: block;
-  max-width: 1080px;
+  max-width: 1120px;
   margin: 32px auto;
   padding: 0 20px 48px;
+  position: relative;
 }}
-.fig-deck > input {{
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
+.fig-deck input[type="radio"] {{
+  appearance: none;
+  -webkit-appearance: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
 }}
 .fig-shell {{
   background: rgba(255, 252, 247, 0.92);
@@ -167,18 +252,24 @@ body.fig-page {{ min-height: 100vh; }}
 }}
 .fig-stat.added {{ color: var(--fig-added); border-color: color-mix(in srgb, var(--fig-added) 35%, white); background: var(--fig-added-bg); }}
 .fig-stat.removed {{ color: var(--fig-removed); border-color: color-mix(in srgb, var(--fig-removed) 35%, white); background: var(--fig-removed-bg); }}
+.fig-inspect-hint {{
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--fig-muted);
+  margin-top: 10px;
+}}
 
 .fig-scene {{
   display: none;
   flex-direction: column;
-  min-height: 430px;
+  min-height: 420px;
 }}
 .fig-deck:not(:has(input:checked)) .fig-scene:nth-of-type(1) {{ display: flex; }}
 {scene_rules}
 
 .fig-stage {{
   flex: 1;
-  padding: 28px 28px 8px;
+  padding: 24px 28px 10px;
   display: flex;
   flex-direction: column;
 }}
@@ -187,7 +278,7 @@ body.fig-page {{ min-height: 100vh; }}
   grid-template-columns: auto 1fr;
   gap: 14px;
   align-items: start;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }}
 .fig-index {{
   font-family: "IBM Plex Mono", ui-monospace, monospace;
@@ -212,15 +303,15 @@ body.fig-page {{ min-height: 100vh; }}
   margin: 0;
   color: var(--fig-muted);
   line-height: 1.45;
-  max-width: 62ch;
+  max-width: 68ch;
 }}
 .fig-canvas {{
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 22px;
-  padding: 8px 0 16px;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 4px 0 12px;
 }}
 .fig-nav {{
   display: flex;
@@ -268,8 +359,9 @@ label.fig-btn {{ cursor: pointer; }}
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 10px 8px;
+  gap: 12px 10px;
 }}
+.fig-row:has(details[open]) {{ align-items: flex-start; }}
 .fig-col, .fig-stack {{ flex-direction: column; align-items: center; gap: 10px; }}
 .fig-cluster {{
   flex-direction: column;
@@ -369,7 +461,7 @@ label.fig-btn {{ cursor: pointer; }}
   background: var(--fig-rule);
 }}
 
-{glyph_list} {{
+{glyph} {{
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -381,7 +473,7 @@ label.fig-btn {{ cursor: pointer; }}
   font-weight: 500;
   text-align: center;
 }}
-{glyph_list}::before {{
+{glyph_before} {{
   content: "";
   width: 64px;
   height: 64px;
@@ -392,26 +484,26 @@ label.fig-btn {{ cursor: pointer; }}
   background-position: center;
   background-size: 42px;
 }}
-{glyph_list}::after {{
+{glyph_after} {{
   content: attr(data-label);
   max-width: 110px;
   line-height: 1.25;
 }}
-{glyph_list}[data-note]::after {{
+{glyph_note_after} {{
   content: attr(data-label) "\\A" attr(data-note);
   white-space: pre-line;
 }}
-{icon_rules}
+ICON_RULES_HERE
 [data-tone="added"] {{ color: var(--fig-added); }}
 [data-tone="removed"] {{ color: var(--fig-removed); }}
 [data-tone="changed"] {{ color: var(--fig-changed); }}
 [data-tone="focus"] {{ color: var(--fig-focus); }}
 [data-tone="ghost"] {{ color: var(--fig-ghost); opacity: 0.72; }}
-{glyph_list}[data-tone="added"]::before {{ background-color: var(--fig-added-bg); border-color: color-mix(in srgb, var(--fig-added) 35%, white); }}
-{glyph_list}[data-tone="removed"]::before {{ background-color: var(--fig-removed-bg); border-color: color-mix(in srgb, var(--fig-removed) 35%, white); }}
-{glyph_list}[data-tone="changed"]::before {{ background-color: var(--fig-changed-bg); border-color: color-mix(in srgb, var(--fig-changed) 35%, white); }}
-{glyph_list}[data-tone="focus"]::before {{ background-color: var(--fig-focus-bg); border-color: color-mix(in srgb, var(--fig-focus) 35%, white); }}
-{glyph_list}[data-tone="ghost"]::before {{ background-color: transparent; border-style: dashed; }}
+{tone_before["added"]} {{ background-color: var(--fig-added-bg); border-color: color-mix(in srgb, var(--fig-added) 35%, white); }}
+{tone_before["removed"]} {{ background-color: var(--fig-removed-bg); border-color: color-mix(in srgb, var(--fig-removed) 35%, white); }}
+{tone_before["changed"]} {{ background-color: var(--fig-changed-bg); border-color: color-mix(in srgb, var(--fig-changed) 35%, white); }}
+{tone_before["focus"]} {{ background-color: var(--fig-focus-bg); border-color: color-mix(in srgb, var(--fig-focus) 35%, white); }}
+{tone_before["ghost"]} {{ background-color: transparent; border-style: dashed; }}
 .fig-layer[data-tone="added"], .fig-phase[data-tone="added"] {{ background: var(--fig-added-bg); }}
 .fig-layer[data-tone="removed"], .fig-phase[data-tone="removed"] {{ background: var(--fig-removed-bg); }}
 .fig-layer[data-tone="changed"], .fig-phase[data-tone="changed"] {{ background: var(--fig-changed-bg); }}
@@ -421,6 +513,174 @@ label.fig-btn {{ cursor: pointer; }}
 .fig-step[data-tone="removed"]::before {{ background: var(--fig-removed); border-color: var(--fig-removed); }}
 .fig-step[data-tone="changed"]::before {{ background: var(--fig-changed); border-color: var(--fig-changed); }}
 .fig-step[data-tone="focus"]::before {{ background: var(--fig-focus); border-color: var(--fig-focus); }}
+
+.fig-mark {{
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 14px;
+  border: 1px solid var(--fig-rule);
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 30px;
+  display: inline-block;
+}}
+.fig-glyph {{
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 84px;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
+}}
+
+.fig-node {{
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 248px;
+  max-width: 100%;
+  background: #fffaf2;
+  border: 1px solid var(--fig-rule);
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(26, 23, 20, 0.05);
+  color: var(--fig-ink);
+  opacity: 1;
+  position: relative;
+  text-align: left;
+}}
+.fig-node.tight {{ width: 168px; }}
+.fig-node.wide {{
+  width: min(100%, 720px);
+  flex: 1 1 100%;
+}}
+.fig-node > summary {{
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 12px 12px 12px;
+  cursor: pointer;
+  list-style: none;
+  border-radius: 16px;
+}}
+.fig-node > summary::-webkit-details-marker,
+.fig-fold > summary::-webkit-details-marker {{ display: none; }}
+.fig-node > summary::marker,
+.fig-fold > summary::marker {{ content: ""; }}
+.fig-node > summary:hover {{ background: #fff6ea; }}
+.fig-node > summary:focus-visible,
+.fig-fold > summary:focus-visible {{
+  outline: 2px solid var(--fig-ink);
+  outline-offset: -2px;
+}}
+.fig-node[open] > summary {{
+  border-bottom: 1px solid var(--fig-rule);
+  border-radius: 16px 16px 0 0;
+}}
+.fig-node-text {{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}}
+.fig-node-text em {{
+  font-style: normal;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fig-muted);
+}}
+.fig-node-text strong {{
+  font-family: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--fig-ink);
+}}
+.fig-node-text span {{
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--fig-muted);
+}}
+.fig-node.tight .fig-node-text em,
+.fig-node.tight .fig-node-text span {{ display: none; }}
+.fig-node.tight > summary {{ grid-template-columns: 40px 1fr auto; padding: 10px; }}
+.fig-node.tight .fig-mark {{ width: 40px; height: 40px; flex-basis: 40px; border-radius: 12px; }}
+.fig-node-go {{
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fig-muted);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+}}
+.fig-node-go::before {{ content: "Inspect"; }}
+.fig-node[open] > summary .fig-node-go::before {{ content: "Close"; }}
+.fig-node-panel {{
+  padding: 12px 14px 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #3f3a34;
+}}
+.fig-node-panel p {{ margin: 0 0 10px; }}
+.fig-node-panel p:last-child {{ margin-bottom: 0; }}
+.fig-node-panel .fig-code {{
+  width: 100%;
+  margin: 8px 0 0;
+}}
+.fig-node-panel .fig-node {{
+  width: 100%;
+  margin-top: 10px;
+}}
+.fig-node[data-tone="added"] {{ border-color: color-mix(in srgb, var(--fig-added) 35%, var(--fig-rule)); }}
+.fig-node[data-tone="removed"] {{ border-color: color-mix(in srgb, var(--fig-removed) 35%, var(--fig-rule)); }}
+.fig-node[data-tone="changed"] {{ border-color: color-mix(in srgb, var(--fig-changed) 35%, var(--fig-rule)); }}
+.fig-node[data-tone="focus"] {{ border-color: color-mix(in srgb, var(--fig-focus) 35%, var(--fig-rule)); }}
+.fig-node[data-tone="ghost"] {{ opacity: 0.78; border-style: dashed; }}
+
+.fig-fold {{
+  border: 1px solid var(--fig-rule);
+  border-radius: 10px;
+  background: #fff;
+  margin: 8px 0 0;
+}}
+.fig-fold > summary {{
+  cursor: pointer;
+  padding: 9px 12px;
+  font-weight: 550;
+  font-size: 13px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}}
+.fig-fold > summary::before {{
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 1.6px solid currentColor;
+  border-bottom: 1.6px solid currentColor;
+  transform: rotate(-45deg);
+  flex: 0 0 auto;
+}}
+.fig-fold[open] > summary::before {{ transform: rotate(45deg); }}
+.fig-fold > :not(summary) {{
+  padding: 0 12px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #3f3a34;
+}}
+.fig-fold .fig-fold {{ margin-top: 8px; }}
 
 .fig-chip {{
   position: absolute;
@@ -434,6 +694,10 @@ label.fig-btn {{ cursor: pointer; }}
   border: 1px solid currentColor;
   background: #fff;
   z-index: 1;
+}}
+.fig-node .fig-chip {{
+  top: 8px;
+  right: 28px;
 }}
 
 .fig-edge {{
@@ -532,7 +796,7 @@ label.fig-btn {{ cursor: pointer; }}
 
 .fig-callout {{
   display: block;
-  max-width: 640px;
+  max-width: 720px;
   margin: 4px auto 0;
   padding: 12px 16px;
   border-left: 3px solid var(--fig-ink);
@@ -658,11 +922,13 @@ label.fig-btn {{ cursor: pointer; }}
 @media (max-width: 700px) {{
   .fig-mast {{ flex-direction: column; padding: 18px 16px 14px; }}
   .fig-stage, .fig-nav {{ padding-left: 16px; padding-right: 16px; }}
-  .fig-scene {{ min-height: 360px; }}
+  .fig-scene {{ min-height: 320px; }}
   .fig-btn {{ min-width: 84px; }}
   .fig-deck {{ margin-top: 16px; }}
+  .fig-node {{ width: 100%; }}
+  .fig-node.tight {{ width: 100%; }}
 }}
 """
 
-OUT.write_text(css)
+OUT.write_text(css.replace("ICON_RULES_HERE", icon_rules))
 print(f"wrote {OUT} ({OUT.stat().st_size:,} bytes)")

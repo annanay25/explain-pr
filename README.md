@@ -4,6 +4,8 @@ A visual language for explaining pull requests. **One CSS file. Plain HTML. No J
 
 `figure.css` already contains Fraunces and IBM Plex (woff2, inlined) plus the glyph icons. A skill that uses this library only needs to copy that file next to an HTML page.
 
+Named parts of a system are **inspectable cards**. Click a component for kind, role, prose, code, and nested folds — as far as the reviewer wants to go.
+
 ## Open it
 
 Double-click `index.html`, or from this folder:
@@ -18,7 +20,7 @@ There is nothing to install.
 
 ## Skill
 
-Load `skills/explain-pr/SKILL.md` into Cursor, Codex, or Claude. The model emits HTML that links `figure.css` and steps through scenes with Next labels.
+Load `skills/explain-pr/SKILL.md` into Cursor, Codex, or Claude. The model emits HTML that links `figure.css`, steps through scenes with Next labels, and puts depth inside `<details class="fig-node">` so a reviewer can keep asking.
 
 ## Walkthroughs
 

@@ -12,53 +12,127 @@
       <div class="wordmark" style="margin-top: 18px">Figure</div>
       <section class="hero">
         <h1>Catalog</h1>
-        <p>Abstract marks for people, machines, stores, and the arrows between them. One stylesheet. No JavaScript.</p>
+        <p>Each kind has its own mark. Named components are inspectable cards — click in, then keep folding until you have enough.</p>
       </section>
 
-      <h2>Actors</h2>
+      <h2>Inspectable node</h2>
+      <p style="color:var(--fig-muted);max-width:62ch;line-height:1.5">Use <code>&lt;details class="fig-node" data-kind="…"&gt;</code> for anything a reviewer might want to question. Nested <code>.fig-fold</code> and nested nodes are unlimited.</p>
+      <div class="fig-row" style="justify-content:flex-start;margin-top:18px">
+        <details class="fig-node" data-kind="compiler" data-tone="added" open>
+          <summary>
+            <i class="fig-mark"></i>
+            <span class="fig-node-text">
+              <em>compiler</em>
+              <strong>react-compiler</strong>
+              <span>Rust crate. Babel-AST in, Babel-AST out.</span>
+            </span>
+            <b class="fig-node-go"></b>
+          </summary>
+          <div class="fig-node-panel">
+            <p>The public shape did not change. Internals moved from a TypeScript pointer graph to arenas and indices.</p>
+            <details class="fig-fold">
+              <summary>Pipeline</summary>
+              <p>Lower AST → HIR with CFG and SSA → same pass order as TS → codegen back to AST.</p>
+              <details class="fig-fold">
+                <summary>Why arenas</summary>
+                <p>Rust cannot cheaply express the TS compiler’s web of pointers. Indices into typed arenas are the port’s main storage change.</p>
+              </details>
+            </details>
+          </div>
+        </details>
+      </div>
+
+      <h2>People and clients</h2>
       <div class="catalog-grid">
-        <div class="catalog-item"><div class="fig-user" data-label="user"></div><code>.fig-user</code></div>
-        <div class="catalog-item"><div class="fig-users" data-label="users"></div><code>.fig-users</code></div>
-        <div class="catalog-item"><div class="fig-browser" data-label="browser"></div><code>.fig-browser</code></div>
-        <div class="catalog-item"><div class="fig-mobile" data-label="mobile"></div><code>.fig-mobile</code></div>
+        <div class="catalog-item"><div class="fig-user" data-label="user"></div><code>user</code></div>
+        <div class="catalog-item"><div class="fig-users" data-label="users"></div><code>users</code></div>
+        <div class="catalog-item"><div class="fig-browser" data-label="browser"></div><code>browser</code></div>
+        <div class="catalog-item"><div class="fig-client" data-label="client"></div><code>client</code></div>
+        <div class="catalog-item"><div class="fig-mobile" data-label="mobile"></div><code>mobile</code></div>
       </div>
       <h2>Machines and stores</h2>
       <div class="catalog-grid">
-        <div class="catalog-item"><div class="fig-server" data-label="server"></div><code>.fig-server</code></div>
-        <div class="catalog-item"><div class="fig-worker" data-label="worker"></div><code>.fig-worker</code></div>
-        <div class="catalog-item"><div class="fig-db" data-label="db"></div><code>.fig-db</code></div>
-        <div class="catalog-item"><div class="fig-bucket" data-label="bucket"></div><code>.fig-bucket</code></div>
-        <div class="catalog-item"><div class="fig-cache" data-label="cache"></div><code>.fig-cache</code></div>
-        <div class="catalog-item"><div class="fig-queue" data-label="queue"></div><code>.fig-queue</code></div>
-        <div class="catalog-item"><div class="fig-cloud" data-label="cloud"></div><code>.fig-cloud</code></div>
-        <div class="catalog-item"><div class="fig-api" data-label="api"></div><code>.fig-api</code></div>
-        <div class="catalog-item"><div class="fig-box" data-label="box"></div><code>.fig-box</code></div>
-        <div class="catalog-item"><div class="fig-globe" data-label="globe"></div><code>.fig-globe</code></div>
+        <div class="catalog-item"><div class="fig-server" data-label="server"></div><code>server</code></div>
+        <div class="catalog-item"><div class="fig-worker" data-label="worker"></div><code>worker</code></div>
+        <div class="catalog-item"><div class="fig-runtime" data-label="runtime"></div><code>runtime</code></div>
+        <div class="catalog-item"><div class="fig-db" data-label="db"></div><code>db</code></div>
+        <div class="catalog-item"><div class="fig-bucket" data-label="bucket"></div><code>bucket</code></div>
+        <div class="catalog-item"><div class="fig-cache" data-label="cache"></div><code>cache</code></div>
+        <div class="catalog-item"><div class="fig-queue" data-label="queue"></div><code>queue</code></div>
+        <div class="catalog-item"><div class="fig-cloud" data-label="cloud"></div><code>cloud</code></div>
+        <div class="catalog-item"><div class="fig-api" data-label="api"></div><code>api</code></div>
+        <div class="catalog-item"><div class="fig-env" data-label="env"></div><code>env</code></div>
+        <div class="catalog-item"><div class="fig-globe" data-label="globe"></div><code>globe</code></div>
       </div>
-      <h2>Signals and artifacts</h2>
+      <h2>Compilers and parsers</h2>
       <div class="catalog-grid">
-        <div class="catalog-item"><div class="fig-file" data-label="file"></div><code>.fig-file</code></div>
-        <div class="catalog-item"><div class="fig-folder" data-label="folder"></div><code>.fig-folder</code></div>
-        <div class="catalog-item"><div class="fig-lock" data-label="lock"></div><code>.fig-lock</code></div>
-        <div class="catalog-item"><div class="fig-key" data-label="key"></div><code>.fig-key</code></div>
-        <div class="catalog-item"><div class="fig-flag" data-label="flag"></div><code>.fig-flag</code></div>
-        <div class="catalog-item"><div class="fig-test" data-label="test"></div><code>.fig-test</code></div>
-        <div class="catalog-item"><div class="fig-event" data-label="event"></div><code>.fig-event</code></div>
-        <div class="catalog-item"><div class="fig-token" data-label="token"></div><code>.fig-token</code></div>
-        <div class="catalog-item"><div class="fig-clock" data-label="clock"></div><code>.fig-clock</code></div>
-        <div class="catalog-item"><div class="fig-filter" data-label="filter"></div><code>.fig-filter</code></div>
-        <div class="catalog-item"><div class="fig-branch" data-label="branch"></div><code>.fig-branch</code></div>
-        <div class="catalog-item"><div class="fig-transform" data-label="transform"></div><code>.fig-transform</code></div>
+        <div class="catalog-item"><div class="fig-babel" data-label="babel"></div><code>babel</code></div>
+        <div class="catalog-item"><div class="fig-oxc" data-label="oxc"></div><code>oxc</code></div>
+        <div class="catalog-item"><div class="fig-swc" data-label="swc"></div><code>swc</code></div>
+        <div class="catalog-item"><div class="fig-rust" data-label="rust"></div><code>rust</code></div>
+        <div class="catalog-item"><div class="fig-compiler" data-label="compiler"></div><code>compiler</code></div>
+        <div class="catalog-item"><div class="fig-parser" data-label="parser"></div><code>parser</code></div>
+        <div class="catalog-item"><div class="fig-ast" data-label="ast"></div><code>ast</code></div>
+        <div class="catalog-item"><div class="fig-ir" data-label="ir"></div><code>ir</code></div>
+        <div class="catalog-item"><div class="fig-hir" data-label="hir"></div><code>hir</code></div>
+        <div class="catalog-item"><div class="fig-transform" data-label="transform"></div><code>transform</code></div>
+        <div class="catalog-item"><div class="fig-plugin" data-label="plugin"></div><code>plugin</code></div>
+        <div class="catalog-item"><div class="fig-adapter" data-label="adapter"></div><code>adapter</code></div>
+        <div class="catalog-item"><div class="fig-arena" data-label="arena"></div><code>arena</code></div>
+        <div class="catalog-item"><div class="fig-crate" data-label="crate"></div><code>crate</code></div>
+        <div class="catalog-item"><div class="fig-bundler" data-label="bundler"></div><code>bundler</code></div>
+        <div class="catalog-item"><div class="fig-scan" data-label="scan"></div><code>scan</code></div>
+      </div>
+      <h2>Web artifacts</h2>
+      <div class="catalog-grid">
+        <div class="catalog-item"><div class="fig-file" data-label="file"></div><code>file</code></div>
+        <div class="catalog-item"><div class="fig-folder" data-label="folder"></div><code>folder</code></div>
+        <div class="catalog-item"><div class="fig-doc" data-label="doc"></div><code>doc</code></div>
+        <div class="catalog-item"><div class="fig-term" data-label="term"></div><code>term</code></div>
+        <div class="catalog-item"><div class="fig-fallback" data-label="fallback"></div><code>fallback</code></div>
+        <div class="catalog-item"><div class="fig-route" data-label="route"></div><code>route</code></div>
+        <div class="catalog-item"><div class="fig-module" data-label="module"></div><code>module</code></div>
+        <div class="catalog-item"><div class="fig-graph" data-label="graph"></div><code>graph</code></div>
+        <div class="catalog-item"><div class="fig-snippet" data-label="snippet"></div><code>snippet</code></div>
+        <div class="catalog-item"><div class="fig-html" data-label="html"></div><code>html</code></div>
+        <div class="catalog-item"><div class="fig-css" data-label="css"></div><code>css</code></div>
+        <div class="catalog-item"><div class="fig-js" data-label="js"></div><code>js</code></div>
+        <div class="catalog-item"><div class="fig-wasm" data-label="wasm"></div><code>wasm</code></div>
+        <div class="catalog-item"><div class="fig-stream" data-label="stream"></div><code>stream</code></div>
+        <div class="catalog-item"><div class="fig-hook" data-label="hook"></div><code>hook</code></div>
+        <div class="catalog-item"><div class="fig-package" data-label="package"></div><code>package</code></div>
+      </div>
+      <h2>Signals</h2>
+      <div class="catalog-grid">
+        <div class="catalog-item"><div class="fig-lock" data-label="lock"></div><code>lock</code></div>
+        <div class="catalog-item"><div class="fig-key" data-label="key"></div><code>key</code></div>
+        <div class="catalog-item"><div class="fig-flag" data-label="flag"></div><code>flag</code></div>
+        <div class="catalog-item"><div class="fig-test" data-label="test"></div><code>test</code></div>
+        <div class="catalog-item"><div class="fig-event" data-label="event"></div><code>event</code></div>
+        <div class="catalog-item"><div class="fig-token" data-label="token"></div><code>token</code></div>
+        <div class="catalog-item"><div class="fig-clock" data-label="clock"></div><code>clock</code></div>
+        <div class="catalog-item"><div class="fig-filter" data-label="filter"></div><code>filter</code></div>
+        <div class="catalog-item"><div class="fig-branch" data-label="branch"></div><code>branch</code></div>
+        <div class="catalog-item"><div class="fig-tree" data-label="tree"></div><code>tree</code></div>
+        <div class="catalog-item"><div class="fig-config" data-label="config"></div><code>config</code></div>
+        <div class="catalog-item"><div class="fig-log" data-label="log"></div><code>log</code></div>
+        <div class="catalog-item"><div class="fig-error" data-label="error"></div><code>error</code></div>
+        <div class="catalog-item"><div class="fig-request" data-label="request"></div><code>request</code></div>
+        <div class="catalog-item"><div class="fig-response" data-label="response"></div><code>response</code></div>
+        <div class="catalog-item"><div class="fig-snapshot" data-label="snapshot"></div><code>snapshot</code></div>
+        <div class="catalog-item"><div class="fig-build" data-label="build"></div><code>build</code></div>
+        <div class="catalog-item"><div class="fig-pipeline" data-label="pipeline"></div><code>pipeline</code></div>
+        <div class="catalog-item"><div class="fig-box" data-label="box"></div><code>box</code></div>
       </div>
 
       <h2>Tones</h2>
       <div class="fig-row">
-        <div class="fig-box" data-label="idle"></div>
-        <div class="fig-box" data-label="added" data-tone="added"><b class="fig-chip">+</b></div>
-        <div class="fig-box" data-label="removed" data-tone="removed"><b class="fig-chip">−</b></div>
-        <div class="fig-box" data-label="changed" data-tone="changed"><b class="fig-chip">~</b></div>
-        <div class="fig-box" data-label="focus" data-tone="focus"></div>
-        <div class="fig-box" data-label="ghost" data-tone="ghost"></div>
+        <div class="fig-server" data-label="idle"></div>
+        <div class="fig-cache" data-label="added" data-tone="added"><b class="fig-chip">+</b></div>
+        <div class="fig-file" data-label="removed" data-tone="removed"><b class="fig-chip">−</b></div>
+        <div class="fig-api" data-label="changed" data-tone="changed"><b class="fig-chip">~</b></div>
+        <div class="fig-worker" data-label="focus" data-tone="focus"></div>
+        <div class="fig-cloud" data-label="ghost" data-tone="ghost"></div>
       </div>
 
       <h2>Layout</h2>

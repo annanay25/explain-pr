@@ -12,169 +12,380 @@
     </div>
     <article class="fig-deck">
       <div class="fig-shell">
-            <header class="fig-mast">
-        <div>
-          <p class="fig-kicker">Figure · PR walk</p>
-          <h1>Vite 6 Environment API</h1>
-          <div class="fig-repo"><a href="https://github.com/vitejs/vite/pull/16471">vitejs/vite #16471</a></div>
-        </div>
-        <div class="fig-mast-side">
-          <span class="fig-stat added">+8602</span>
-          <span class="fig-stat removed">−3878</span>
-          <span class="fig-stat">165 files</span>
-        </div>
-      </header>
-      <input type="radio" name="walk" id="s1" checked>
-      <input type="radio" name="walk" id="s2">
-      <input type="radio" name="walk" id="s3">
-      <input type="radio" name="walk" id="s4">
-      <input type="radio" name="walk" id="s5">
-      <input type="radio" name="walk" id="s6">
-      <div class="fig-scenes">
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">01</div>
-              <div>
-                <h2>Vite 5 hid two environments inside one server</h2>
-                <p>There was always a client, and optionally SSR. They shared too much implicit state: one mental model, two module graphs stuffed into server internals.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-row">
-                <div class="fig-browser" data-label="Client" data-tone="focus"></div>
-                <div class="fig-edge" data-label="implicit"></div>
-                <div class="fig-server" data-label="Vite server"></div>
-                <div class="fig-edge" data-label="optional"></div>
-                <div class="fig-server" data-label="SSR" data-note="same Node process"></div>
-              </div>
-              <div class="fig-callout">Frameworks that needed an extra runtime — edge, workerd, a second worker — had to fight the internals.</div>
-            </div>
+        <header class="fig-mast">
+          <div>
+            <p class="fig-kicker">Figure · PR walk</p>
+            <h1>Vite 6 Environment API</h1>
+            <div class="fig-repo"><a href="https://github.com/vitejs/vite/pull/16471">vitejs/vite #16471</a></div>
+            <p class="fig-inspect-hint">Click any environment or runtime to see how it is wired.</p>
           </div>
-          <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">02</div>
-              <div>
-                <h2>The problem: production has more rooms than client and SSR</h2>
-                <p>A modern app is a set of runtimes. Vite 6 makes that set a first-class map instead of a boolean.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-row">
-                <div class="fig-browser" data-label="Browser"></div>
-                <div class="fig-server" data-label="Node SSR"></div>
-                <div class="fig-cloud" data-label="Edge" data-tone="added"></div>
-                <div class="fig-worker" data-label="workerd" data-tone="added"></div>
-              </div>
-              <div class="fig-callout" data-tone="focus">If production has four places code can run, the dev server should be able to name all four.</div>
-            </div>
+          <div class="fig-mast-side">
+            <span class="fig-stat added">+8602</span>
+            <span class="fig-stat removed">−3878</span>
+            <span class="fig-stat">165 files</span>
           </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">03</div>
-              <div>
-                <h2>After: one process, N named environments</h2>
-                <p>server.environments.client and .ssr stay. Authors can add more. Each environment has its own module graph, transform pipeline, and options.</p>
+        </header>
+        <input type="radio" name="walk" id="s1" checked>
+        <input type="radio" name="walk" id="s2">
+        <input type="radio" name="walk" id="s3">
+        <input type="radio" name="walk" id="s4">
+        <input type="radio" name="walk" id="s5">
+        <input type="radio" name="walk" id="s6">
+        <div class="fig-scenes">
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">01</div>
+                <div>
+                  <h2>Vite 5 hid two environments inside one server</h2>
+                  <p>There was always a client, and optionally SSR. They shared too much implicit state: one mental model, two module graphs stuffed into server internals.</p>
+                </div>
               </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-cluster" data-label="Vite server">
+              <div class="fig-canvas">
                 <div class="fig-row">
-                  <div class="fig-box" data-label="client" data-note="module graph"></div>
-                  <div class="fig-box" data-label="ssr" data-note="module graph"></div>
-                  <div class="fig-box" data-label="edge" data-tone="added" data-note="module graph"><b class="fig-chip">new</b></div>
-                  <div class="fig-box" data-label="rsc" data-tone="added" data-note="module graph"><b class="fig-chip">new</b></div>
+                  <details class="fig-node" data-kind="browser" data-tone="focus">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>environment</em>
+                        <strong>Client</strong>
+                        <span>Always there. Browser module graph.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Dev served this through <code>/@vite/client</code> and HMR. It was not a named object you could construct a second copy of.</p>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="implicit"></div>
+                  <details class="fig-node" data-kind="server">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>process</em>
+                        <strong>Vite server</strong>
+                        <span>Owned both graphs. Plugins guessed with ssr flags.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Transform, resolve, and module graph APIs lived on the server. A plugin that needed “the other runtime” had to read booleans and hope.</p>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="optional"></div>
+                  <details class="fig-node" data-kind="runtime">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>environment</em>
+                        <strong>SSR</strong>
+                        <span>Same Node process. Not a first-class map entry.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Optional, boolean-shaped. Fine for “client plus Node SSR.” Wrong for edge, workerd, or a second worker.</p>
+                    </div>
+                  </details>
                 </div>
               </div>
             </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">04</div>
-              <div>
-                <h2>Work happens on an environment, not on “the server”</h2>
-                <p>environment.transformRequest(url) resolves, loads, and transforms against that graph. Plugins see which environment they are in instead of guessing from ssr flags.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-col">
-                <div class="fig-row">
-                  <div class="fig-file" data-label="/src/App.tsx"></div>
-                  <div class="fig-edge" data-label="url"></div>
-                  <div class="fig-api" data-label="transformRequest" data-tone="changed"></div>
-                </div>
-                <div class="fig-edge down" data-label="this env"></div>
-                <div class="fig-row">
-                  <div class="fig-transform" data-label="plugin pipeline"></div>
-                  <div class="fig-edge" data-label="record"></div>
-                  <div class="fig-box" data-label="env module graph" data-tone="focus"></div>
-                  <div class="fig-edge" data-label="store"></div>
-                  <div class="fig-cache" data-label="transform result"></div>
+            <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">02</div>
+                <div>
+                  <h2>The problem: production has more rooms than client and SSR</h2>
+                  <p>A modern app is a set of runtimes. Vite 6 makes that set a first-class map instead of a boolean.</p>
                 </div>
               </div>
-            </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">05</div>
-              <div>
-                <h2>Runtimes are factories, not hard-coded Node</h2>
-                <p>A runtime provider packages how code executes: browser via /@vite/client, Node via a module runner, or Cloudflare’s workerd. Frameworks should not have to invent this each time.</p>
+              <div class="fig-canvas">
+                <div class="fig-row">
+                  <details class="fig-node tight" data-kind="browser">
+                    <summary><i class="fig-mark"></i><span class="fig-node-text"><strong>Browser</strong></span><b class="fig-node-go"></b></summary>
+                    <div class="fig-node-panel"><p>The classic client bundle. Still environment <code>client</code>.</p></div>
+                  </details>
+                  <details class="fig-node tight" data-kind="server">
+                    <summary><i class="fig-mark"></i><span class="fig-node-text"><strong>Node SSR</strong></span><b class="fig-node-go"></b></summary>
+                    <div class="fig-node-panel"><p>Still environment <code>ssr</code>. No longer the only extra room.</p></div>
+                  </details>
+                  <details class="fig-node" data-kind="cloud" data-tone="added">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>environment</em>
+                        <strong>Edge</strong>
+                        <span>A named runtime production already has.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Frameworks that ship an edge bundle needed this to be a first-class Vite environment, not a fork of internals.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="worker" data-tone="added">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>environment</em>
+                        <strong>workerd</strong>
+                        <span>Cloudflare’s runtime as a factory, not a hack.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>If production has four places code can run, the dev server should be able to name all four.</p>
+                    </div>
+                  </details>
+                </div>
               </div>
             </div>
-            <div class="fig-canvas">
-              <div class="fig-compare">
-                <div class="fig-pane" data-label="Dev, client">
-                  <div class="fig-col">
-                    <div class="fig-browser" data-label="Browser env"></div>
-                    <div class="fig-event" data-label="HMR channel"></div>
+            <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">03</div>
+                <div>
+                  <h2>After: one process, N named environments</h2>
+                  <p>server.environments.client and .ssr stay. Authors can add more. Each environment has its own module graph, transform pipeline, and options.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-cluster" data-label="Vite server">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="env">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>environment</em>
+                          <strong>client</strong>
+                          <span>Own module graph + transforms.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Still the default browser environment. Plugins see <code>this.environment.name === 'client'</code> instead of inferring from an ssr flag.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="env">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>environment</em>
+                          <strong>ssr</strong>
+                          <span>Own module graph + transforms.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Kept for compatibility. It is now one entry in a map, not a boolean on the server.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="env" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>environment</em>
+                          <strong>edge</strong>
+                          <span>Author-defined. Own graph.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Frameworks register extra environments in config. Each gets isolated resolve/transform/module graph state.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="env" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>environment</em>
+                          <strong>rsc</strong>
+                          <span>Author-defined. Own graph.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>React Server Components need a graph that is neither client nor classic SSR. That is the point of a map.</p>
+                      </div>
+                    </details>
                   </div>
                 </div>
-                <div class="fig-pane" data-label="Dev, custom" data-tone="added">
-                  <div class="fig-col">
-                    <div class="fig-worker" data-label="Runnable env" data-tone="added"></div>
-                    <div class="fig-cloud" data-label="Fetchable env" data-tone="added" data-note="workerd / edge"></div>
+              </div>
+            </div>
+            <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">04</div>
+                <div>
+                  <h2>Work happens on an environment, not on “the server”</h2>
+                  <p>environment.transformRequest(url) resolves, loads, and transforms against that graph. Plugins see which environment they are in instead of guessing from ssr flags.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-col">
+                  <div class="fig-row">
+                    <details class="fig-node tight" data-kind="file">
+                      <summary><i class="fig-mark"></i><span class="fig-node-text"><strong>/src/App.tsx</strong></span><b class="fig-node-go"></b></summary>
+                      <div class="fig-node-panel"><p>The URL being transformed. Same file can exist in more than one environment’s graph.</p></div>
+                    </details>
+                    <div class="fig-edge" data-label="url"></div>
+                    <details class="fig-node" data-kind="api" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>api</em>
+                          <strong>transformRequest</strong>
+                          <span>Belongs to the environment now.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Resolve, load, transform, and cache against <em>this</em> graph. The server no longer pretends there is one pipeline.</p>
+                        <div class="fig-code" data-caption="shape">
+                          <span class="fig-line">environment.transformRequest(url)</span>
+                        </div>
+                      </div>
+                    </details>
+                  </div>
+                  <div class="fig-edge down" data-label="this env"></div>
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="plugin">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>pipeline</em>
+                          <strong>plugin pipeline</strong>
+                          <span>Hooks know environment.name.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Replace <code>options.ssr</code> guesses with an explicit environment. Framework plugins can branch on name.</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge" data-label="record"></div>
+                    <details class="fig-node" data-kind="graph" data-tone="focus">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>store</em>
+                          <strong>env module graph</strong>
+                          <span>One graph per environment.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Client and SSR (and edge, rsc, …) no longer share a half-hidden pair of graphs on the server object.</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge" data-label="store"></div>
+                    <details class="fig-node tight" data-kind="cache">
+                      <summary><i class="fig-mark"></i><span class="fig-node-text"><strong>transform result</strong></span><b class="fig-node-go"></b></summary>
+                      <div class="fig-node-panel"><p>Cached per environment. A client transform is not reused as SSR by accident.</p></div>
+                    </details>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s6">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">06</div>
-              <div>
-                <h2>Compatibility is the release strategy</h2>
-                <p>The Vite 5 server API is not ripped out. Ecosystem packages that poked internals (VitePress and import glob maps, plugins reading config.build) need a migration, but apps can take Vite 6 without rewriting plugins on day one.</p>
+            <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">05</div>
+                <div>
+                  <h2>Runtimes are factories, not hard-coded Node</h2>
+                  <p>A runtime provider packages how code executes: browser via /@vite/client, Node via a module runner, or Cloudflare’s workerd. Frameworks should not have to invent this each time.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-compare">
+                  <div class="fig-pane" data-label="Dev, client">
+                    <details class="fig-node" data-kind="browser">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>runtime</em>
+                          <strong>Browser env</strong>
+                          <span>/@vite/client + HMR channel.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>The factory that already existed, now expressed as a runtime provider instead of special cases in the server.</p>
+                      </div>
+                    </details>
+                  </div>
+                  <div class="fig-pane" data-label="Dev, custom" data-tone="added">
+                    <details class="fig-node" data-kind="runtime" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>runtime</em>
+                          <strong>Runnable env</strong>
+                          <span>Module runner for Node-like targets.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Execute transformed modules without pretending they are a browser graph.</p>
+                        <details class="fig-fold">
+                          <summary>Fetchable / workerd</summary>
+                          <p>A fetchable environment talks to workerd or an edge isolate instead of importing into the Vite process.</p>
+                        </details>
+                      </div>
+                    </details>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="fig-canvas">
-              <div class="fig-timeline">
-                <div class="fig-step">Ship Vite 6</div>
-                <div class="fig-step" data-tone="focus">Keep old server API</div>
-                <div class="fig-step" data-tone="changed">Plugins migrate</div>
-                <div class="fig-step" data-tone="added">Environments as default</div>
+            <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s6">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">06</div>
+                <div>
+                  <h2>Compatibility is the release strategy</h2>
+                  <p>The Vite 5 server API is not ripped out. Ecosystem packages that poked internals need a migration, but apps can take Vite 6 without rewriting plugins on day one.</p>
+                </div>
               </div>
-              <div class="fig-callout" data-tone="changed">Read this PR as plumbing: +8.6k / −3.9k across 165 files, so frameworks can model production faithfully.</div>
+              <div class="fig-canvas">
+                <div class="fig-timeline">
+                  <div class="fig-step">Ship Vite 6</div>
+                  <div class="fig-step" data-tone="focus">Keep old server API</div>
+                  <div class="fig-step" data-tone="changed">Plugins migrate</div>
+                  <div class="fig-step" data-tone="added">Environments as default</div>
+                </div>
+                <details class="fig-node wide" data-kind="config" data-tone="changed">
+                  <summary>
+                    <i class="fig-mark"></i>
+                    <span class="fig-node-text">
+                      <em>migration</em>
+                      <strong>Who has to move</strong>
+                      <span>VitePress glob maps, plugins reading config.build, anything that poked server internals.</span>
+                    </span>
+                    <b class="fig-node-go"></b>
+                  </summary>
+                  <div class="fig-node-panel">
+                    <p>Read this PR as plumbing: +8.6k / −3.9k across 165 files, so frameworks can model production faithfully. App authors should not need a rewrite on day one.</p>
+                    <details class="fig-fold">
+                      <summary>What stays</summary>
+                      <p>Existing server methods keep working while plugins learn <code>environment.transformRequest</code> and named graphs.</p>
+                    </details>
+                  </div>
+                </details>
+              </div>
             </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s5">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot is-current" for="s6"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
-        </section>
-      </div>
+            <nav class="fig-nav"><label class="fig-btn" for="s5">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot is-current" for="s6"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+          </section>
+        </div>
       </div>
     </article>
   </body>

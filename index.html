@@ -12,9 +12,10 @@
       <section class="hero">
         <h1>Explain the change,<br />not the diff.</h1>
         <p>
-          One CSS file of abstract glyphs — people, servers, stores, edges —
-          so a model can walk a human through a pull request one claim at a time.
-          No Node, no npm, no JavaScript. Just HTML, CSS, and Next.
+          One CSS file of named components — people, compilers, stores, edges —
+          so a model can walk a reviewer through a pull request. Click any card
+          for more. Open nested sections until you have enough. No Node, no npm,
+          no JavaScript.
         </p>
       </section>
 
@@ -24,6 +25,7 @@
             <div>
               <p class="fig-kicker">Figure · PR walk</p>
               <h1>What this library is for</h1>
+              <p class="fig-inspect-hint">Click a component to inspect. Nested folds go as deep as the reviewer wants.</p>
             </div>
           </header>
           <input type="radio" name="intro" id="s1" checked>
@@ -41,11 +43,50 @@
                 </div>
                 <div class="fig-canvas">
                   <div class="fig-row">
-                    <div class="fig-user" data-label="Reader"></div>
+                    <details class="fig-node" data-kind="user">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>reviewer</em>
+                          <strong>Reader</strong>
+                          <span>Needs a mental model, not a file list.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>The human who will approve or bounce the change. They should be able to name the parts of the system without opening the patch.</p>
+                      </div>
+                    </details>
                     <div class="fig-edge" data-label="wants"></div>
-                    <div class="fig-box" data-label="Mental model" data-tone="focus"></div>
+                    <details class="fig-node" data-kind="graph" data-tone="focus">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>outcome</em>
+                          <strong>Mental model</strong>
+                          <span>Who talks to whom, and what changed.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>A picture of components, tones (added / removed / changed), and the one claim this scene is making.</p>
+                      </div>
+                    </details>
                     <div class="fig-edge strike" data-label="not this"></div>
-                    <div class="fig-file" data-label="5000-line patch" data-tone="ghost"></div>
+                    <details class="fig-node" data-kind="file" data-tone="ghost">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>artifact</em>
+                          <strong>5000-line patch</strong>
+                          <span>Necessary later. Not the first thing to show.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Keep code samples to a few lines that prove the claim. Link the PR for the rest.</p>
+                      </div>
+                    </details>
                   </div>
                 </div>
               </div>
@@ -64,18 +105,65 @@
                 <div class="fig-scene-head">
                   <div class="fig-index">02</div>
                   <div>
-                    <h2>Glyphs stay simple on purpose</h2>
-                    <p>Circles, racks, cylinders, diamonds. Tone marks what was added, removed, or merely changed.</p>
+                    <h2>Every component can be opened</h2>
+                    <p>Kind, name, and a one-line role on the card. Click Inspect for prose, code, and nested questions — as far as you want.</p>
                   </div>
                 </div>
                 <div class="fig-canvas">
                   <div class="fig-row">
-                    <div class="fig-user" data-label="User"></div>
-                    <div class="fig-browser" data-label="Client"></div>
-                    <div class="fig-api" data-label="API" data-tone="changed"></div>
-                    <div class="fig-server" data-label="Server"></div>
-                    <div class="fig-db" data-label="Store"></div>
-                    <div class="fig-cache" data-label="Cache" data-tone="added"><b class="fig-chip">new</b></div>
+                    <details class="fig-node" data-kind="babel" data-tone="changed" open>
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>parser host</em>
+                          <strong>Babel</strong>
+                          <span>JS AST + scopes. Was the only door in.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Hosts convert native trees into the compiler’s Babel-shaped AST. Babel is now a guest, not the only host.</p>
+                        <details class="fig-fold" open>
+                          <summary>What the host must provide</summary>
+                          <p>AST plus scope info. The Rust crate does not re-analyze scopes.</p>
+                          <details class="fig-fold">
+                            <summary>Why scopes stay on the host</summary>
+                            <p>Each parser already did the work. Reimplementing Babel scopes in Rust was out of scope for the port.</p>
+                          </details>
+                        </details>
+                        <div class="fig-code" data-caption="public shape">
+                          <span class="fig-line">compile(babel_ast, scopes) → babel_ast</span>
+                        </div>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="oxc" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>parser host</em>
+                          <strong>OXC</strong>
+                          <span>Rust parser. New front door.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>A thin crate in the React repo converts OXC’s AST into the compiler’s Babel-AST so the core never depends on OXC types.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="swc" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>parser host</em>
+                          <strong>SWC</strong>
+                          <span>Speedy compiler. New front door.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Same pattern as OXC: convert in, compile, convert out. Native paths should beat the Babel plugin once serialization is gone.</p>
+                      </div>
+                    </details>
                   </div>
                   <div class="fig-legend"><span><i class="add"></i> added</span><span><i class="rem"></i> removed</span><span><i class="chg"></i> changed</span><span><i class="foc"></i> focus</span></div>
                 </div>
@@ -107,7 +195,7 @@
                     <div class="fig-step">New path</div>
                     <div class="fig-step">Proof</div>
                   </div>
-                  <div class="fig-callout">Write 5–8 scenes. If you need more, the story is not sharp yet.</div>
+                  <div class="fig-callout">Write 5–8 scenes. Put depth inside components, not extra slides.</div>
                 </div>
               </div>
               <nav class="fig-nav">
@@ -153,7 +241,7 @@
         <a class="card" href="catalog.html">
           <div class="meta">Reference</div>
           <h3>Glyph catalog</h3>
-          <p>Every shape, layout primitive, and tone on one page.</p>
+          <p>Every shape, inspectable node, layout primitive, and tone on one page.</p>
         </a>
         <a class="card" href="skills/explain-pr/SKILL.md">
           <div class="meta">Skill</div>

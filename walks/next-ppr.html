@@ -12,146 +12,283 @@
     </div>
     <article class="fig-deck">
       <div class="fig-shell">
-            <header class="fig-mast">
-        <div>
-          <p class="fig-kicker">Figure · PR walk</p>
-          <h1>Partial fallback route shells</h1>
-          <div class="fig-repo"><a href="https://github.com/vercel/next.js/pull/69282">vercel/next.js #69282</a></div>
-        </div>
-        <div class="fig-mast-side">
-          <span class="fig-stat added">+318</span>
-          <span class="fig-stat removed">−102</span>
-          <span class="fig-stat">20 files</span>
-        </div>
-      </header>
-      <input type="radio" name="walk" id="s1" checked>
-      <input type="radio" name="walk" id="s2">
-      <input type="radio" name="walk" id="s3">
-      <input type="radio" name="walk" id="s4">
-      <input type="radio" name="walk" id="s5">
-      <div class="fig-scenes">
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">01</div>
-              <div>
-                <h2>PPR already splits a page into a shell and holes</h2>
-                <p>At build time Next can prerender a static HTML shell and postpone the bits that need request data. The browser gets one stream: shell first, dynamic holes later.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-stack">
-                <div class="fig-layer" data-tone="focus">Static shell · nav, layout, skeleton</div>
-                <div class="fig-layer" data-tone="changed">Dynamic holes · cookies, search, user</div>
-              </div>
-              <div class="fig-row">
-                <div class="fig-browser" data-label="One HTTP stream"></div>
-                <div class="fig-datapoints" data-label="shell bytes first" data-tone="focus"><div class="fig-dotgrid"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div></div>
-              </div>
-            </div>
+        <header class="fig-mast">
+          <div>
+            <p class="fig-kicker">Figure · PR walk</p>
+            <h1>Partial fallback route shells</h1>
+            <div class="fig-repo"><a href="https://github.com/vercel/next.js/pull/69282">vercel/next.js #69282</a></div>
+            <p class="fig-inspect-hint">Click the fallback, the route shell, or resume to see the distinction.</p>
           </div>
-          <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">02</div>
-              <div>
-                <h2>Before this PR: a fallback shell never grew up</h2>
-                <p>Partial fallback prerendering could serve a generic fallback. The next visitor still paid for that cold shape. The fallback did not promote itself into a reusable route shell.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-timeline">
-                <div class="fig-step">Build</div>
-                <div class="fig-step" data-tone="changed">Fallback served</div>
-                <div class="fig-step" data-tone="removed">Still a fallback</div>
-                <div class="fig-step" data-tone="removed">Next request repeats</div>
-              </div>
-              <div class="fig-row">
-                <div class="fig-user" data-label="Visitor A"></div>
-                <div class="fig-edge"></div>
-                <div class="fig-cloud" data-label="Fallback shell" data-tone="changed"></div>
-                <div class="fig-edge strike" data-label="no promote"></div>
-                <div class="fig-cache" data-label="Route shell" data-tone="ghost"></div>
-              </div>
-            </div>
+          <div class="fig-mast-side">
+            <span class="fig-stat added">+318</span>
+            <span class="fig-stat removed">−102</span>
+            <span class="fig-stat">20 files</span>
           </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">03</div>
-              <div>
-                <h2>After a fallback is served, generate the route shell</h2>
-                <p>Wyatt Johnson’s change: once the fallback has gone out, Next renders the real route shell and stores it. The fallback is a one-time cold start, not a permanent personality.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-col">
-                <div class="fig-row">
-                  <div class="fig-user" data-label="First visitor"></div>
-                  <div class="fig-edge" data-label="miss"></div>
-                  <div class="fig-cloud" data-label="Fallback" data-tone="changed"></div>
+        </header>
+        <input type="radio" name="walk" id="s1" checked>
+        <input type="radio" name="walk" id="s2">
+        <input type="radio" name="walk" id="s3">
+        <input type="radio" name="walk" id="s4">
+        <input type="radio" name="walk" id="s5">
+        <div class="fig-scenes">
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">01</div>
+                <div>
+                  <h2>PPR already splits a page into a shell and holes</h2>
+                  <p>At build time Next can prerender a static HTML shell and postpone the bits that need request data. The browser gets one stream: shell first, dynamic holes later.</p>
                 </div>
-                <div class="fig-edge down" data-label="then"></div>
+              </div>
+              <div class="fig-canvas">
                 <div class="fig-row">
-                  <div class="fig-worker" data-label="Generate route shell" data-tone="added"><b class="fig-chip">new</b></div>
-                  <div class="fig-edge" data-label="store"></div>
-                  <div class="fig-cache" data-label="Route shell" data-tone="added"></div>
+                  <details class="fig-node" data-kind="html" data-tone="focus">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>static</em>
+                        <strong>Route shell</strong>
+                        <span>Nav, layout, skeleton. Safe to cache.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>HTML that does not depend on cookies, search params, or the current user. This is what later scenes will promote from a one-off fallback into a reusable cache entry.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="stream" data-tone="changed">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>dynamic</em>
+                        <strong>Holes</strong>
+                        <span>Cookies, search, user. Resume on the origin.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Postponed fragments. They still need the origin on every request. The shell around them should not.</p>
+                    </div>
+                  </details>
+                </div>
+                <div class="fig-row">
+                  <div class="fig-browser" data-label="One HTTP stream"></div>
+                  <div class="fig-datapoints" data-label="shell bytes first" data-tone="focus"><div class="fig-dotgrid"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div></div>
                 </div>
               </div>
             </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">04</div>
-              <div>
-                <h2>Later requests skip the cold path</h2>
-                <p>Visitor B is served the route shell immediately. Dynamic holes still resume on the origin; the static frame no longer has to be invented again.</p>
+            <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">02</div>
+                <div>
+                  <h2>Before this PR: a fallback shell never grew up</h2>
+                  <p>Partial fallback prerendering could serve a generic fallback. The next visitor still paid for that cold shape. The fallback did not promote itself into a reusable route shell.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-timeline">
+                  <div class="fig-step">Build</div>
+                  <div class="fig-step" data-tone="changed">Fallback served</div>
+                  <div class="fig-step" data-tone="removed">Still a fallback</div>
+                  <div class="fig-step" data-tone="removed">Next request repeats</div>
+                </div>
+                <div class="fig-row">
+                  <div class="fig-user" data-label="Visitor A"></div>
+                  <div class="fig-edge"></div>
+                  <details class="fig-node" data-kind="fallback" data-tone="changed">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>cold</em>
+                        <strong>Fallback shell</strong>
+                        <span>Generic. Fine once. Wrong forever.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>A stand-in page for a path that has not been prerendered yet. Before this PR it was not promoted, so visitor B paid the same cold cost.</p>
+                    </div>
+                  </details>
+                  <div class="fig-edge strike" data-label="no promote"></div>
+                  <details class="fig-node" data-kind="html" data-tone="ghost">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>missing</em>
+                        <strong>Route shell</strong>
+                        <span>Never written. Next request repeats the fallback.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>This is the cache entry the next scene starts generating after the fallback goes out.</p>
+                    </div>
+                  </details>
+                </div>
               </div>
             </div>
-            <div class="fig-canvas">
-              <div class="fig-row">
-                <div class="fig-user" data-label="Visitor B"></div>
-                <div class="fig-edge" data-label="GET"></div>
-                <div class="fig-cloud" data-label="CDN shell" data-tone="added"><b class="fig-chip">hit</b></div>
-                <div class="fig-edge" data-label="holes"></div>
-                <div class="fig-server" data-label="Origin resume"></div>
-                <div class="fig-edge"></div>
-                <div class="fig-db" data-label="Request data"></div>
+            <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">03</div>
+                <div>
+                  <h2>After a fallback is served, generate the route shell</h2>
+                  <p>Wyatt Johnson’s change: once the fallback has gone out, Next renders the real route shell and stores it. The fallback is a one-time cold start, not a permanent personality.</p>
+                </div>
               </div>
-              <div class="fig-callout" data-tone="added">Future requests use this new route shell instead of the fallback.</div>
-            </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">05</div>
-              <div>
-                <h2>A small, surgical diff in the fallback pipeline</h2>
-                <p>+318 / −102 across 20 files, stacked on Partial Fallback Prerendering (#68958). Review the cache after fallback, not a new rendering model.</p>
+              <div class="fig-canvas">
+                <div class="fig-col">
+                  <div class="fig-row">
+                    <div class="fig-user" data-label="First visitor"></div>
+                    <div class="fig-edge" data-label="miss"></div>
+                    <details class="fig-node" data-kind="fallback" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>cold</em>
+                          <strong>Fallback</strong>
+                          <span>Still served first. Then it graduates.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Visitor A does not wait for the real shell. They get the fallback immediately. Generation happens after the response is on the wire.</p>
+                      </div>
+                    </details>
+                  </div>
+                  <div class="fig-edge down" data-label="then"></div>
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="worker" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>new work</em>
+                          <strong>Generate route shell</strong>
+                          <span>Background render of the static frame.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>This is the surgical addition. It is not a new rendering model — it is “after fallback, write the shell we wished we had.”</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge" data-label="store"></div>
+                    <details class="fig-node" data-kind="cache" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>cache</em>
+                          <strong>Route shell</strong>
+                          <span>Reusable for this path.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Visitor B hits this instead of regenerating a fallback. Dynamic holes still resume on the origin.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="fig-canvas">
-              <div class="fig-code" data-caption="behaviour">
-                <span class="fig-line">serve fallback shell</span>
-                <span class="fig-line added">generate route shell in the background</span>
-                <span class="fig-line added">cache route shell for this path</span>
-                <span class="fig-line removed">keep serving fallback forever</span>
+            <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">04</div>
+                <div>
+                  <h2>Later requests skip the cold path</h2>
+                  <p>Visitor B is served the route shell immediately. Dynamic holes still resume on the origin; the static frame no longer has to be invented again.</p>
+                </div>
               </div>
-              <div class="fig-legend"><span><i class="add"></i> added</span><span><i class="rem"></i> removed</span><span><i class="chg"></i> changed</span><span><i class="foc"></i> focus</span></div>
+              <div class="fig-canvas">
+                <div class="fig-row">
+                  <div class="fig-user" data-label="Visitor B"></div>
+                  <div class="fig-edge" data-label="GET"></div>
+                  <details class="fig-node" data-kind="cloud" data-tone="added">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>hit</em>
+                        <strong>CDN shell</strong>
+                        <span>The promoted route shell, not a fallback.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Future requests use this new route shell instead of the fallback. That is the whole user-visible change.</p>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="holes"></div>
+                  <details class="fig-node" data-kind="server">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>origin</em>
+                        <strong>Resume</strong>
+                        <span>Dynamic holes still render here.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>PPR did not become fully static. Only the frame around the holes is reused.</p>
+                    </div>
+                  </details>
+                  <div class="fig-edge"></div>
+                  <details class="fig-node tight" data-kind="db">
+                    <summary><i class="fig-mark"></i><span class="fig-node-text"><strong>Request data</strong></span><b class="fig-node-go"></b></summary>
+                    <div class="fig-node-panel"><p>Cookies, search, session — still per request.</p></div>
+                  </details>
+                </div>
+              </div>
             </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
-        </section>
-      </div>
+            <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">05</div>
+                <div>
+                  <h2>A small, surgical diff in the fallback pipeline</h2>
+                  <p>+318 / −102 across 20 files, stacked on Partial Fallback Prerendering (#68958). Review the cache after fallback, not a new rendering model.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-code" data-caption="behaviour">
+                  <span class="fig-line">serve fallback shell</span>
+                  <span class="fig-line added">generate route shell in the background</span>
+                  <span class="fig-line added">cache route shell for this path</span>
+                  <span class="fig-line removed">keep serving fallback forever</span>
+                </div>
+                <details class="fig-node wide" data-kind="route" data-tone="added">
+                  <summary>
+                    <i class="fig-mark"></i>
+                    <span class="fig-node-text">
+                      <em>review lens</em>
+                      <strong>What to look at in the diff</strong>
+                      <span>The fallback pipeline after a miss, and the cache write for the route shell.</span>
+                    </span>
+                    <b class="fig-node-go"></b>
+                  </summary>
+                  <div class="fig-node-panel">
+                    <p>This sits on Partial Fallback Prerendering. If you already understand PPR shells vs holes, the new behavior is “promote after first serve.”</p>
+                    <details class="fig-fold">
+                      <summary>What this is not</summary>
+                      <p>Not a new streaming protocol, not a change to how holes resume, not a CDN product. It is a missing write after fallback.</p>
+                    </details>
+                  </div>
+                </details>
+              </div>
+            </div>
+            <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+          </section>
+        </div>
       </div>
     </article>
   </body>

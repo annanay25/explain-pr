@@ -12,175 +12,472 @@
     </div>
     <article class="fig-deck">
       <div class="fig-shell">
-            <header class="fig-mast">
-        <div>
-          <p class="fig-kicker">Figure · PR walk</p>
-          <h1>Port React Compiler to Rust</h1>
-          <div class="fig-repo"><a href="https://github.com/facebook/react/pull/36173">facebook/react #36173</a></div>
+        <header class="fig-mast">
+          <div>
+            <p class="fig-kicker">Figure · PR walk</p>
+            <h1>Port React Compiler to Rust</h1>
+            <div class="fig-repo"><a href="https://github.com/facebook/react/pull/36173">facebook/react #36173</a></div>
+            <p class="fig-inspect-hint">Click any component. Nested sections keep going until you have enough.</p>
+          </div>
+          <div class="fig-mast-side">
+            <span class="fig-stat added">+123289</span>
+            <span class="fig-stat removed">−306</span>
+            <span class="fig-stat">461 files</span>
+          </div>
+        </header>
+        <input type="radio" name="walk" id="s1" checked>
+        <input type="radio" name="walk" id="s2">
+        <input type="radio" name="walk" id="s3">
+        <input type="radio" name="walk" id="s4">
+        <input type="radio" name="walk" id="s5">
+        <input type="radio" name="walk" id="s6">
+        <div class="fig-scenes">
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">01</div>
+                <div>
+                  <h2>A pass-by-pass port, not a new compiler</h2>
+                  <p>Joseph Savona’s PR moves the TypeScript React Compiler into Rust with the same HIR, CFG, SSA, and pass order. The public shape is still “Babel-like AST in, AST out.”</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-row">
+                  <div class="fig-metric" data-value="1,725" data-tone="added">fixtures match TS output</div>
+                  <div class="fig-metric" data-value="3×" data-tone="focus">faster as a Babel plugin</div>
+                  <div class="fig-metric" data-value="10×" data-tone="changed">transform itself, before serialize</div>
+                </div>
+                <details class="fig-node wide" data-kind="compiler" data-tone="added">
+                  <summary>
+                    <i class="fig-mark"></i>
+                    <span class="fig-node-text">
+                      <em>what shipped</em>
+                      <strong>react_compiler</strong>
+                      <span>Same passes. New storage. Three hosts instead of one.</span>
+                    </span>
+                    <b class="fig-node-go"></b>
+                  </summary>
+                  <div class="fig-node-panel">
+                    <p>Early numbers: the Rust backend is already fast; the Babel bridge still pays a serialization tax. Open the hosts in scene 03 to see why.</p>
+                    <details class="fig-fold">
+                      <summary>How the fixtures were compared</summary>
+                      <p><code>yarn snap --rust</code> compares final JS and errors against the TypeScript compiler. A second script diffs compiler state after every pass, with ids normalized, which is how the port stayed honest.</p>
+                    </details>
+                  </div>
+                </details>
+              </div>
+            </div>
+            <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">02</div>
+                <div>
+                  <h2>Before: one TypeScript plugin behind Babel</h2>
+                  <p>Source is parsed by Babel. The TS compiler relies on Babel’s scope analysis, lowers to HIR, runs passes, and writes JavaScript back through Babel.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-row">
+                  <details class="fig-node tight" data-kind="file">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text"><strong>Component.jsx</strong></span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Unchanged input. A React function component the compiler may memoize.</p>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="parse"></div>
+                  <details class="fig-node" data-kind="babel" data-tone="focus">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>parser host</em>
+                        <strong>Babel AST + scopes</strong>
+                        <span>The only door. Parser and scope analysis live here.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>The TypeScript compiler never owned parsing. It consumed Babel’s tree and Babel’s bindings, then emitted Babel nodes.</p>
+                      <details class="fig-fold">
+                        <summary>Why this became a bottleneck</summary>
+                        <p>Every integration had to speak Babel. Native parsers (OXC, SWC) could not call the compiler without a JS round-trip.</p>
+                      </details>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="compile"></div>
+                  <details class="fig-node" data-kind="compiler" data-tone="changed">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>compiler</em>
+                        <strong>TS compiler</strong>
+                        <span>HIR, CFG, SSA, same pass list. Pointer-heavy.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>This is the program being ported, not replaced. Pass order is the compatibility contract with 1,725 fixtures.</p>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="emit"></div>
+                  <details class="fig-node tight" data-kind="js">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text"><strong>memoized JS</strong></span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Output still looks like a Babel plugin result: hoisted constants, cache slots, skipped components.</p>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </div>
+            <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">03</div>
+                <div>
+                  <h2>After: one Rust core, three front doors</h2>
+                  <p>Integrations convert native ASTs into the Rust Babel-AST plus scope info, call the compiler, and convert back. Babel is a guest now, not the only host.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-row">
+                  <div class="fig-cluster" data-label="Hosts">
+                    <div class="fig-row">
+                      <details class="fig-node" data-kind="babel" data-tone="changed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>parser host</em>
+                            <strong>Babel</strong>
+                            <span>Still supported. No longer the only door.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>The Babel plugin remains the compatibility path. It serializes the AST into Rust and back, which is why “3× as a plugin” is slower than the transform itself.</p>
+                          <details class="fig-fold">
+                            <summary>Serialization tax</summary>
+                            <p>The transform can be ~10×; the plugin is ~3× because the bridge copies the tree. Native OXC/SWC paths skip this once they are wired through.</p>
+                          </details>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="oxc" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>parser host</em>
+                            <strong>OXC</strong>
+                            <span>Rust parser. Thin adapter crate in this repo.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>OXC already speaks Rust. The adapter maps OXC nodes into the compiler’s Babel-shaped AST so the core never takes an OXC dependency.</p>
+                          <details class="fig-fold">
+                            <summary>Why a crate in the React repo</summary>
+                            <p>The integration layer can change without waiting on the OXC release train. Same idea for SWC.</p>
+                          </details>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="swc" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>parser host</em>
+                            <strong>SWC</strong>
+                            <span>Speedy compiler. Same adapter pattern as OXC.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Convert in, compile, convert out. End-to-end scripts already compare OXC and SWC examples against TypeScript output.</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                  <div class="fig-edge" data-label="AST + scopes"></div>
+                  <details class="fig-node" data-kind="rust" data-tone="added">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>compiler</em>
+                        <strong>Rust compiler</strong>
+                        <span>react_compiler crate. Arenas, not pointers.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Hosts must still supply scope analysis. The crate does not re-derive bindings.</p>
+                      <details class="fig-node" data-kind="arena" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>storage</em>
+                            <strong>Arena + index</strong>
+                            <span>Typed arenas replace the TS object graph.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Functions, instructions, and types are stored in arenas and addressed by index. That is the main Rust-shaped change; the pass list is not.</p>
+                          <details class="fig-fold">
+                            <summary>What an index buys</summary>
+                            <p>Copying an id is cheap, graphs are explicit, and the compiler can snapshot IR after each pass for the port tests.</p>
+                          </details>
+                        </div>
+                      </details>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="AST out"></div>
+                  <details class="fig-node tight" data-kind="js">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text"><strong>same JS</strong></span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Fixture output is compared against the TypeScript compiler, not rewritten to a new IR-on-the-page format.</p>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </div>
+            <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">04</div>
+                <div>
+                  <h2>Inside, the pipeline is the old one</h2>
+                  <p>AST lowers to a high-level IR with a control-flow graph and SSA. Passes run in the same order as TypeScript. Rust mainly changes how values are stored.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-row">
+                  <details class="fig-node tight" data-kind="ast">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text"><strong>AST</strong></span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Babel-shaped, regardless of which host produced it.</p>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="lower"></div>
+                  <details class="fig-node" data-kind="hir" data-tone="focus">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>ir</em>
+                        <strong>HIR · CFG · SSA</strong>
+                        <span>The working representation. Passes mutate this.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>High-level IR plus a control-flow graph in SSA form. This is what <code>test-rust-port.sh</code> dumps after every pass.</p>
+                      <details class="fig-fold">
+                        <summary>Pass order is the contract</summary>
+                        <p>If a pass moves, fixtures fail. The port’s job was to match TypeScript, not to invent a smarter pipeline.</p>
+                      </details>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="passes"></div>
+                  <details class="fig-node tight" data-kind="ir">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text"><strong>HIR′</strong></span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Same IR after inference, memoization, and the rest of the TS pass list.</p>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="codegen"></div>
+                  <details class="fig-node tight" data-kind="ast">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text"><strong>AST</strong></span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Back to Babel-AST so the host can print JavaScript.</p>
+                    </div>
+                  </details>
+                </div>
+                <div class="fig-row">
+                  <details class="fig-node" data-kind="graph" data-tone="ghost">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>storage</em>
+                        <strong>TS: pointers</strong>
+                        <span>Object graph. Cheap in a GC language.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>The TypeScript compiler could point anywhere. Rust cannot do that without a lifetime puzzle, so the port did not try.</p>
+                    </div>
+                  </details>
+                  <div class="fig-edge" data-label="becomes"></div>
+                  <details class="fig-node" data-kind="arena" data-tone="added">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>storage</em>
+                        <strong>Rust: arena + index</strong>
+                        <span>Ids instead of references.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>This is the one structural change inside the pipeline. Reviewers looking for “a new compiler” will not find one here.</p>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </div>
+            <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">05</div>
+                <div>
+                  <h2>Correctness was checked at two depths</h2>
+                  <p>yarn snap --rust compares final JS and errors. A separate script diffs compiler state after every pass, which is how the port was kept honest.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-compare">
+                  <div class="fig-pane" data-label="Output">
+                    <details class="fig-node" data-kind="snapshot" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>test</em>
+                          <strong>1,725 snap fixtures</strong>
+                          <span>Codegen and errors vs the TS plugin.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>If printed JS or the diagnostic set diverges, the fixture fails. This is the user-visible contract.</p>
+                      </div>
+                    </details>
+                  </div>
+                  <div class="fig-pane" data-label="Each pass" data-tone="focus">
+                    <details class="fig-node" data-kind="ir" data-tone="focus">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>test</em>
+                          <strong>test-rust-port.sh</strong>
+                          <span>IR after pass N, ids normalized.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Catches a pass that happens to emit the same JS for the wrong reason. The e2e script also runs the OXC and SWC examples against TS, comparing final code only.</p>
+                        <details class="fig-fold">
+                          <summary>Why normalize ids</summary>
+                          <p>Arena indices will not match TypeScript object identities. The dump strips those so the comparison is about shape, not allocator luck.</p>
+                        </details>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s6">Next</label></nav>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <div class="fig-scene-head">
+                <div class="fig-index">06</div>
+                <div>
+                  <h2>What to watch next</h2>
+                  <p>Scope analysis still comes from the host. Returning a whole program should become a list of patches. Native OXC/SWC paths should beat the Babel plugin once serialization is out of the way.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-row">
+                  <details class="fig-node" data-kind="hook" data-tone="changed">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>host contract</em>
+                        <strong>Host scopes</strong>
+                        <span>Still required. Not ported.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Each host already computed bindings. The crate consumes that map. A future pass could grow a native scope analyzer; this PR does not.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="ast" data-tone="removed">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>planned</em>
+                        <strong>Full AST replace</strong>
+                        <span>Today the host swaps the whole tree.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>The intended shape is a list of patches so hosts that already own a tree do not rebuild it.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="adapter" data-tone="changed">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>cost</em>
+                        <strong>Babel serialize</strong>
+                        <span>The remaining tax on the plugin path.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Do not read the 3× plugin number as the ceiling. The transform is already faster; the bridge is the drag.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="oxc" data-tone="added">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>native</em>
+                        <strong>OXC / SWC</strong>
+                        <span>Should be faster still, no JS round-trip.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Once serialization is out of the way, these are the paths that should show the 10×-class numbers in production builds.</p>
+                    </div>
+                  </details>
+                </div>
+                <div class="fig-legend"><span><i class="add"></i> added</span><span><i class="rem"></i> removed</span><span><i class="chg"></i> changed</span><span><i class="foc"></i> focus</span></div>
+              </div>
+            </div>
+            <nav class="fig-nav"><label class="fig-btn" for="s5">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot is-current" for="s6"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+          </section>
         </div>
-        <div class="fig-mast-side">
-          <span class="fig-stat added">+123289</span>
-          <span class="fig-stat removed">−306</span>
-          <span class="fig-stat">461 files</span>
-        </div>
-      </header>
-      <input type="radio" name="walk" id="s1" checked>
-      <input type="radio" name="walk" id="s2">
-      <input type="radio" name="walk" id="s3">
-      <input type="radio" name="walk" id="s4">
-      <input type="radio" name="walk" id="s5">
-      <input type="radio" name="walk" id="s6">
-      <div class="fig-scenes">
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">01</div>
-              <div>
-                <h2>A pass-by-pass port, not a new compiler</h2>
-                <p>Joseph Savona’s PR moves the TypeScript React Compiler into Rust with the same HIR, CFG, SSA, and pass order. The public shape is still “Babel-like AST in, AST out.”</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-row">
-                <div class="fig-metric" data-value="1,725" data-tone="added">fixtures match TS output</div>
-                <div class="fig-metric" data-value="3×" data-tone="focus">faster as a Babel plugin</div>
-                <div class="fig-metric" data-value="10×" data-tone="changed">transform itself, before serialize</div>
-              </div>
-              <div class="fig-callout">Early numbers: the Rust backend is already fast; the Babel bridge still pays a serialization tax.</div>
-            </div>
-          </div>
-          <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">02</div>
-              <div>
-                <h2>Before: one TypeScript plugin behind Babel</h2>
-                <p>Source is parsed by Babel. The TS compiler relies on Babel’s scope analysis, lowers to HIR, runs passes, and writes JavaScript back through Babel.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-row">
-                <div class="fig-file" data-label="Component.jsx"></div>
-                <div class="fig-edge" data-label="parse"></div>
-                <div class="fig-box" data-label="Babel AST + scopes"></div>
-                <div class="fig-edge" data-label="compile"></div>
-                <div class="fig-transform" data-label="TS compiler" data-tone="focus"></div>
-                <div class="fig-edge" data-label="emit"></div>
-                <div class="fig-file" data-label="memoized JS"></div>
-              </div>
-            </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">03</div>
-              <div>
-                <h2>After: one Rust core, three front doors</h2>
-                <p>Integrations convert native ASTs into the Rust Babel-AST plus scope info, call the compiler, and convert back. Babel is a guest now, not the only host.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-row">
-                <div class="fig-cluster" data-label="Hosts">
-                  <div class="fig-row">
-                    <div class="fig-box" data-label="Babel" data-tone="changed"></div>
-                    <div class="fig-box" data-label="OXC" data-tone="added"><b class="fig-chip">new</b></div>
-                    <div class="fig-box" data-label="SWC" data-tone="added"><b class="fig-chip">new</b></div>
-                  </div>
-                </div>
-                <div class="fig-edge" data-label="AST + scopes"></div>
-                <div class="fig-worker" data-label="Rust compiler" data-tone="added" data-note="react_compiler"></div>
-                <div class="fig-edge" data-label="AST out"></div>
-                <div class="fig-file" data-label="same JS"></div>
-              </div>
-              <div class="fig-callout" data-tone="focus">Each host will keep a thin crate in the React repo so the integration layer can change without waiting on those projects.</div>
-            </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">04</div>
-              <div>
-                <h2>Inside, the pipeline is the old one</h2>
-                <p>AST lowers to a high-level IR with a control-flow graph and SSA. Passes run in the same order as TypeScript. Rust mainly changes how values are stored: arenas and indices instead of a web of pointers.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-pipe">
-                <div class="fig-phase">AST</div>
-                <div class="fig-edge" data-label="lower"></div>
-                <div class="fig-phase" data-tone="focus">HIR · CFG · SSA</div>
-                <div class="fig-edge" data-label="passes"></div>
-                <div class="fig-phase">HIR'</div>
-                <div class="fig-edge" data-label="codegen"></div>
-                <div class="fig-phase">AST</div>
-              </div>
-              <div class="fig-row">
-                <div class="fig-box" data-label="TS: pointers" data-tone="ghost"></div>
-                <div class="fig-edge" data-label="becomes"></div>
-                <div class="fig-box" data-label="Rust: arena + index" data-tone="added"></div>
-              </div>
-            </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">05</div>
-              <div>
-                <h2>Correctness was checked at two depths</h2>
-                <p>yarn snap --rust compares final JS and errors. A separate script diffs compiler state after every pass, which is how the port was kept honest.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-compare">
-                <div class="fig-pane" data-label="Output">
-                  <div class="fig-col">
-                    <div class="fig-test" data-label="1,725 snap fixtures" data-tone="added"></div>
-                    <div class="fig-file" data-label="codegen + errors" data-note="Babel plugin vs TS"></div>
-                  </div>
-                </div>
-                <div class="fig-pane" data-label="Each pass" data-tone="focus">
-                  <div class="fig-col">
-                    <div class="fig-transform" data-label="IR after pass N" data-tone="focus"></div>
-                    <div class="fig-test" data-label="test-rust-port.sh" data-note="ids normalized"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="fig-callout">The e2e script also runs the OXC and SWC examples against TS, comparing final code only.</div>
-            </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s6">Next</label></nav>
-        </section>
-        <section class="fig-scene">
-          <div class="fig-stage">
-            <div class="fig-scene-head">
-              <div class="fig-index">06</div>
-              <div>
-                <h2>What to watch next</h2>
-                <p>Scope analysis still comes from the host. Returning a whole program should become a list of patches. Native OXC/SWC paths should beat the Babel plugin once serialization is out of the way.</p>
-              </div>
-            </div>
-            <div class="fig-canvas">
-              <div class="fig-row">
-                <div class="fig-box" data-label="Host scopes" data-tone="changed" data-note="still required"></div>
-                <div class="fig-box" data-label="Full AST replace" data-tone="removed" data-note="planned: patches"></div>
-                <div class="fig-box" data-label="Babel serialize" data-tone="changed" data-note="the remaining tax"></div>
-                <div class="fig-box" data-label="OXC / SWC" data-tone="added" data-note="should be faster still"></div>
-              </div>
-              <div class="fig-legend"><span><i class="add"></i> added</span><span><i class="rem"></i> removed</span><span><i class="chg"></i> changed</span><span><i class="foc"></i> focus</span></div>
-            </div>
-          </div>
-          <nav class="fig-nav"><label class="fig-btn" for="s5">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot is-current" for="s6"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
-        </section>
-      </div>
       </div>
     </article>
   </body>

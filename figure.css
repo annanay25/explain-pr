@@ -81,16 +81,24 @@ body.fig-page { min-height: 100vh; }
 
 .fig-deck {
   display: block;
-  max-width: 1080px;
+  max-width: 1120px;
   margin: 32px auto;
   padding: 0 20px 48px;
+  position: relative;
 }
-.fig-deck > input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
+.fig-deck input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 .fig-shell {
   background: rgba(255, 252, 247, 0.92);
@@ -142,11 +150,17 @@ body.fig-page { min-height: 100vh; }
 }
 .fig-stat.added { color: var(--fig-added); border-color: color-mix(in srgb, var(--fig-added) 35%, white); background: var(--fig-added-bg); }
 .fig-stat.removed { color: var(--fig-removed); border-color: color-mix(in srgb, var(--fig-removed) 35%, white); background: var(--fig-removed-bg); }
+.fig-inspect-hint {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--fig-muted);
+  margin-top: 10px;
+}
 
 .fig-scene {
   display: none;
   flex-direction: column;
-  min-height: 430px;
+  min-height: 420px;
 }
 .fig-deck:not(:has(input:checked)) .fig-scene:nth-of-type(1) { display: flex; }
 .fig-deck:has(#s1:checked) .fig-scene:nth-of-type(1) { display: flex; }
@@ -160,7 +174,7 @@ body.fig-page { min-height: 100vh; }
 
 .fig-stage {
   flex: 1;
-  padding: 28px 28px 8px;
+  padding: 24px 28px 10px;
   display: flex;
   flex-direction: column;
 }
@@ -169,7 +183,7 @@ body.fig-page { min-height: 100vh; }
   grid-template-columns: auto 1fr;
   gap: 14px;
   align-items: start;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 .fig-index {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
@@ -194,15 +208,15 @@ body.fig-page { min-height: 100vh; }
   margin: 0;
   color: var(--fig-muted);
   line-height: 1.45;
-  max-width: 62ch;
+  max-width: 68ch;
 }
 .fig-canvas {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 22px;
-  padding: 8px 0 16px;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 4px 0 12px;
 }
 .fig-nav {
   display: flex;
@@ -250,8 +264,9 @@ label.fig-btn { cursor: pointer; }
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 10px 8px;
+  gap: 12px 10px;
 }
+.fig-row:has(details[open]) { align-items: flex-start; }
 .fig-col, .fig-stack { flex-direction: column; align-items: center; gap: 10px; }
 .fig-cluster {
   flex-direction: column;
@@ -351,7 +366,7 @@ label.fig-btn { cursor: pointer; }
   background: var(--fig-rule);
 }
 
-.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform {
+.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform, .fig-babel, .fig-oxc, .fig-swc, .fig-rust, .fig-compiler, .fig-parser, .fig-ast, .fig-ir, .fig-hir, .fig-plugin, .fig-env, .fig-scan, .fig-crate, .fig-wasm, .fig-hook, .fig-runtime, .fig-doc, .fig-term, .fig-fallback, .fig-route, .fig-module, .fig-graph, .fig-css, .fig-js, .fig-snippet, .fig-html, .fig-stream, .fig-arena, .fig-bundler, .fig-adapter, .fig-snapshot, .fig-tree, .fig-config, .fig-log, .fig-error, .fig-request, .fig-response, .fig-client, .fig-package, .fig-build, .fig-pipeline {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -363,7 +378,7 @@ label.fig-btn { cursor: pointer; }
   font-weight: 500;
   text-align: center;
 }
-.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform::before {
+.fig-user::before, .fig-users::before, .fig-server::before, .fig-db::before, .fig-box::before, .fig-file::before, .fig-folder::before, .fig-cloud::before, .fig-cache::before, .fig-queue::before, .fig-api::before, .fig-browser::before, .fig-worker::before, .fig-lock::before, .fig-key::before, .fig-flag::before, .fig-test::before, .fig-event::before, .fig-token::before, .fig-mobile::before, .fig-globe::before, .fig-clock::before, .fig-filter::before, .fig-branch::before, .fig-bucket::before, .fig-transform::before, .fig-babel::before, .fig-oxc::before, .fig-swc::before, .fig-rust::before, .fig-compiler::before, .fig-parser::before, .fig-ast::before, .fig-ir::before, .fig-hir::before, .fig-plugin::before, .fig-env::before, .fig-scan::before, .fig-crate::before, .fig-wasm::before, .fig-hook::before, .fig-runtime::before, .fig-doc::before, .fig-term::before, .fig-fallback::before, .fig-route::before, .fig-module::before, .fig-graph::before, .fig-css::before, .fig-js::before, .fig-snippet::before, .fig-html::before, .fig-stream::before, .fig-arena::before, .fig-bundler::before, .fig-adapter::before, .fig-snapshot::before, .fig-tree::before, .fig-config::before, .fig-log::before, .fig-error::before, .fig-request::before, .fig-response::before, .fig-client::before, .fig-package::before, .fig-build::before, .fig-pipeline::before {
   content: "";
   width: 64px;
   height: 64px;
@@ -374,52 +389,361 @@ label.fig-btn { cursor: pointer; }
   background-position: center;
   background-size: 42px;
 }
-.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform::after {
+.fig-user::after, .fig-users::after, .fig-server::after, .fig-db::after, .fig-box::after, .fig-file::after, .fig-folder::after, .fig-cloud::after, .fig-cache::after, .fig-queue::after, .fig-api::after, .fig-browser::after, .fig-worker::after, .fig-lock::after, .fig-key::after, .fig-flag::after, .fig-test::after, .fig-event::after, .fig-token::after, .fig-mobile::after, .fig-globe::after, .fig-clock::after, .fig-filter::after, .fig-branch::after, .fig-bucket::after, .fig-transform::after, .fig-babel::after, .fig-oxc::after, .fig-swc::after, .fig-rust::after, .fig-compiler::after, .fig-parser::after, .fig-ast::after, .fig-ir::after, .fig-hir::after, .fig-plugin::after, .fig-env::after, .fig-scan::after, .fig-crate::after, .fig-wasm::after, .fig-hook::after, .fig-runtime::after, .fig-doc::after, .fig-term::after, .fig-fallback::after, .fig-route::after, .fig-module::after, .fig-graph::after, .fig-css::after, .fig-js::after, .fig-snippet::after, .fig-html::after, .fig-stream::after, .fig-arena::after, .fig-bundler::after, .fig-adapter::after, .fig-snapshot::after, .fig-tree::after, .fig-config::after, .fig-log::after, .fig-error::after, .fig-request::after, .fig-response::after, .fig-client::after, .fig-package::after, .fig-build::after, .fig-pipeline::after {
   content: attr(data-label);
   max-width: 110px;
   line-height: 1.25;
 }
-.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform[data-note]::after {
+.fig-user[data-note]::after, .fig-users[data-note]::after, .fig-server[data-note]::after, .fig-db[data-note]::after, .fig-box[data-note]::after, .fig-file[data-note]::after, .fig-folder[data-note]::after, .fig-cloud[data-note]::after, .fig-cache[data-note]::after, .fig-queue[data-note]::after, .fig-api[data-note]::after, .fig-browser[data-note]::after, .fig-worker[data-note]::after, .fig-lock[data-note]::after, .fig-key[data-note]::after, .fig-flag[data-note]::after, .fig-test[data-note]::after, .fig-event[data-note]::after, .fig-token[data-note]::after, .fig-mobile[data-note]::after, .fig-globe[data-note]::after, .fig-clock[data-note]::after, .fig-filter[data-note]::after, .fig-branch[data-note]::after, .fig-bucket[data-note]::after, .fig-transform[data-note]::after, .fig-babel[data-note]::after, .fig-oxc[data-note]::after, .fig-swc[data-note]::after, .fig-rust[data-note]::after, .fig-compiler[data-note]::after, .fig-parser[data-note]::after, .fig-ast[data-note]::after, .fig-ir[data-note]::after, .fig-hir[data-note]::after, .fig-plugin[data-note]::after, .fig-env[data-note]::after, .fig-scan[data-note]::after, .fig-crate[data-note]::after, .fig-wasm[data-note]::after, .fig-hook[data-note]::after, .fig-runtime[data-note]::after, .fig-doc[data-note]::after, .fig-term[data-note]::after, .fig-fallback[data-note]::after, .fig-route[data-note]::after, .fig-module[data-note]::after, .fig-graph[data-note]::after, .fig-css[data-note]::after, .fig-js[data-note]::after, .fig-snippet[data-note]::after, .fig-html[data-note]::after, .fig-stream[data-note]::after, .fig-arena[data-note]::after, .fig-bundler[data-note]::after, .fig-adapter[data-note]::after, .fig-snapshot[data-note]::after, .fig-tree[data-note]::after, .fig-config[data-note]::after, .fig-log[data-note]::after, .fig-error[data-note]::after, .fig-request[data-note]::after, .fig-response[data-note]::after, .fig-client[data-note]::after, .fig-package[data-note]::after, .fig-build[data-note]::after, .fig-pipeline[data-note]::after {
   content: attr(data-label) "\A" attr(data-note);
   white-space: pre-line;
 }
-.fig-user::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2220%22%20r%3D%228%22%2F%3E%3Cpath%20d%3D%22M14%2050c2-12%209-18%2018-18s16%206%2018%2018%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-users::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2220%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22M10%2050c2-11%208-16%2014-16s12%205%2014%2016%22%2F%3E%3Ccircle%20cx%3D%2242%22%20cy%3D%2222%22%20r%3D%226%22%2F%3E%3Cpath%20d%3D%22M32%2050c1-9%206-14%2012-14s11%205%2012%2014%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-server::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2212%22%20y%3D%2210%22%20width%3D%2240%22%20height%3D%2213%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2226%22%20width%3D%2240%22%20height%3D%2213%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2242%22%20width%3D%2240%22%20height%3D%2213%22%20rx%3D%222%22%2F%3E%3Ccircle%20fill%3D%22%231a1714%22%20stroke%3D%22none%22%20cx%3D%2220%22%20cy%3D%2216.5%22%20r%3D%221.8%22%2F%3E%3Ccircle%20fill%3D%22%231a1714%22%20stroke%3D%22none%22%20cx%3D%2220%22%20cy%3D%2232.5%22%20r%3D%221.8%22%2F%3E%3Ccircle%20fill%3D%22%231a1714%22%20stroke%3D%22none%22%20cx%3D%2220%22%20cy%3D%2248.5%22%20r%3D%221.8%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-db::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cellipse%20cx%3D%2232%22%20cy%3D%2216%22%20rx%3D%2216%22%20ry%3D%227%22%2F%3E%3Cpath%20d%3D%22M16%2016v26c0%204%207%208%2016%208s16-4%2016-8V16%22%2F%3E%3Cpath%20d%3D%22M16%2028c0%204%207%207%2016%207s16-3%2016-7%22%2F%3E%3Cpath%20d%3D%22M16%2038c0%204%207%207%2016%207s16-3%2016-7%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-box::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2212%22%20y%3D%2212%22%20width%3D%2240%22%20height%3D%2240%22%20rx%3D%226%22%2F%3E%3Cpath%20d%3D%22M32%2012v40M12%2032h40%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-file::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20%2010h16l12%2012v32H20z%22%2F%3E%3Cpath%20d%3D%22M36%2010v12h12%22%2F%3E%3Cpath%20d%3D%22M26%2034h16M26%2042h12%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-folder::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2020h14l6%206h24v24H10z%22%2F%3E%3Cpath%20d%3D%22M10%2026h44%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-cloud::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M18%2042h26a10%2010%200%200%200%202-20%2014%2014%200%200%200-27-3A10%2010%200%200%200%2018%2042z%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-cache::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M32%208%2052%2020v24L32%2056%2012%2044V20z%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%228%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-queue::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%228%22%20y%3D%2218%22%20width%3D%2220%22%20height%3D%2228%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%2222%22%20y%3D%2214%22%20width%3D%2220%22%20height%3D%2228%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%2236%22%20y%3D%2210%22%20width%3D%2220%22%20height%3D%2228%22%20rx%3D%223%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-api::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M32%208%2054%2032%2032%2056%2010%2032z%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%226%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-browser::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2210%22%20y%3D%2212%22%20width%3D%2244%22%20height%3D%2240%22%20rx%3D%224%22%2F%3E%3Cpath%20d%3D%22M10%2022h44%22%2F%3E%3Ccircle%20fill%3D%22%231a1714%22%20stroke%3D%22none%22%20cx%3D%2218%22%20cy%3D%2217%22%20r%3D%221.5%22%2F%3E%3Ccircle%20fill%3D%22%231a1714%22%20stroke%3D%22none%22%20cx%3D%2224%22%20cy%3D%2217%22%20r%3D%221.5%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-worker::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M32%2012v8M32%2044v8M12%2032h8M44%2032h8M18%2018l6%206M40%2040l6%206M46%2018l-6%206M24%2040l-6%206%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-lock::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2218%22%20y%3D%2228%22%20width%3D%2228%22%20height%3D%2222%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M24%2028v-6a8%208%200%200%201%2016%200v6%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-key::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2232%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M32%2032h22v6M46%2032v8M52%2032v8%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-flag::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M18%2010v44%22%2F%3E%3Cpath%20d%3D%22M18%2012h26l-6%2010%206%2010H18z%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-test::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2218%22%2F%3E%3Cpath%20d%3D%22M22%2033l7%207%2014-16%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-event::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2214%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2222%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-token::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2210%22%20y%3D%2224%22%20width%3D%2244%22%20height%3D%2216%22%20rx%3D%228%22%2F%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2232%22%20r%3D%224%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-mobile::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2220%22%20y%3D%228%22%20width%3D%2224%22%20height%3D%2248%22%20rx%3D%224%22%2F%3E%3Cpath%20d%3D%22M28%2012h8%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-globe::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2218%22%2F%3E%3Cellipse%20cx%3D%2232%22%20cy%3D%2232%22%20rx%3D%228%22%20ry%3D%2218%22%2F%3E%3Cpath%20d%3D%22M14%2032h36M18%2022h28M18%2042h28%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-clock::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2218%22%2F%3E%3Cpath%20d%3D%22M32%2018v14l10%206%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-filter::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2016h40L38%2032v16l-12-6V32z%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-branch::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2216%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2248%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2232%22%20r%3D%226%22%2F%3E%3Cpath%20d%3D%22M20%2022v20M26%2016c12%200%2014%208%2014%2016%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-bucket::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M14%2020h36l-4%2032H18z%22%2F%3E%3Cpath%20d%3D%22M12%2020c0-6%209-10%2020-10s20%204%2020%2010%22%2F%3E%3C%2Fsvg%3E"); }
-.fig-transform::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2218%22%20y%3D%2218%22%20width%3D%2228%22%20height%3D%2228%22%20rx%3D%224%22%2F%3E%3Cpath%20d%3D%22M8%2032h10M46%2032h10%22%2F%3E%3Cpath%20d%3D%22M52%2026l6%206-6%206%22%2F%3E%3C%2Fsvg%3E"); }
+.fig-user::before,
+.fig-node[data-kind="user"] > summary > .fig-mark,
+.fig-mark[data-kind="user"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2218%22%20r%3D%228%22%2F%3E%3Cpath%20d%3D%22M12%2052c3-14%2010-20%2020-20s17%206%2020%2020%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-users::before,
+.fig-node[data-kind="users"] > summary > .fig-mark,
+.fig-mark[data-kind="users"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2218%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22M8%2052c3-13%209-18%2016-18s13%205%2016%2018%22%2F%3E%3Ccircle%20cx%3D%2244%22%20cy%3D%2220%22%20r%3D%226%22%2F%3E%3Cpath%20d%3D%22M32%2052c2-11%207-16%2013-16s12%205%2014%2016%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-server::before,
+.fig-node[data-kind="server"] > summary > .fig-mark,
+.fig-mark[data-kind="server"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2212%22%20y%3D%2210%22%20width%3D%2240%22%20height%3D%2213%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2226%22%20width%3D%2240%22%20height%3D%2213%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2242%22%20width%3D%2240%22%20height%3D%2213%22%20rx%3D%222%22%2F%3E%3Ccircle%20fill%3D%22%231a1714%22%20stroke%3D%22none%22%20cx%3D%2220%22%20cy%3D%2216.5%22%20r%3D%221.8%22%2F%3E%3Ccircle%20fill%3D%22%231a1714%22%20stroke%3D%22none%22%20cx%3D%2220%22%20cy%3D%2232.5%22%20r%3D%221.8%22%2F%3E%3Ccircle%20fill%3D%22%231a1714%22%20stroke%3D%22none%22%20cx%3D%2220%22%20cy%3D%2248.5%22%20r%3D%221.8%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-db::before,
+.fig-node[data-kind="db"] > summary > .fig-mark,
+.fig-mark[data-kind="db"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cellipse%20cx%3D%2232%22%20cy%3D%2216%22%20rx%3D%2216%22%20ry%3D%227%22%2F%3E%3Cpath%20d%3D%22M16%2016v26c0%204%207%208%2016%208s16-4%2016-8V16%22%2F%3E%3Cpath%20d%3D%22M16%2028c0%204%207%207%2016%207s16-3%2016-7%22%2F%3E%3Cpath%20d%3D%22M16%2038c0%204%207%207%2016%207s16-3%2016-7%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-box::before,
+.fig-node[data-kind="box"] > summary > .fig-mark,
+.fig-mark[data-kind="box"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2212%22%20y%3D%2212%22%20width%3D%2240%22%20height%3D%2240%22%20rx%3D%226%22%2F%3E%3Cpath%20d%3D%22M32%2012v40M12%2032h40%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-file::before,
+.fig-node[data-kind="file"] > summary > .fig-mark,
+.fig-mark[data-kind="file"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20%2010h16l12%2012v32H20z%22%2F%3E%3Cpath%20d%3D%22M36%2010v12h12%22%2F%3E%3Cpath%20d%3D%22M26%2034h16M26%2042h12%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-folder::before,
+.fig-node[data-kind="folder"] > summary > .fig-mark,
+.fig-mark[data-kind="folder"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2020h14l6%206h24v24H10z%22%2F%3E%3Cpath%20d%3D%22M10%2026h44%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-cloud::before,
+.fig-node[data-kind="cloud"] > summary > .fig-mark,
+.fig-mark[data-kind="cloud"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M18%2042h26a10%2010%200%200%200%202-20%2014%2014%200%200%200-27-3A10%2010%200%200%200%2018%2042z%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-cache::before,
+.fig-node[data-kind="cache"] > summary > .fig-mark,
+.fig-mark[data-kind="cache"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M32%208%2052%2020v24L32%2056%2012%2044V20z%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%228%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-queue::before,
+.fig-node[data-kind="queue"] > summary > .fig-mark,
+.fig-mark[data-kind="queue"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%228%22%20y%3D%2218%22%20width%3D%2220%22%20height%3D%2228%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%2222%22%20y%3D%2214%22%20width%3D%2220%22%20height%3D%2228%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%2236%22%20y%3D%2210%22%20width%3D%2220%22%20height%3D%2228%22%20rx%3D%223%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-api::before,
+.fig-node[data-kind="api"] > summary > .fig-mark,
+.fig-mark[data-kind="api"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M32%208%2054%2032%2032%2056%2010%2032z%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%226%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-browser::before,
+.fig-node[data-kind="browser"] > summary > .fig-mark,
+.fig-mark[data-kind="browser"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2210%22%20y%3D%2212%22%20width%3D%2244%22%20height%3D%2240%22%20rx%3D%224%22%2F%3E%3Cpath%20d%3D%22M10%2022h44%22%2F%3E%3Ccircle%20fill%3D%22%231a1714%22%20stroke%3D%22none%22%20cx%3D%2218%22%20cy%3D%2217%22%20r%3D%221.5%22%2F%3E%3Ccircle%20fill%3D%22%231a1714%22%20stroke%3D%22none%22%20cx%3D%2224%22%20cy%3D%2217%22%20r%3D%221.5%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-worker::before,
+.fig-node[data-kind="worker"] > summary > .fig-mark,
+.fig-mark[data-kind="worker"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M32%2012v8M32%2044v8M12%2032h8M44%2032h8M18%2018l6%206M40%2040l6%206M46%2018l-6%206M24%2040l-6%206%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-lock::before,
+.fig-node[data-kind="lock"] > summary > .fig-mark,
+.fig-mark[data-kind="lock"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2218%22%20y%3D%2228%22%20width%3D%2228%22%20height%3D%2222%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M24%2028v-6a8%208%200%200%201%2016%200v6%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-key::before,
+.fig-node[data-kind="key"] > summary > .fig-mark,
+.fig-mark[data-kind="key"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2232%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M32%2032h22v6M46%2032v8M52%2032v8%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-flag::before,
+.fig-node[data-kind="flag"] > summary > .fig-mark,
+.fig-mark[data-kind="flag"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M18%2010v44%22%2F%3E%3Cpath%20d%3D%22M18%2012h26l-6%2010%206%2010H18z%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-test::before,
+.fig-node[data-kind="test"] > summary > .fig-mark,
+.fig-mark[data-kind="test"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2218%22%2F%3E%3Cpath%20d%3D%22M22%2033l7%207%2014-16%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-event::before,
+.fig-node[data-kind="event"] > summary > .fig-mark,
+.fig-mark[data-kind="event"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2214%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2222%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-token::before,
+.fig-node[data-kind="token"] > summary > .fig-mark,
+.fig-mark[data-kind="token"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2210%22%20y%3D%2224%22%20width%3D%2244%22%20height%3D%2216%22%20rx%3D%228%22%2F%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2232%22%20r%3D%224%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-mobile::before,
+.fig-node[data-kind="mobile"] > summary > .fig-mark,
+.fig-mark[data-kind="mobile"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2220%22%20y%3D%228%22%20width%3D%2224%22%20height%3D%2248%22%20rx%3D%224%22%2F%3E%3Cpath%20d%3D%22M28%2012h8%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-globe::before,
+.fig-node[data-kind="globe"] > summary > .fig-mark,
+.fig-mark[data-kind="globe"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2218%22%2F%3E%3Cellipse%20cx%3D%2232%22%20cy%3D%2232%22%20rx%3D%228%22%20ry%3D%2218%22%2F%3E%3Cpath%20d%3D%22M14%2032h36M18%2022h28M18%2042h28%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-clock::before,
+.fig-node[data-kind="clock"] > summary > .fig-mark,
+.fig-mark[data-kind="clock"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2218%22%2F%3E%3Cpath%20d%3D%22M32%2018v14l10%206%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-filter::before,
+.fig-node[data-kind="filter"] > summary > .fig-mark,
+.fig-mark[data-kind="filter"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2016h40L38%2032v16l-12-6V32z%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-branch::before,
+.fig-node[data-kind="branch"] > summary > .fig-mark,
+.fig-mark[data-kind="branch"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2216%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2248%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2232%22%20r%3D%226%22%2F%3E%3Cpath%20d%3D%22M20%2022v20M26%2016c12%200%2014%208%2014%2016%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-bucket::before,
+.fig-node[data-kind="bucket"] > summary > .fig-mark,
+.fig-mark[data-kind="bucket"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M14%2020h36l-4%2032H18z%22%2F%3E%3Cpath%20d%3D%22M12%2020c0-6%209-10%2020-10s20%204%2020%2010%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-transform::before,
+.fig-node[data-kind="transform"] > summary > .fig-mark,
+.fig-mark[data-kind="transform"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2218%22%20y%3D%2218%22%20width%3D%2228%22%20height%3D%2228%22%20rx%3D%224%22%2F%3E%3Cpath%20d%3D%22M8%2032h10M46%2032h10%22%2F%3E%3Cpath%20d%3D%22M52%2026l6%206-6%206%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-babel::before,
+.fig-node[data-kind="babel"] > summary > .fig-mark,
+.fig-mark[data-kind="babel"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20%2014c-8%200-8%2010-8%2018s0%2018%208%2018M44%2014c8%200%208%2010%208%2018s0%2018-8%2018%22%2F%3E%3Cpath%20d%3D%22M28%2022h8M28%2032h8M28%2042h8%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-oxc::before,
+.fig-node[data-kind="oxc"] > summary > .fig-mark,
+.fig-mark[data-kind="oxc"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M22%2038%2034%2010l4%2016%2012-4L32%2056l-4-16z%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-swc::before,
+.fig-node[data-kind="swc"] > summary > .fig-mark,
+.fig-mark[data-kind="swc"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2032h22%22%2F%3E%3Cpath%20d%3D%22M26%2022l16%2010-16%2010%22%2F%3E%3Cpath%20d%3D%22M36%2018l16%2014-16%2014%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-rust::before,
+.fig-node[data-kind="rust"] > summary > .fig-mark,
+.fig-mark[data-kind="rust"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M32%208%2054%2020v24L32%2056%2010%2044V20z%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%228%22%2F%3E%3Cpath%20d%3D%22M32%2018v6M32%2040v6M18%2032h6M40%2032h6%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-compiler::before,
+.fig-node[data-kind="compiler"] > summary > .fig-mark,
+.fig-mark[data-kind="compiler"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%226%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2220%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2244%22%20y%3D%2222%22%20width%3D%2214%22%20height%3D%2220%22%20rx%3D%222%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2211%22%2F%3E%3Cpath%20d%3D%22M21%2032h22%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-parser::before,
+.fig-node[data-kind="parser"] > summary > .fig-mark,
+.fig-mark[data-kind="parser"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2016h18M10%2024h18M10%2032h12%22%2F%3E%3Ccircle%20cx%3D%2244%22%20cy%3D%2218%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2234%22%20cy%3D%2246%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2246%22%20r%3D%225%22%2F%3E%3Cpath%20d%3D%22M44%2023v12M44%2035l-8%206M44%2035l8%206%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-ast::before,
+.fig-node[data-kind="ast"] > summary > .fig-mark,
+.fig-mark[data-kind="ast"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2212%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%2250%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%226%22%2F%3E%3Cpath%20d%3D%22M32%2018v9M29%2036%2017%2046M35%2036%2047%2046%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-ir::before,
+.fig-node[data-kind="ir"] > summary > .fig-mark,
+.fig-mark[data-kind="ir"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2210%22%20y%3D%2214%22%20width%3D%2244%22%20height%3D%2210%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%2228%22%20width%3D%2228%22%20height%3D%2210%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%2242%22%20width%3D%2236%22%20height%3D%2210%22%20rx%3D%222%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-hir::before,
+.fig-node[data-kind="hir"] > summary > .fig-mark,
+.fig-mark[data-kind="hir"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%228%22%20y%3D%2214%22%20width%3D%2220%22%20height%3D%2214%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2236%22%20y%3D%2214%22%20width%3D%2220%22%20height%3D%2214%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2222%22%20y%3D%2238%22%20width%3D%2220%22%20height%3D%2214%22%20rx%3D%222%22%2F%3E%3Cpath%20d%3D%22M18%2028v6c0%204%208%204%2012%204M46%2028v6c0%204-8%204-12%204%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-plugin::before,
+.fig-node[data-kind="plugin"] > summary > .fig-mark,
+.fig-mark[data-kind="plugin"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2226%22%20height%3D%2226%22%20rx%3D%224%22%2F%3E%3Crect%20x%3D%2228%22%20y%3D%2228%22%20width%3D%2226%22%20height%3D%2226%22%20rx%3D%224%22%2F%3E%3Ccircle%20cx%3D%2223%22%20cy%3D%2223%22%20r%3D%223%22%2F%3E%3Ccircle%20cx%3D%2241%22%20cy%3D%2241%22%20r%3D%223%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-env::before,
+.fig-node[data-kind="env"] > summary > .fig-mark,
+.fig-mark[data-kind="env"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2218%22%20y%3D%2210%22%20width%3D%2234%22%20height%3D%2220%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2222%22%20width%3D%2234%22%20height%3D%2220%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%226%22%20y%3D%2234%22%20width%3D%2234%22%20height%3D%2220%22%20rx%3D%223%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-scan::before,
+.fig-node[data-kind="scan"] > summary > .fig-mark,
+.fig-mark[data-kind="scan"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2228%22%20cy%3D%2228%22%20r%3D%2214%22%2F%3E%3Cpath%20d%3D%22M38%2038l14%2014%22%2F%3E%3Cpath%20d%3D%22M28%2020v10h10%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-crate::before,
+.fig-node[data-kind="crate"] > summary > .fig-mark,
+.fig-mark[data-kind="crate"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2022%2032%2012%2052%2022%2052%2044%2032%2054%2012%2044z%22%2F%3E%3Cpath%20d%3D%22M12%2022%2032%2032%2052%2022M32%2032v22%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-wasm::before,
+.fig-node[data-kind="wasm"] > summary > .fig-mark,
+.fig-mark[data-kind="wasm"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M32%208%2054%2021v22L32%2056%2010%2043V21z%22%2F%3E%3Cpath%20d%3D%22M32%2022v20M22%2028h20%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-hook::before,
+.fig-node[data-kind="hook"] > summary > .fig-mark,
+.fig-mark[data-kind="hook"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2212%22%20r%3D%225%22%2F%3E%3Cpath%20d%3D%22M22%2017v22a12%2012%200%201%200%2024%200V30%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-runtime::before,
+.fig-node[data-kind="runtime"] > summary > .fig-mark,
+.fig-mark[data-kind="runtime"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M32%208%2054%2021v22L32%2056%2010%2043V21z%22%2F%3E%3Cpath%20d%3D%22M26%2022%2044%2032%2026%2042z%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-doc::before,
+.fig-node[data-kind="doc"] > summary > .fig-mark,
+.fig-mark[data-kind="doc"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2214%22%20y%3D%228%22%20width%3D%2236%22%20height%3D%2248%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M22%2020h20M22%2028h20M22%2036h14%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-term::before,
+.fig-node[data-kind="term"] > summary > .fig-mark,
+.fig-mark[data-kind="term"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%228%22%20y%3D%2214%22%20width%3D%2248%22%20height%3D%2236%22%20rx%3D%224%22%2F%3E%3Cpath%20d%3D%22M8%2024h48%22%2F%3E%3Cpath%20d%3D%22M16%2034l7%205-7%205M28%2044h14%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-fallback::before,
+.fig-node[data-kind="fallback"] > summary > .fig-mark,
+.fig-mark[data-kind="fallback"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20%2010h16l12%2012v32H20z%22%20stroke-dasharray%3D%224%203%22%2F%3E%3Cpath%20d%3D%22M36%2010v12h12%22%20stroke-dasharray%3D%224%203%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-route::before,
+.fig-node[data-kind="route"] > summary > .fig-mark,
+.fig-mark[data-kind="route"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2232%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2252%22%20cy%3D%2216%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2252%22%20cy%3D%2248%22%20r%3D%225%22%2F%3E%3Cpath%20d%3D%22M17%2032h12M29%2032c8%200%208-16%2018-16M29%2032c8%200%208%2016%2018%2016%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-module::before,
+.fig-node[data-kind="module"] > summary > .fig-mark,
+.fig-mark[data-kind="module"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2218%22%20height%3D%2218%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%2236%22%20y%3D%2210%22%20width%3D%2218%22%20height%3D%2218%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%2236%22%20width%3D%2218%22%20height%3D%2218%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%2236%22%20y%3D%2236%22%20width%3D%2218%22%20height%3D%2218%22%20rx%3D%223%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-graph::before,
+.fig-node[data-kind="graph"] > summary > .fig-mark,
+.fig-mark[data-kind="graph"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2218%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2248%22%20cy%3D%2218%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2248%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2248%22%20cy%3D%2246%22%20r%3D%226%22%2F%3E%3Cpath%20d%3D%22M22%2018h20M19%2024l2%2018M46%2024l1%2016M24%2048h18%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-css::before,
+.fig-node[data-kind="css"] > summary > .fig-mark,
+.fig-mark[data-kind="css"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M18%2016h28M18%2032h28M18%2048h28M26%2010v44M38%2010v44%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-js::before,
+.fig-node[data-kind="js"] > summary > .fig-mark,
+.fig-mark[data-kind="js"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M22%2014c-10%200-10%2010-10%2018s0%2018%2010%2018M42%2014c10%200%2010%2010%2010%2018s0%2018-10%2018%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-snippet::before,
+.fig-node[data-kind="snippet"] > summary > .fig-mark,
+.fig-mark[data-kind="snippet"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M26%2018%2014%2032%2026%2046M38%2018%2050%2032%2038%2046M36%2016%2028%2048%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-html::before,
+.fig-node[data-kind="html"] > summary > .fig-mark,
+.fig-mark[data-kind="html"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M24%2016%2010%2032%2024%2048M40%2016%2054%2032%2040%2048%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-stream::before,
+.fig-node[data-kind="stream"] > summary > .fig-mark,
+.fig-mark[data-kind="stream"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M8%2022c8%200%208%2020%2016%2020s8-20%2016-20%208%2020%2016%2020%22%2F%3E%3Cpath%20d%3D%22M8%2042c8%200%208-20%2016-20s8%2020%2016%2020%208-20%2016-20%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-arena::before,
+.fig-node[data-kind="arena"] > summary > .fig-mark,
+.fig-mark[data-kind="arena"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2244%22%20height%3D%2244%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M10%2032h44M32%2010v44M10%2021h44M10%2043h44M21%2010v44M43%2010v44%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-bundler::before,
+.fig-node[data-kind="bundler"] > summary > .fig-mark,
+.fig-mark[data-kind="bundler"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2214%22%20y%3D%2224%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2234%22%20y%3D%2224%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2224%22%20y%3D%2212%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2224%22%20y%3D%2236%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%221%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-adapter::before,
+.fig-node[data-kind="adapter"] > summary > .fig-mark,
+.fig-mark[data-kind="adapter"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%226%22%20y%3D%2224%22%20width%3D%2218%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2240%22%20y%3D%2224%22%20width%3D%2218%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Cpath%20d%3D%22M24%2032h16%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2232%22%20r%3D%222.2%22%2F%3E%3Ccircle%20cx%3D%2244%22%20cy%3D%2232%22%20r%3D%222.2%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-snapshot::before,
+.fig-node[data-kind="snapshot"] > summary > .fig-mark,
+.fig-mark[data-kind="snapshot"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2218%22%20y%3D%2216%22%20width%3D%2230%22%20height%3D%2236%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2210%22%20width%3D%2230%22%20height%3D%2236%22%20rx%3D%222%22%2F%3E%3Cpath%20d%3D%22M18%2022h18M18%2030h12%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-tree::before,
+.fig-node[data-kind="tree"] > summary > .fig-mark,
+.fig-mark[data-kind="tree"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2212%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%2250%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%226%22%2F%3E%3Cpath%20d%3D%22M32%2018v14M32%2032%2017%2046M32%2032%2047%2046%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-config::before,
+.fig-node[data-kind="config"] > summary > .fig-mark,
+.fig-mark[data-kind="config"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M14%2020h36M14%2032h36M14%2044h36%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2220%22%20r%3D%224%22%2F%3E%3Ccircle%20cx%3D%2242%22%20cy%3D%2232%22%20r%3D%224%22%2F%3E%3Ccircle%20cx%3D%2228%22%20cy%3D%2244%22%20r%3D%224%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-log::before,
+.fig-node[data-kind="log"] > summary > .fig-mark,
+.fig-mark[data-kind="log"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M14%2016h36M14%2028h36M14%2040h26M14%2050h30%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-error::before,
+.fig-node[data-kind="error"] > summary > .fig-mark,
+.fig-mark[data-kind="error"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M32%2010%2054%2050H10z%22%2F%3E%3Cpath%20d%3D%22M32%2026v14M32%2046v.5%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-request::before,
+.fig-node[data-kind="request"] > summary > .fig-mark,
+.fig-mark[data-kind="request"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M8%2032h40%22%2F%3E%3Cpath%20d%3D%22M38%2022l16%2010-16%2010%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2226%22%20width%3D%228%22%20height%3D%2212%22%20rx%3D%221%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-response::before,
+.fig-node[data-kind="response"] > summary > .fig-mark,
+.fig-mark[data-kind="response"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M56%2032H16%22%2F%3E%3Cpath%20d%3D%22M26%2022%2010%2032l16%2010%22%2F%3E%3Crect%20x%3D%2248%22%20y%3D%2226%22%20width%3D%228%22%20height%3D%2212%22%20rx%3D%221%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-client::before,
+.fig-node[data-kind="client"] > summary > .fig-mark,
+.fig-mark[data-kind="client"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2210%22%20y%3D%2212%22%20width%3D%2244%22%20height%3D%2228%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M24%2040v6M40%2040v6M20%2052h24%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-package::before,
+.fig-node[data-kind="package"] > summary > .fig-mark,
+.fig-mark[data-kind="package"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2022%2032%2012%2052%2022v24L32%2056%2012%2046z%22%2F%3E%3Cpath%20d%3D%22M12%2022h40M32%2012v44%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-build::before,
+.fig-node[data-kind="build"] > summary > .fig-mark,
+.fig-mark[data-kind="build"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2210%22%20y%3D%2240%22%20width%3D%2214%22%20height%3D%2212%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2240%22%20width%3D%2214%22%20height%3D%2212%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2242%22%20y%3D%2240%22%20width%3D%2212%22%20height%3D%2212%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%2226%22%20width%3D%2214%22%20height%3D%2212%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2234%22%20y%3D%2226%22%20width%3D%2214%22%20height%3D%2212%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2212%22%20width%3D%2214%22%20height%3D%2212%22%20rx%3D%221%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-pipeline::before,
+.fig-node[data-kind="pipeline"] > summary > .fig-mark,
+.fig-mark[data-kind="pipeline"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%226%22%20y%3D%2224%22%20width%3D%2214%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2225%22%20y%3D%2224%22%20width%3D%2214%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2244%22%20y%3D%2224%22%20width%3D%2214%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Cpath%20d%3D%22M20%2032h5M39%2032h5%22%2F%3E%3C%2Fsvg%3E");
+}
 
 [data-tone="added"] { color: var(--fig-added); }
 [data-tone="removed"] { color: var(--fig-removed); }
 [data-tone="changed"] { color: var(--fig-changed); }
 [data-tone="focus"] { color: var(--fig-focus); }
 [data-tone="ghost"] { color: var(--fig-ghost); opacity: 0.72; }
-.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform[data-tone="added"]::before { background-color: var(--fig-added-bg); border-color: color-mix(in srgb, var(--fig-added) 35%, white); }
-.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform[data-tone="removed"]::before { background-color: var(--fig-removed-bg); border-color: color-mix(in srgb, var(--fig-removed) 35%, white); }
-.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform[data-tone="changed"]::before { background-color: var(--fig-changed-bg); border-color: color-mix(in srgb, var(--fig-changed) 35%, white); }
-.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform[data-tone="focus"]::before { background-color: var(--fig-focus-bg); border-color: color-mix(in srgb, var(--fig-focus) 35%, white); }
-.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform[data-tone="ghost"]::before { background-color: transparent; border-style: dashed; }
+.fig-user[data-tone="added"]::before, .fig-users[data-tone="added"]::before, .fig-server[data-tone="added"]::before, .fig-db[data-tone="added"]::before, .fig-box[data-tone="added"]::before, .fig-file[data-tone="added"]::before, .fig-folder[data-tone="added"]::before, .fig-cloud[data-tone="added"]::before, .fig-cache[data-tone="added"]::before, .fig-queue[data-tone="added"]::before, .fig-api[data-tone="added"]::before, .fig-browser[data-tone="added"]::before, .fig-worker[data-tone="added"]::before, .fig-lock[data-tone="added"]::before, .fig-key[data-tone="added"]::before, .fig-flag[data-tone="added"]::before, .fig-test[data-tone="added"]::before, .fig-event[data-tone="added"]::before, .fig-token[data-tone="added"]::before, .fig-mobile[data-tone="added"]::before, .fig-globe[data-tone="added"]::before, .fig-clock[data-tone="added"]::before, .fig-filter[data-tone="added"]::before, .fig-branch[data-tone="added"]::before, .fig-bucket[data-tone="added"]::before, .fig-transform[data-tone="added"]::before, .fig-babel[data-tone="added"]::before, .fig-oxc[data-tone="added"]::before, .fig-swc[data-tone="added"]::before, .fig-rust[data-tone="added"]::before, .fig-compiler[data-tone="added"]::before, .fig-parser[data-tone="added"]::before, .fig-ast[data-tone="added"]::before, .fig-ir[data-tone="added"]::before, .fig-hir[data-tone="added"]::before, .fig-plugin[data-tone="added"]::before, .fig-env[data-tone="added"]::before, .fig-scan[data-tone="added"]::before, .fig-crate[data-tone="added"]::before, .fig-wasm[data-tone="added"]::before, .fig-hook[data-tone="added"]::before, .fig-runtime[data-tone="added"]::before, .fig-doc[data-tone="added"]::before, .fig-term[data-tone="added"]::before, .fig-fallback[data-tone="added"]::before, .fig-route[data-tone="added"]::before, .fig-module[data-tone="added"]::before, .fig-graph[data-tone="added"]::before, .fig-css[data-tone="added"]::before, .fig-js[data-tone="added"]::before, .fig-snippet[data-tone="added"]::before, .fig-html[data-tone="added"]::before, .fig-stream[data-tone="added"]::before, .fig-arena[data-tone="added"]::before, .fig-bundler[data-tone="added"]::before, .fig-adapter[data-tone="added"]::before, .fig-snapshot[data-tone="added"]::before, .fig-tree[data-tone="added"]::before, .fig-config[data-tone="added"]::before, .fig-log[data-tone="added"]::before, .fig-error[data-tone="added"]::before, .fig-request[data-tone="added"]::before, .fig-response[data-tone="added"]::before, .fig-client[data-tone="added"]::before, .fig-package[data-tone="added"]::before, .fig-build[data-tone="added"]::before, .fig-pipeline[data-tone="added"]::before, .fig-node[data-tone="added"] > summary > .fig-mark, .fig-glyph[data-tone="added"] > .fig-mark { background-color: var(--fig-added-bg); border-color: color-mix(in srgb, var(--fig-added) 35%, white); }
+.fig-user[data-tone="removed"]::before, .fig-users[data-tone="removed"]::before, .fig-server[data-tone="removed"]::before, .fig-db[data-tone="removed"]::before, .fig-box[data-tone="removed"]::before, .fig-file[data-tone="removed"]::before, .fig-folder[data-tone="removed"]::before, .fig-cloud[data-tone="removed"]::before, .fig-cache[data-tone="removed"]::before, .fig-queue[data-tone="removed"]::before, .fig-api[data-tone="removed"]::before, .fig-browser[data-tone="removed"]::before, .fig-worker[data-tone="removed"]::before, .fig-lock[data-tone="removed"]::before, .fig-key[data-tone="removed"]::before, .fig-flag[data-tone="removed"]::before, .fig-test[data-tone="removed"]::before, .fig-event[data-tone="removed"]::before, .fig-token[data-tone="removed"]::before, .fig-mobile[data-tone="removed"]::before, .fig-globe[data-tone="removed"]::before, .fig-clock[data-tone="removed"]::before, .fig-filter[data-tone="removed"]::before, .fig-branch[data-tone="removed"]::before, .fig-bucket[data-tone="removed"]::before, .fig-transform[data-tone="removed"]::before, .fig-babel[data-tone="removed"]::before, .fig-oxc[data-tone="removed"]::before, .fig-swc[data-tone="removed"]::before, .fig-rust[data-tone="removed"]::before, .fig-compiler[data-tone="removed"]::before, .fig-parser[data-tone="removed"]::before, .fig-ast[data-tone="removed"]::before, .fig-ir[data-tone="removed"]::before, .fig-hir[data-tone="removed"]::before, .fig-plugin[data-tone="removed"]::before, .fig-env[data-tone="removed"]::before, .fig-scan[data-tone="removed"]::before, .fig-crate[data-tone="removed"]::before, .fig-wasm[data-tone="removed"]::before, .fig-hook[data-tone="removed"]::before, .fig-runtime[data-tone="removed"]::before, .fig-doc[data-tone="removed"]::before, .fig-term[data-tone="removed"]::before, .fig-fallback[data-tone="removed"]::before, .fig-route[data-tone="removed"]::before, .fig-module[data-tone="removed"]::before, .fig-graph[data-tone="removed"]::before, .fig-css[data-tone="removed"]::before, .fig-js[data-tone="removed"]::before, .fig-snippet[data-tone="removed"]::before, .fig-html[data-tone="removed"]::before, .fig-stream[data-tone="removed"]::before, .fig-arena[data-tone="removed"]::before, .fig-bundler[data-tone="removed"]::before, .fig-adapter[data-tone="removed"]::before, .fig-snapshot[data-tone="removed"]::before, .fig-tree[data-tone="removed"]::before, .fig-config[data-tone="removed"]::before, .fig-log[data-tone="removed"]::before, .fig-error[data-tone="removed"]::before, .fig-request[data-tone="removed"]::before, .fig-response[data-tone="removed"]::before, .fig-client[data-tone="removed"]::before, .fig-package[data-tone="removed"]::before, .fig-build[data-tone="removed"]::before, .fig-pipeline[data-tone="removed"]::before, .fig-node[data-tone="removed"] > summary > .fig-mark, .fig-glyph[data-tone="removed"] > .fig-mark { background-color: var(--fig-removed-bg); border-color: color-mix(in srgb, var(--fig-removed) 35%, white); }
+.fig-user[data-tone="changed"]::before, .fig-users[data-tone="changed"]::before, .fig-server[data-tone="changed"]::before, .fig-db[data-tone="changed"]::before, .fig-box[data-tone="changed"]::before, .fig-file[data-tone="changed"]::before, .fig-folder[data-tone="changed"]::before, .fig-cloud[data-tone="changed"]::before, .fig-cache[data-tone="changed"]::before, .fig-queue[data-tone="changed"]::before, .fig-api[data-tone="changed"]::before, .fig-browser[data-tone="changed"]::before, .fig-worker[data-tone="changed"]::before, .fig-lock[data-tone="changed"]::before, .fig-key[data-tone="changed"]::before, .fig-flag[data-tone="changed"]::before, .fig-test[data-tone="changed"]::before, .fig-event[data-tone="changed"]::before, .fig-token[data-tone="changed"]::before, .fig-mobile[data-tone="changed"]::before, .fig-globe[data-tone="changed"]::before, .fig-clock[data-tone="changed"]::before, .fig-filter[data-tone="changed"]::before, .fig-branch[data-tone="changed"]::before, .fig-bucket[data-tone="changed"]::before, .fig-transform[data-tone="changed"]::before, .fig-babel[data-tone="changed"]::before, .fig-oxc[data-tone="changed"]::before, .fig-swc[data-tone="changed"]::before, .fig-rust[data-tone="changed"]::before, .fig-compiler[data-tone="changed"]::before, .fig-parser[data-tone="changed"]::before, .fig-ast[data-tone="changed"]::before, .fig-ir[data-tone="changed"]::before, .fig-hir[data-tone="changed"]::before, .fig-plugin[data-tone="changed"]::before, .fig-env[data-tone="changed"]::before, .fig-scan[data-tone="changed"]::before, .fig-crate[data-tone="changed"]::before, .fig-wasm[data-tone="changed"]::before, .fig-hook[data-tone="changed"]::before, .fig-runtime[data-tone="changed"]::before, .fig-doc[data-tone="changed"]::before, .fig-term[data-tone="changed"]::before, .fig-fallback[data-tone="changed"]::before, .fig-route[data-tone="changed"]::before, .fig-module[data-tone="changed"]::before, .fig-graph[data-tone="changed"]::before, .fig-css[data-tone="changed"]::before, .fig-js[data-tone="changed"]::before, .fig-snippet[data-tone="changed"]::before, .fig-html[data-tone="changed"]::before, .fig-stream[data-tone="changed"]::before, .fig-arena[data-tone="changed"]::before, .fig-bundler[data-tone="changed"]::before, .fig-adapter[data-tone="changed"]::before, .fig-snapshot[data-tone="changed"]::before, .fig-tree[data-tone="changed"]::before, .fig-config[data-tone="changed"]::before, .fig-log[data-tone="changed"]::before, .fig-error[data-tone="changed"]::before, .fig-request[data-tone="changed"]::before, .fig-response[data-tone="changed"]::before, .fig-client[data-tone="changed"]::before, .fig-package[data-tone="changed"]::before, .fig-build[data-tone="changed"]::before, .fig-pipeline[data-tone="changed"]::before, .fig-node[data-tone="changed"] > summary > .fig-mark, .fig-glyph[data-tone="changed"] > .fig-mark { background-color: var(--fig-changed-bg); border-color: color-mix(in srgb, var(--fig-changed) 35%, white); }
+.fig-user[data-tone="focus"]::before, .fig-users[data-tone="focus"]::before, .fig-server[data-tone="focus"]::before, .fig-db[data-tone="focus"]::before, .fig-box[data-tone="focus"]::before, .fig-file[data-tone="focus"]::before, .fig-folder[data-tone="focus"]::before, .fig-cloud[data-tone="focus"]::before, .fig-cache[data-tone="focus"]::before, .fig-queue[data-tone="focus"]::before, .fig-api[data-tone="focus"]::before, .fig-browser[data-tone="focus"]::before, .fig-worker[data-tone="focus"]::before, .fig-lock[data-tone="focus"]::before, .fig-key[data-tone="focus"]::before, .fig-flag[data-tone="focus"]::before, .fig-test[data-tone="focus"]::before, .fig-event[data-tone="focus"]::before, .fig-token[data-tone="focus"]::before, .fig-mobile[data-tone="focus"]::before, .fig-globe[data-tone="focus"]::before, .fig-clock[data-tone="focus"]::before, .fig-filter[data-tone="focus"]::before, .fig-branch[data-tone="focus"]::before, .fig-bucket[data-tone="focus"]::before, .fig-transform[data-tone="focus"]::before, .fig-babel[data-tone="focus"]::before, .fig-oxc[data-tone="focus"]::before, .fig-swc[data-tone="focus"]::before, .fig-rust[data-tone="focus"]::before, .fig-compiler[data-tone="focus"]::before, .fig-parser[data-tone="focus"]::before, .fig-ast[data-tone="focus"]::before, .fig-ir[data-tone="focus"]::before, .fig-hir[data-tone="focus"]::before, .fig-plugin[data-tone="focus"]::before, .fig-env[data-tone="focus"]::before, .fig-scan[data-tone="focus"]::before, .fig-crate[data-tone="focus"]::before, .fig-wasm[data-tone="focus"]::before, .fig-hook[data-tone="focus"]::before, .fig-runtime[data-tone="focus"]::before, .fig-doc[data-tone="focus"]::before, .fig-term[data-tone="focus"]::before, .fig-fallback[data-tone="focus"]::before, .fig-route[data-tone="focus"]::before, .fig-module[data-tone="focus"]::before, .fig-graph[data-tone="focus"]::before, .fig-css[data-tone="focus"]::before, .fig-js[data-tone="focus"]::before, .fig-snippet[data-tone="focus"]::before, .fig-html[data-tone="focus"]::before, .fig-stream[data-tone="focus"]::before, .fig-arena[data-tone="focus"]::before, .fig-bundler[data-tone="focus"]::before, .fig-adapter[data-tone="focus"]::before, .fig-snapshot[data-tone="focus"]::before, .fig-tree[data-tone="focus"]::before, .fig-config[data-tone="focus"]::before, .fig-log[data-tone="focus"]::before, .fig-error[data-tone="focus"]::before, .fig-request[data-tone="focus"]::before, .fig-response[data-tone="focus"]::before, .fig-client[data-tone="focus"]::before, .fig-package[data-tone="focus"]::before, .fig-build[data-tone="focus"]::before, .fig-pipeline[data-tone="focus"]::before, .fig-node[data-tone="focus"] > summary > .fig-mark, .fig-glyph[data-tone="focus"] > .fig-mark { background-color: var(--fig-focus-bg); border-color: color-mix(in srgb, var(--fig-focus) 35%, white); }
+.fig-user[data-tone="ghost"]::before, .fig-users[data-tone="ghost"]::before, .fig-server[data-tone="ghost"]::before, .fig-db[data-tone="ghost"]::before, .fig-box[data-tone="ghost"]::before, .fig-file[data-tone="ghost"]::before, .fig-folder[data-tone="ghost"]::before, .fig-cloud[data-tone="ghost"]::before, .fig-cache[data-tone="ghost"]::before, .fig-queue[data-tone="ghost"]::before, .fig-api[data-tone="ghost"]::before, .fig-browser[data-tone="ghost"]::before, .fig-worker[data-tone="ghost"]::before, .fig-lock[data-tone="ghost"]::before, .fig-key[data-tone="ghost"]::before, .fig-flag[data-tone="ghost"]::before, .fig-test[data-tone="ghost"]::before, .fig-event[data-tone="ghost"]::before, .fig-token[data-tone="ghost"]::before, .fig-mobile[data-tone="ghost"]::before, .fig-globe[data-tone="ghost"]::before, .fig-clock[data-tone="ghost"]::before, .fig-filter[data-tone="ghost"]::before, .fig-branch[data-tone="ghost"]::before, .fig-bucket[data-tone="ghost"]::before, .fig-transform[data-tone="ghost"]::before, .fig-babel[data-tone="ghost"]::before, .fig-oxc[data-tone="ghost"]::before, .fig-swc[data-tone="ghost"]::before, .fig-rust[data-tone="ghost"]::before, .fig-compiler[data-tone="ghost"]::before, .fig-parser[data-tone="ghost"]::before, .fig-ast[data-tone="ghost"]::before, .fig-ir[data-tone="ghost"]::before, .fig-hir[data-tone="ghost"]::before, .fig-plugin[data-tone="ghost"]::before, .fig-env[data-tone="ghost"]::before, .fig-scan[data-tone="ghost"]::before, .fig-crate[data-tone="ghost"]::before, .fig-wasm[data-tone="ghost"]::before, .fig-hook[data-tone="ghost"]::before, .fig-runtime[data-tone="ghost"]::before, .fig-doc[data-tone="ghost"]::before, .fig-term[data-tone="ghost"]::before, .fig-fallback[data-tone="ghost"]::before, .fig-route[data-tone="ghost"]::before, .fig-module[data-tone="ghost"]::before, .fig-graph[data-tone="ghost"]::before, .fig-css[data-tone="ghost"]::before, .fig-js[data-tone="ghost"]::before, .fig-snippet[data-tone="ghost"]::before, .fig-html[data-tone="ghost"]::before, .fig-stream[data-tone="ghost"]::before, .fig-arena[data-tone="ghost"]::before, .fig-bundler[data-tone="ghost"]::before, .fig-adapter[data-tone="ghost"]::before, .fig-snapshot[data-tone="ghost"]::before, .fig-tree[data-tone="ghost"]::before, .fig-config[data-tone="ghost"]::before, .fig-log[data-tone="ghost"]::before, .fig-error[data-tone="ghost"]::before, .fig-request[data-tone="ghost"]::before, .fig-response[data-tone="ghost"]::before, .fig-client[data-tone="ghost"]::before, .fig-package[data-tone="ghost"]::before, .fig-build[data-tone="ghost"]::before, .fig-pipeline[data-tone="ghost"]::before, .fig-node[data-tone="ghost"] > summary > .fig-mark, .fig-glyph[data-tone="ghost"] > .fig-mark { background-color: transparent; border-style: dashed; }
 .fig-layer[data-tone="added"], .fig-phase[data-tone="added"] { background: var(--fig-added-bg); }
 .fig-layer[data-tone="removed"], .fig-phase[data-tone="removed"] { background: var(--fig-removed-bg); }
 .fig-layer[data-tone="changed"], .fig-phase[data-tone="changed"] { background: var(--fig-changed-bg); }
@@ -429,6 +753,174 @@ label.fig-btn { cursor: pointer; }
 .fig-step[data-tone="removed"]::before { background: var(--fig-removed); border-color: var(--fig-removed); }
 .fig-step[data-tone="changed"]::before { background: var(--fig-changed); border-color: var(--fig-changed); }
 .fig-step[data-tone="focus"]::before { background: var(--fig-focus); border-color: var(--fig-focus); }
+
+.fig-mark {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 14px;
+  border: 1px solid var(--fig-rule);
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 30px;
+  display: inline-block;
+}
+.fig-glyph {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 84px;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
+}
+
+.fig-node {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 248px;
+  max-width: 100%;
+  background: #fffaf2;
+  border: 1px solid var(--fig-rule);
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(26, 23, 20, 0.05);
+  color: var(--fig-ink);
+  opacity: 1;
+  position: relative;
+  text-align: left;
+}
+.fig-node.tight { width: 168px; }
+.fig-node.wide {
+  width: min(100%, 720px);
+  flex: 1 1 100%;
+}
+.fig-node > summary {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 12px 12px 12px;
+  cursor: pointer;
+  list-style: none;
+  border-radius: 16px;
+}
+.fig-node > summary::-webkit-details-marker,
+.fig-fold > summary::-webkit-details-marker { display: none; }
+.fig-node > summary::marker,
+.fig-fold > summary::marker { content: ""; }
+.fig-node > summary:hover { background: #fff6ea; }
+.fig-node > summary:focus-visible,
+.fig-fold > summary:focus-visible {
+  outline: 2px solid var(--fig-ink);
+  outline-offset: -2px;
+}
+.fig-node[open] > summary {
+  border-bottom: 1px solid var(--fig-rule);
+  border-radius: 16px 16px 0 0;
+}
+.fig-node-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.fig-node-text em {
+  font-style: normal;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fig-muted);
+}
+.fig-node-text strong {
+  font-family: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--fig-ink);
+}
+.fig-node-text span {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--fig-muted);
+}
+.fig-node.tight .fig-node-text em,
+.fig-node.tight .fig-node-text span { display: none; }
+.fig-node.tight > summary { grid-template-columns: 40px 1fr auto; padding: 10px; }
+.fig-node.tight .fig-mark { width: 40px; height: 40px; flex-basis: 40px; border-radius: 12px; }
+.fig-node-go {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fig-muted);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+}
+.fig-node-go::before { content: "Inspect"; }
+.fig-node[open] > summary .fig-node-go::before { content: "Close"; }
+.fig-node-panel {
+  padding: 12px 14px 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #3f3a34;
+}
+.fig-node-panel p { margin: 0 0 10px; }
+.fig-node-panel p:last-child { margin-bottom: 0; }
+.fig-node-panel .fig-code {
+  width: 100%;
+  margin: 8px 0 0;
+}
+.fig-node-panel .fig-node {
+  width: 100%;
+  margin-top: 10px;
+}
+.fig-node[data-tone="added"] { border-color: color-mix(in srgb, var(--fig-added) 35%, var(--fig-rule)); }
+.fig-node[data-tone="removed"] { border-color: color-mix(in srgb, var(--fig-removed) 35%, var(--fig-rule)); }
+.fig-node[data-tone="changed"] { border-color: color-mix(in srgb, var(--fig-changed) 35%, var(--fig-rule)); }
+.fig-node[data-tone="focus"] { border-color: color-mix(in srgb, var(--fig-focus) 35%, var(--fig-rule)); }
+.fig-node[data-tone="ghost"] { opacity: 0.78; border-style: dashed; }
+
+.fig-fold {
+  border: 1px solid var(--fig-rule);
+  border-radius: 10px;
+  background: #fff;
+  margin: 8px 0 0;
+}
+.fig-fold > summary {
+  cursor: pointer;
+  padding: 9px 12px;
+  font-weight: 550;
+  font-size: 13px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fig-fold > summary::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 1.6px solid currentColor;
+  border-bottom: 1.6px solid currentColor;
+  transform: rotate(-45deg);
+  flex: 0 0 auto;
+}
+.fig-fold[open] > summary::before { transform: rotate(45deg); }
+.fig-fold > :not(summary) {
+  padding: 0 12px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #3f3a34;
+}
+.fig-fold .fig-fold { margin-top: 8px; }
 
 .fig-chip {
   position: absolute;
@@ -442,6 +934,10 @@ label.fig-btn { cursor: pointer; }
   border: 1px solid currentColor;
   background: #fff;
   z-index: 1;
+}
+.fig-node .fig-chip {
+  top: 8px;
+  right: 28px;
 }
 
 .fig-edge {
@@ -540,7 +1036,7 @@ label.fig-btn { cursor: pointer; }
 
 .fig-callout {
   display: block;
-  max-width: 640px;
+  max-width: 720px;
   margin: 4px auto 0;
   padding: 12px 16px;
   border-left: 3px solid var(--fig-ink);
@@ -666,7 +1162,9 @@ label.fig-btn { cursor: pointer; }
 @media (max-width: 700px) {
   .fig-mast { flex-direction: column; padding: 18px 16px 14px; }
   .fig-stage, .fig-nav { padding-left: 16px; padding-right: 16px; }
-  .fig-scene { min-height: 360px; }
+  .fig-scene { min-height: 320px; }
   .fig-btn { min-width: 84px; }
   .fig-deck { margin-top: 16px; }
+  .fig-node { width: 100%; }
+  .fig-node.tight { width: 100%; }
 }

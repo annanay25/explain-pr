@@ -20,7 +20,7 @@ A complete HTML file. Link the library relatively (or copy the two files next to
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PR title — Figure</title>
-    <link rel="stylesheet" href="../lib/figure.css" />
+    <link rel="stylesheet" href="/lib/figure.css" />
   </head>
   <body class="fig-page">
     <fig-deck
@@ -34,7 +34,7 @@ A complete HTML file. Link the library relatively (or copy the two files next to
     >
       <!-- scenes -->
     </fig-deck>
-    <script src="../lib/figure.js"></script>
+    <script src="/lib/figure.js"></script>
   </body>
 </html>
 ```

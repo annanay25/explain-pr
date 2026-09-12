@@ -1,14 +1,18 @@
 # Figure
 
-A visual language for explaining pull requests. **One CSS file. Plain HTML. No JavaScript, no npm, no build.**
+A visual language for explaining pull requests. **One CSS file, one small JS file for the ask-prompt box. No npm, no build.**
 
-`figure.css` already contains Fraunces and IBM Plex (woff2, inlined) plus the glyph icons. A skill that uses this library only needs to copy that file next to an HTML page.
+A coding agent emits **three views** of the same PR:
 
-Named parts of a system are **inspectable cards**. Click a component for kind, role, prose, code, and nested folds — as far as the reviewer wants to go.
+- **Story** — what changed
+- **Data** — which payload moved, which component processed it, how that HOW changed
+- **Blast radius** — public APIs, prod stores, callers
+
+Click a component, type a question, copy a preconstructed prompt back into the agent.
+
+`figure.css` inlines Fraunces, IBM Plex, and the glyph icons. `figure.js` only fills the question box and copy button.
 
 ## Open it
-
-Double-click `index.html`, or from this folder:
 
 ```bash
 python3 -m http.server 43147 --bind 127.0.0.1
@@ -16,11 +20,9 @@ python3 -m http.server 43147 --bind 127.0.0.1
 
 Then open [http://127.0.0.1:43147](http://127.0.0.1:43147).
 
-There is nothing to install.
-
 ## Skill
 
-Load `skills/explain-pr/SKILL.md` into Cursor, Codex, or Claude. The model emits HTML that links `figure.css`, steps through scenes with Next labels, and puts depth inside `<details class="fig-node">` so a reviewer can keep asking.
+Load `skills/explain-pr/SKILL.md`. Copy `figure.css` and `figure.js` next to the HTML the model emits.
 
 ## Walkthroughs
 
@@ -33,10 +35,6 @@ Load `skills/explain-pr/SKILL.md` into Cursor, Codex, or Claude. The model emits
 
 ## Rebuild the stylesheet
 
-Fonts live in `fonts/`. After changing icons or typefaces:
-
 ```bash
 python3 scripts/build-css.py
 ```
-
-That is optional. Using Figure does not require Python either — only `figure.css` and an HTML file.

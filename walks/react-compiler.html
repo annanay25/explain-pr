@@ -17,7 +17,7 @@
             <p class="fig-kicker">Figure · PR walk</p>
             <h1>Port React Compiler to Rust</h1>
             <div class="fig-repo"><a href="https://github.com/facebook/react/pull/36173">facebook/react #36173</a></div>
-            <p class="fig-inspect-hint">Click any component. Nested sections keep going until you have enough.</p>
+            <p class="fig-inspect-hint">Three views of the same PR. Click a component, type a question, copy the prompt into your coding agent.</p>
           </div>
           <div class="fig-mast-side">
             <span class="fig-stat added">+123289</span>
@@ -25,6 +25,15 @@
             <span class="fig-stat">461 files</span>
           </div>
         </header>
+        <nav class="fig-view-tabs">
+          <label class="fig-view-tab" for="view-story">Story<small>what changed</small></label>
+          <label class="fig-view-tab" for="view-data">Data<small>who processed what, how</small></label>
+          <label class="fig-view-tab" for="view-blast">Blast radius<small>APIs, stores, callers</small></label>
+        </nav>
+        <input type="radio" name="view" id="view-story" checked>
+        <input type="radio" name="view" id="view-data">
+        <input type="radio" name="view" id="view-blast">
+        <div class="fig-view" data-view="story">
         <input type="radio" name="walk" id="s1" checked>
         <input type="radio" name="walk" id="s2">
         <input type="radio" name="walk" id="s3">
@@ -478,7 +487,374 @@
             <nav class="fig-nav"><label class="fig-btn" for="s5">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot is-current" for="s6"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
           </section>
         </div>
+        </div>
+
+        <div class="fig-view" data-view="data">
+          <input type="radio" name="data" id="d1" checked>
+          <input type="radio" name="data" id="d2">
+          <input type="radio" name="data" id="d3">
+          <input type="radio" name="data" id="d4">
+          <div class="fig-scenes">
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D1</div>
+                  <div>
+                    <h2>Before: one pipe owned the data</h2>
+                    <p>JSX bytes became a Babel AST. Babel also owned scopes. The TypeScript compiler mutated that tree in memory (a pointer graph) and wrote JavaScript back through Babel.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node tight" data-kind="js">
+                      <summary><i class="fig-mark"></i><span class="fig-node-text"><strong>JSX source</strong></span><b class="fig-node-go"></b></summary>
+                      <div class="fig-node-panel"><p>The payload at rest: a component file. Unchanged by this PR.</p></div>
+                    </details>
+                    <div class="fig-edge" data-label="parse"></div>
+                    <details class="fig-node" data-kind="babel" data-tone="focus">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>processed how</em>
+                          <strong>Babel</strong>
+                          <span>Parsed bytes → AST. Computed bindings. Owned the only copy of the tree.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Data shape out: Babel AST plus a scope map. No other host could feed the compiler without becoming Babel.</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge" data-label="AST + scopes"></div>
+                    <details class="fig-node" data-kind="compiler">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>processed how</em>
+                          <strong>TS compiler</strong>
+                          <span>Lowered to HIR, mutated a pointer graph, emitted Babel nodes.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>HOW: in-place object graph. Passes walked pointers. Serialization out was “give Babel the tree back.”</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge" data-label="print"></div>
+                    <details class="fig-node tight" data-kind="js">
+                      <summary><i class="fig-mark"></i><span class="fig-node-text"><strong>memoized JS</strong></span><b class="fig-node-go"></b></summary>
+                      <div class="fig-node-panel"><p>Same user-visible payload this PR still has to match: 1,725 fixtures.</p></div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d2">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D2</div>
+                  <div>
+                    <h2>After: three doors, one arena</h2>
+                    <p>Each host converts its native tree into the compiler’s Babel-shaped AST plus scopes, then converts the result back. Inside the crate the payload is ids into arenas, not pointers.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-compare">
+                    <div class="fig-pane" data-label="Host converts in">
+                      <div class="fig-row">
+                        <details class="fig-node tight" data-kind="babel" data-tone="changed"><summary><i class="fig-mark"></i><span class="fig-node-text"><strong>Babel tree</strong></span><b class="fig-node-go"></b></summary><div class="fig-node-panel"><p>Still a JS object graph. Crossing into Rust now serializes it. That copy is the remaining tax.</p></div></details>
+                        <details class="fig-node tight" data-kind="oxc" data-tone="added"><summary><i class="fig-mark"></i><span class="fig-node-text"><strong>OXC tree</strong></span><b class="fig-node-go"></b></summary><div class="fig-node-panel"><p>Already Rust. Adapter maps nodes into the compiler AST. No JS round-trip.</p></div></details>
+                        <details class="fig-node tight" data-kind="swc" data-tone="added"><summary><i class="fig-mark"></i><span class="fig-node-text"><strong>SWC tree</strong></span><b class="fig-node-go"></b></summary><div class="fig-node-panel"><p>Same HOW as OXC: convert in, compile, convert out.</p></div></details>
+                      </div>
+                    </div>
+                    <div class="fig-pane" data-label="Compiler mutates" data-tone="added">
+                      <details class="fig-node" data-kind="arena" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>how now</em>
+                            <strong>HIR in arenas</strong>
+                            <span>Passes still mutate HIR. Storage is indices, not TS pointers.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Data shape inside: FunctionId, InstrId, typed arenas. Same pass order, different HOW those values are addressed.</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="d1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot is-current" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d3">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D3</div>
+                  <div>
+                    <h2>What actually changed in HOW</h2>
+                    <p>Parse and bind still happen on the host. Lower / pass / codegen still happen in the compiler. The new work is the conversion at the boundary and arena addressing inside.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="parser">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>unchanged how</em>
+                          <strong>Parse + scopes</strong>
+                          <span>Still the host. The crate does not re-bind.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>If you are reviewing data integrity: the compiler trusts the host’s scope map. Incomplete scopes are still a host bug.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="adapter" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>new how</em>
+                          <strong>AST convert</strong>
+                          <span>Native tree ⇄ compiler Babel-AST. New copies at the door.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Ask whether convert-in drops node kinds the passes need, and whether convert-out preserves comments/locs well enough for the host.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="hir" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>same passes, new store</em>
+                          <strong>Lower + mutate</strong>
+                          <span>HOW changed (arenas). WHAT the passes do did not.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>test-rust-port.sh diffs IR after every pass because this is where a silent HOW bug would hide behind matching JS.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="d2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot is-current" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d4">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D4</div>
+                  <div>
+                    <h2>The payload that must not drift</h2>
+                    <p>Printed JS and diagnostics are the contract with TypeScript. Hosts still swap a whole AST; patches are planned, not shipped.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="snapshot" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>output data</em>
+                          <strong>JS + errors</strong>
+                          <span>1,725 fixtures. User-visible payload.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>If this drifts, the port is wrong even if IR dumps look plausible.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="ast" data-tone="removed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>still whole-tree</em>
+                          <strong>Full AST replace</strong>
+                          <span>Host still receives a whole program, not a patch list.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Data-out HOW is still “here is the new tree.” Integrators that wanted surgical edits do not get that yet.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="d3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot is-current" for="d4"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+            </section>
+          </div>
+        </div>
+
+        <div class="fig-view" data-view="blast">
+          <input type="radio" name="blast" id="b1" checked>
+          <input type="radio" name="blast" id="b2">
+          <input type="radio" name="blast" id="b3">
+          <input type="radio" name="blast" id="b4">
+          <div class="fig-scenes">
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">B1</div>
+                  <div>
+                    <h2>Who actually has to care</h2>
+                    <p>This is a compiler-port PR. App developers do not get a new React API. Integrators and host authors do.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <div class="fig-risk" data-level="safe"><em>prod databases</em><strong>None</strong><span>No user store, no query path, no migration.</span></div>
+                    <div class="fig-risk" data-level="safe"><em>React runtime API</em><strong>Untouched</strong><span>No change to createElement, hooks, or user components.</span></div>
+                    <div class="fig-risk" data-level="watch"><em>compiler plugin API</em><strong>Same shape</strong><span>Still Babel-AST in, AST out. Hosts must now supply scopes explicitly.</span></div>
+                    <div class="fig-risk" data-level="hot"><em>native hosts</em><strong>New crates</strong><span>OXC and SWC adapters live in this repo and will move as the core moves.</span></div>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot" for="b3"></label><label class="fig-dot" for="b4"></label></div><label class="fig-btn fig-next" for="b2">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">B2</div>
+                  <div>
+                    <h2>Public-ish surface vs internals</h2>
+                    <p>+123k is mostly the Rust crate. Review the host contract and the adapters, not every arena file.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="api" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>public contract</em>
+                          <strong>compile(ast, scopes)</strong>
+                          <span>The function hosts call. Still Babel-shaped.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Not a REST API. It is the compiler’s public function. Changing its arguments would blast every host at once.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="crate" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>in-repo API</em>
+                          <strong>OXC / SWC crates</strong>
+                          <span>Thin, but they will be imported by those projects.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Blast is “we can change these without waiting on OXC/SWC releases” — and also “those teams now have a moving target in this repo.”</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="arena" data-tone="ghost">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>internal</em>
+                          <strong>Pass implementations</strong>
+                          <span>Large diff, low external blast if fixtures hold.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Do not treat 461 files as 461 public API changes. Most of this is the port of private passes.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="b1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot is-current" for="b2"></label><label class="fig-dot" for="b3"></label><label class="fig-dot" for="b4"></label></div><label class="fig-btn fig-next" for="b3">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">B3</div>
+                  <div>
+                    <h2>Production risk is compile-time, not runtime</h2>
+                    <p>A bug here ships as wrong memoization in user apps after a compiler upgrade — not as a downed database.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="build" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>when it runs</em>
+                          <strong>Build / transform</strong>
+                          <span>CI and bundlers. Not the browser session.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Blast window: anyone compiling with the Babel plugin or a native host. Rollback is “pin the compiler,” not “restore a replica.”</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="error" data-tone="watch">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>failure mode</em>
+                          <strong>Silent JS drift</strong>
+                          <span>Worse than a crash: fixtures exist so this cannot hide.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Ask whether the 1,725 snaps cover the host you actually ship (Babel vs OXC vs SWC).</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="b2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot is-current" for="b3"></label><label class="fig-dot" for="b4"></label></div><label class="fig-btn fig-next" for="b4">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">B4</div>
+                  <div>
+                    <h2>What a reviewer should gate on</h2>
+                    <p>Host scope contract, adapter fidelity, and fixture coverage. Not React DOM, not a database checklist.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-callout" data-tone="focus">No public REST, no prod DB, no user PII. The blast is compiler integrators and the JS they emit into everyone else’s apps.</div>
+                  <details class="fig-node wide" data-kind="lock" data-tone="changed">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>gate</em>
+                        <strong>Do not merge if…</strong>
+                        <span>A host can call compile() without scopes, or OXC/SWC output diverges from TS on the e2e examples.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Those are the blast-shaped failures. Arena internals can lag if snaps stay green.</p>
+                    </div>
+                  </details>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="b3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot" for="b3"></label><label class="fig-dot is-current" for="b4"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+            </section>
+          </div>
+        </div>
       </div>
     </article>
+    <script src="../figure.js"></script>
   </body>
 </html>

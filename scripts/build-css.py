@@ -124,10 +124,23 @@ icon_rules = "".join(
     for name, inner in ICONS.items()
 )
 
-scene_rules = "\n".join(
-    f".fig-deck:has(#s{i}:checked) .fig-scene:nth-of-type({i}) {{ display: flex; }}"
-    for i in range(1, 9)
-)
+scene_bits = [
+    ".fig-view { display: none; }",
+    '.fig-deck:has(#view-story:checked) .fig-view[data-view="story"] { display: block; }',
+    '.fig-deck:has(#view-data:checked) .fig-view[data-view="data"] { display: block; }',
+    '.fig-deck:has(#view-blast:checked) .fig-view[data-view="blast"] { display: block; }',
+    ".fig-view:not(:has(input[type=radio]:checked)) .fig-scene:nth-of-type(1) { display: flex; }",
+    ".fig-deck:not(:has(.fig-view)):not(:has(input:checked)) .fig-scene:nth-of-type(1) { display: flex; }",
+]
+for i in range(1, 9):
+    scene_bits.append(
+        f".fig-deck:not(:has(.fig-view)):has(#s{i}:checked) .fig-scene:nth-of-type({i}) {{ display: flex; }}"
+    )
+    for prefix in ("s", "d", "b"):
+        scene_bits.append(
+            f".fig-view:has(#{prefix}{i}:checked) .fig-scene:nth-of-type({i}) {{ display: flex; }}"
+        )
+scene_rules = "\n".join(scene_bits)
 
 tone_before = {}
 for tone in ("added", "removed", "changed", "focus", "ghost"):
@@ -258,13 +271,47 @@ body.fig-page {{ min-height: 100vh; }}
   color: var(--fig-muted);
   margin-top: 10px;
 }}
+.fig-view-tabs {{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 28px 0;
+  background: #fffaf2;
+}}
+.fig-view-tab {{
+  font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+  font-size: 13px;
+  font-weight: 550;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--fig-rule);
+  background: #fff;
+  cursor: pointer;
+  color: var(--fig-ink);
+}}
+.fig-view-tab:hover {{ border-color: var(--fig-ink); }}
+.fig-deck:has(#view-story:checked) .fig-view-tab[for="view-story"],
+.fig-deck:has(#view-data:checked) .fig-view-tab[for="view-data"],
+.fig-deck:has(#view-blast:checked) .fig-view-tab[for="view-blast"] {{
+  background: var(--fig-ink);
+  color: var(--fig-paper);
+  border-color: var(--fig-ink);
+}}
+.fig-view-tab small {{
+  display: block;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  opacity: 0.72;
+  margin-top: 1px;
+}}
 
 .fig-scene {{
   display: none;
   flex-direction: column;
   min-height: 420px;
 }}
-.fig-deck:not(:has(input:checked)) .fig-scene:nth-of-type(1) {{ display: flex; }}
 {scene_rules}
 
 .fig-stage {{
@@ -624,7 +671,7 @@ ICON_RULES_HERE
   display: grid;
   place-items: center;
 }}
-.fig-node-go::before {{ content: "Inspect"; }}
+.fig-node-go::before {{ content: "Ask"; }}
 .fig-node[open] > summary .fig-node-go::before {{ content: "Close"; }}
 .fig-node-panel {{
   padding: 12px 14px 14px;
@@ -699,6 +746,76 @@ ICON_RULES_HERE
   top: 8px;
   right: 28px;
 }}
+
+.fig-ask {{
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--fig-rule);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}}
+.fig-ask-label {{
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fig-muted);
+}}
+.fig-ask-q, .fig-ask-prompt {{
+  width: 100%;
+  border: 1px solid var(--fig-rule);
+  border-radius: 10px;
+  font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  padding: 10px 12px;
+  background: #fff;
+  color: var(--fig-ink);
+  resize: vertical;
+}}
+.fig-ask-q {{ min-height: 72px; }}
+.fig-ask-prompt {{
+  min-height: 140px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  line-height: 1.45;
+  background: #1a1714;
+  color: #f3efe6;
+  border-color: #1a1714;
+}}
+.fig-ask .fig-btn {{ align-self: flex-start; min-width: 0; }}
+.fig-ask .fig-btn.is-copied {{ background: var(--fig-added-bg); color: var(--fig-added); border-color: var(--fig-added); }}
+
+.fig-risk {{
+  width: 220px;
+  max-width: 100%;
+  border: 1px solid var(--fig-rule);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: #fff;
+  text-align: left;
+}}
+.fig-risk em {{
+  display: block;
+  font-style: normal;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fig-muted);
+}}
+.fig-risk strong {{
+  display: block;
+  font-family: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif;
+  font-size: 18px;
+  margin: 4px 0 6px;
+  letter-spacing: -0.03em;
+}}
+.fig-risk span {{ font-size: 12.5px; color: #3f3a34; line-height: 1.4; }}
+.fig-risk[data-level="hot"] {{ background: var(--fig-removed-bg); }}
+.fig-risk[data-level="watch"] {{ background: var(--fig-changed-bg); }}
+.fig-risk[data-level="safe"] {{ background: var(--fig-added-bg); }}
 
 .fig-edge {{
   display: inline-flex;
@@ -927,6 +1044,7 @@ ICON_RULES_HERE
   .fig-deck {{ margin-top: 16px; }}
   .fig-node {{ width: 100%; }}
   .fig-node.tight {{ width: 100%; }}
+  .fig-view-tabs {{ padding-left: 16px; padding-right: 16px; }}
 }}
 """
 

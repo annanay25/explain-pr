@@ -1,119 +1,108 @@
 ---
 name: explain-pr
-description: Explain a pull request as a stepped visual walkthrough using Figure (one CSS file, plain HTML, no JavaScript). Use when asked to explain a PR, summarize code changes for humans, produce a change walkthrough, or generate an HTML visualization of what a diff does.
+description: Explain a pull request as multiple visual views (story, data flow, blast radius) using Figure. Use when asked to explain a PR, summarize code changes, show data flow before/after, assess blast radius, or generate an HTML visualization of what a diff does.
 ---
 
 # Explain a PR with Figure
 
-Produce a single HTML page. Copy `figure.css` next to it (or link it). That file already contains the fonts and the glyph icons. Do not add JavaScript, npm, or a build step.
+Produce a **single HTML page with three views** of the same PR:
 
-Do not write a prose essay. Compose 5–8 scenes. The reader advances with **Next** (a `<label>` wired to a hidden radio). Depth lives **inside components**: a reviewer must be able to click a card and keep opening nested sections until they have enough.
+1. **Story** — what changed, in claims a human can step through.
+2. **Data** — what payload moved, which component processed it, **how** it did that before vs after.
+3. **Blast radius** — public APIs, prod stores / DBs, callers who feel a mistake.
 
-## Output
+Copy `figure.css` and `figure.js` next to the page (or link them). Fonts and icons live in the CSS. `figure.js` only builds the **ask prompt** when a reviewer opens a component. Views and Next are CSS (hidden radios + labels). No npm, no build.
+
+Do not write a prose essay. Each view is 3–5 scenes (8 max). The reader switches views with tabs, advances with **Next**.
+
+## Output skeleton
 
 ```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PR title — Figure</title>
-    <link rel="stylesheet" href="figure.css" />
-  </head>
-  <body class="fig-page">
-    <article class="fig-deck">
-      <div class="fig-shell">
-        <header class="fig-mast">
-          <div>
-            <p class="fig-kicker">Figure · PR walk</p>
-            <h1>Short human title</h1>
-            <div class="fig-repo"><a href="https://github.com/org/repo/pull/1234">org/repo #1234</a></div>
-            <p class="fig-inspect-hint">Click a component to inspect. Nested folds go as deep as you want.</p>
-          </div>
-          <div class="fig-mast-side">
-            <span class="fig-stat added">+318</span>
-            <span class="fig-stat removed">−102</span>
-            <span class="fig-stat">20 files</span>
-          </div>
-        </header>
+<link rel="stylesheet" href="figure.css" />
+...
+<nav class="fig-view-tabs">
+  <label class="fig-view-tab" for="view-story">Story<small>what changed</small></label>
+  <label class="fig-view-tab" for="view-data">Data<small>who processed what, how</small></label>
+  <label class="fig-view-tab" for="view-blast">Blast radius<small>APIs, stores, callers</small></label>
+</nav>
+<input type="radio" name="view" id="view-story" checked>
+<input type="radio" name="view" id="view-data">
+<input type="radio" name="view" id="view-blast">
 
-        <input type="radio" name="walk" id="s1" checked>
-        <input type="radio" name="walk" id="s2">
-        <input type="radio" name="walk" id="s3">
-
-        <div class="fig-scenes">
-          <section class="fig-scene">
-            <div class="fig-stage">
-              <div class="fig-scene-head">
-                <div class="fig-index">01</div>
-                <div>
-                  <h2>The static shell is reused after the first miss</h2>
-                  <p>After a fallback is served, the route shell is generated and later requests skip the cold path.</p>
-                </div>
-              </div>
-              <div class="fig-canvas">
-                <div class="fig-row">
-                  <div class="fig-user" data-label="Visitor"></div>
-                  <div class="fig-edge" data-label="GET /p"></div>
-                  <details class="fig-node" data-kind="cloud" data-tone="added">
-                    <summary>
-                      <i class="fig-mark"></i>
-                      <span class="fig-node-text">
-                        <em>cache</em>
-                        <strong>CDN shell</strong>
-                        <span>Promoted route shell, not a fallback.</span>
-                      </span>
-                      <b class="fig-node-go"></b>
-                    </summary>
-                    <div class="fig-node-panel">
-                      <p>Future requests use this instead of regenerating a fallback.</p>
-                      <details class="fig-fold">
-                        <summary>What still hits origin</summary>
-                        <p>Dynamic holes. Cookies, search, user. The frame around them is what got cached.</p>
-                      </details>
-                    </div>
-                  </details>
-                </div>
-              </div>
-            </div>
-            <nav class="fig-nav">
-              <span class="fig-btn is-disabled">Back</span>
-              <div class="fig-dots-nav">
-                <label class="fig-dot is-current" for="s1"></label>
-                <label class="fig-dot" for="s2"></label>
-                <label class="fig-dot" for="s3"></label>
-              </div>
-              <label class="fig-btn fig-next" for="s2">Next</label>
-            </nav>
-          </section>
-          <!-- more scenes: Back is <label class="fig-btn" for="sN">Back</label> -->
-        </div>
-      </div>
-    </article>
-  </body>
-</html>
+<div class="fig-view" data-view="story">
+  <input type="radio" name="walk" id="s1" checked>
+  <input type="radio" name="walk" id="s2">
+  <div class="fig-scenes"> ... sections with ids s1/s2 ... </div>
+</div>
+<div class="fig-view" data-view="data">
+  <input type="radio" name="data" id="d1" checked>
+  <div class="fig-scenes"> ... </div>
+</div>
+<div class="fig-view" data-view="blast">
+  <input type="radio" name="blast" id="b1" checked>
+  <div class="fig-scenes"> ... </div>
+</div>
+...
+<script src="figure.js"></script>
 ```
 
-If this repo is not on disk, copy the contents of `figure.css` verbatim. Do not rewrite the stylesheet.
+Scene radios: Story `#s1`–`#s8`, Data `#d1`–`#d8`, Blast `#b1`–`#b8`. Put a `.fig-repo` link and the PR title in `.fig-mast h1` — the prompt composer reads those.
+
+If this repo is not on disk, copy `figure.css` and `figure.js` verbatim.
 
 ## How to think
 
 1. Read the PR title, body, and the shape of the diff (not every line).
-2. Name the *system* the change lives in.
+2. Name the system. Then split work into the three views — do not dump everything into Story.
 3. One claim per scene.
-4. Prefer before → after, then the mechanism, then the consequence.
-5. Stop at 8 scenes (the stylesheet only wires `#s1`–`#s8`). Extra depth goes inside nodes, not extra slides.
-6. To stack two flows, wrap them in `.fig-col` with `<div class="fig-edge down">` **between** the rows.
+4. Story: before → after → mechanism → consequence.
+5. Data: name the **payload**, the **processor**, and the **HOW** (parse, copy, cache, serialize, walk twice, …). Draw before and after. Highlight the component whose HOW changed.
+6. Blast: public API / plugin contract / prod DB or cache / who callers are. Use `.fig-risk` with `data-level="hot|watch|safe"`. End with a “do not merge if…” gate.
+7. Extra depth is a node the reviewer can open and **ask**, not extra slides.
 
-## Inspectable nodes (required for named components)
+## Data view (required)
 
-Do **not** draw Babel, OXC, SWC, Vite environments, scanners, shells, etc. as identical `.fig-box` squares. Each named part of the system is a `<details class="fig-node">` with:
+Ask, per stage: *what is the data, who touches it, how did they touch it, how do they now?*
 
-- `data-kind` matching a catalog glyph (so the icon explains the role)
-- a **kind** line (`<em>parser host</em>`)
-- a **name** (`<strong>OXC</strong>`)
-- a **one-line role** (`<span>Rust parser. New front door.</span>`)
-- a panel the reviewer can open, with nested `.fig-fold` (and nested `.fig-node` if needed) so they can go as deep as they want
+Typical cards:
+
+- payload: `file`, `js`, `html`, `token`, `ast`, `stream`
+- processor: `babel`, `scan`, `server`, `worker`, `adapter`
+- store: `cache`, `graph`, `arena`, `db`
+
+Edge labels are the operation (`parse`, `serialize`, `walk #2`, `store`).
+
+Do **not** make Data a copy of Story with different titles. If Story said “three front doors,” Data says “Babel tree serializes into Rust; OXC maps in-process; HIR lives as indices.”
+
+## Blast radius (required)
+
+Put four `.fig-risk` tiles on scene 1:
+
+```html
+<div class="fig-risk" data-level="hot"><em>public API</em><strong>Environment API</strong><span>…</span></div>
+<div class="fig-risk" data-level="watch"><em>compat</em><strong>Old server API</strong><span>…</span></div>
+<div class="fig-risk" data-level="safe"><em>prod databases</em><strong>None</strong><span>…</span></div>
+```
+
+Be honest. A 123k-line compiler port with **no** DB and **no** ReactDOM change should say that. A 20-file cache write that can leak cookies into a CDN object is **hot** even if the diff is small.
+
+Name callers (framework authors, later visitors, PostCSS adapters). End with a gate node: “Do not merge if…”
+
+`.fig-page` and `.fig-shell` are chrome. Glyphs for documents/terminals are `data-kind="doc"` / `data-kind="term"`.
+
+## Inspect + ask prompt
+
+Every named component is `<details class="fig-node" data-kind="…">` with kind, name, role, and a short panel of facts.
+
+`figure.js` appends, on every node:
+
+- a **Your questions** textarea
+- a **Prompt for your coding agent** textarea, prefilled from the PR title, view, scene claim, and panel text
+- **Copy prompt**
+
+Do not omit panel facts — they become `data-known` in the prompt. The reviewer types what the walkthrough did not answer. They paste the prompt back into Cursor / Codex / Claude.
+
+Example node:
 
 ```html
 <details class="fig-node" data-kind="oxc" data-tone="added">
@@ -127,30 +116,20 @@ Do **not** draw Babel, OXC, SWC, Vite environments, scanners, shells, etc. as id
     <b class="fig-node-go"></b>
   </summary>
   <div class="fig-node-panel">
-    <p>What this component actually does in this PR.</p>
-    <details class="fig-fold">
-      <summary>A sharper question</summary>
-      <p>Answer. Nest another .fig-fold if the reviewer might still ask “why.”</p>
-    </details>
+    <p>What this component actually does in this PR, including HOW it processes data.</p>
   </div>
 </details>
 ```
 
-Modifiers:
+Modifiers: `.tight`, `.wide`, `open` to start expanded (use once per scene for the main object).
 
-- `.tight` — icon + name only on the card; panel still has full detail
-- `.wide` — full-width inspector under a row of cards
-- `open` on `<details>` — start expanded (use once per scene to teach, or for the scene’s main object)
+Anonymous extras may stay `<div class="fig-user" data-label="Visitor A"></div>`.
 
-Anonymous extras (Visitor A, a generic arrow) may stay compact glyphs: `<div class="fig-user" data-label="Visitor A"></div>`.
+Tones: `added`, `removed`, `changed`, `focus`, `ghost`.
 
-Optional chip: `<b class="fig-chip">new</b>` inside a glyph or node.
+## Kinds
 
-Tones on `data-tone`: `added`, `removed`, `changed`, `focus`, `ghost`.
-
-## Kinds (`data-kind` / `.fig-{kind}`)
-
-Pick the mark that explains the **role**, not a generic box.
+Pick the mark that explains the **role**. Babel / OXC / SWC / named environments / fallback vs route shell are never all `.fig-box`.
 
 | Kind | Use for |
 |------|---------|
@@ -159,35 +138,31 @@ Pick the mark that explains the **role**, not a generic box.
 | `server` / `worker` / `runtime` | Process, origin, job, executable env |
 | `db` / `bucket` / `cache` / `queue` / `cloud` | Stores and edge |
 | `api` / `env` | Gateway, named environment |
-| `babel` / `oxc` / `swc` / `rust` | Specific compiler hosts — never reuse `box` for these |
+| `babel` / `oxc` / `swc` / `rust` | Specific compiler hosts |
 | `compiler` / `parser` / `ast` / `ir` / `hir` | Compiler pipeline |
 | `plugin` / `adapter` / `transform` | Integrations and passes |
 | `arena` / `crate` / `bundler` / `scan` | Storage, package, pack, filesystem scan |
-| `file` / `folder` / `doc` / `term` / `fallback` / `route` | Artifacts, documents, CLI, fallback HTML |
+| `file` / `folder` / `doc` / `term` / `fallback` / `route` | Artifacts |
 | `module` / `graph` / `package` | Graphs and packages |
 | `html` / `css` / `js` / `wasm` / `stream` / `hook` | Web shapes |
 | `lock` / `key` / `flag` / `test` / `event` / `token` | Signals |
 | `clock` / `filter` / `branch` / `tree` / `config` / `log` / `error` | Ops |
 | `request` / `response` / `snapshot` / `build` / `pipeline` | Flow |
-| `snippet` | Generic code mark |
 | `box` | Last resort unnamed module |
 
-Arrow: `<div class="fig-edge" data-label="GET"></div>`. Add class `down` or `strike`.
-
-A scene can hold 3–6 nodes. Put extra questions inside the panel, not as more cards.
+Arrow: `<div class="fig-edge" data-label="GET"></div>`. Add `down` or `strike`.
 
 ## Layout
 
-`.fig-row`, `.fig-col`, `.fig-cluster` (`data-label`), `.fig-compare` + `.fig-pane`, `.fig-stack` + `.fig-layer`, `.fig-pipe` + `.fig-phase`, `.fig-timeline` + `.fig-step`, `.fig-code` (`data-caption`) + `.fig-line.added|.removed`, `.fig-metric` (`data-value`), `.fig-callout`, `.fig-datapoints` with `<i class="on">` dots.
+`.fig-row`, `.fig-col`, `.fig-cluster`, `.fig-compare` + `.fig-pane`, `.fig-stack` + `.fig-layer`, `.fig-pipe` + `.fig-phase`, `.fig-timeline` + `.fig-step`, `.fig-code` + `.fig-line.added|.removed`, `.fig-metric`, `.fig-callout`, `.fig-datapoints`, `.fig-risk`.
 
-Code samples: at most 6 lines, usually inside a node panel.
+To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows.
 
 ## Rules
 
-- Abstract shapes only. No logos, no product screenshots.
-- No `<script>`, no CSS animations, no autoplay.
+- Abstract shapes only. No logos.
+- No CSS animations, no autoplay. `figure.js` is only the prompt composer.
 - Real names from the PR. Do not invent subsystems.
-- Distinct `data-kind` for distinct components. Babel is not a box. An environment is not a box. A fallback is not a cloud unless it is actually a CDN.
-- `.fig-page` and `.fig-shell` are page chrome, not glyphs. Use `data-kind="doc"` / `data-kind="term"` for documents and terminals.
-- Every important component is inspectable. If a reviewer would ask “what is this?”, it needs a panel.
+- Always emit all three views. If blast is “none,” say so with `.fig-risk` `safe` tiles — do not skip the view.
+- Distinct `data-kind` for distinct components.
 - Open the HTML file in a browser. Nothing to install.

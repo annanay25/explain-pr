@@ -12,10 +12,10 @@
       <section class="hero">
         <h1>Explain the change,<br />not the diff.</h1>
         <p>
-          One CSS file of named components — people, compilers, stores, edges —
-          so a model can walk a reviewer through a pull request. Click any card
-          for more. Open nested sections until you have enough. No Node, no npm,
-          no JavaScript.
+          A coding agent emits several views of the same PR: the story, the data
+          path, and the blast radius. Click any component, type what you still
+          want to know, and copy a prompt back into the agent. One CSS file, a
+          tiny script for the prompt box, no npm.
         </p>
       </section>
 
@@ -25,12 +25,21 @@
             <div>
               <p class="fig-kicker">Figure · PR walk</p>
               <h1>What this library is for</h1>
-              <p class="fig-inspect-hint">Click a component to inspect. Nested folds go as deep as the reviewer wants.</p>
+              <div class="fig-repo">Figure · demo of Story, Data, and Blast radius</div>
+              <p class="fig-inspect-hint">Switch views. Open a card. Type a question. Copy the prompt.</p>
             </div>
           </header>
+          <nav class="fig-view-tabs">
+            <label class="fig-view-tab" for="view-story">Story<small>what changed</small></label>
+            <label class="fig-view-tab" for="view-data">Data<small>who processed what, how</small></label>
+            <label class="fig-view-tab" for="view-blast">Blast radius<small>APIs, stores, callers</small></label>
+          </nav>
+          <input type="radio" name="view" id="view-story" checked>
+          <input type="radio" name="view" id="view-data">
+          <input type="radio" name="view" id="view-blast">
+          <div class="fig-view" data-view="story">
           <input type="radio" name="intro" id="s1" checked>
           <input type="radio" name="intro" id="s2">
-          <input type="radio" name="intro" id="s3">
           <div class="fig-scenes">
             <section class="fig-scene">
               <div class="fig-stage">
@@ -95,7 +104,6 @@
                 <div class="fig-dots-nav">
                   <label class="fig-dot is-current" for="s1"></label>
                   <label class="fig-dot" for="s2"></label>
-                  <label class="fig-dot" for="s3"></label>
                 </div>
                 <label class="fig-btn fig-next" for="s2">Next</label>
               </nav>
@@ -105,8 +113,8 @@
                 <div class="fig-scene-head">
                   <div class="fig-index">02</div>
                   <div>
-                    <h2>Every component can be opened</h2>
-                    <p>Kind, name, and a one-line role on the card. Click Inspect for prose, code, and nested questions — as far as you want.</p>
+                    <h2>Click a component to ask further</h2>
+                    <p>Kind, name, and a one-line role on the card. Open it, type your own questions, copy the prompt into your coding agent.</p>
                   </div>
                 </div>
                 <div class="fig-canvas">
@@ -123,17 +131,6 @@
                       </summary>
                       <div class="fig-node-panel">
                         <p>Hosts convert native trees into the compiler’s Babel-shaped AST. Babel is now a guest, not the only host.</p>
-                        <details class="fig-fold" open>
-                          <summary>What the host must provide</summary>
-                          <p>AST plus scope info. The Rust crate does not re-analyze scopes.</p>
-                          <details class="fig-fold">
-                            <summary>Why scopes stay on the host</summary>
-                            <p>Each parser already did the work. Reimplementing Babel scopes in Rust was out of scope for the port.</p>
-                          </details>
-                        </details>
-                        <div class="fig-code" data-caption="public shape">
-                          <span class="fig-line">compile(babel_ast, scopes) → babel_ast</span>
-                        </div>
                       </div>
                     </details>
                     <details class="fig-node" data-kind="oxc" data-tone="added">
@@ -150,22 +147,7 @@
                         <p>A thin crate in the React repo converts OXC’s AST into the compiler’s Babel-AST so the core never depends on OXC types.</p>
                       </div>
                     </details>
-                    <details class="fig-node" data-kind="swc" data-tone="added">
-                      <summary>
-                        <i class="fig-mark"></i>
-                        <span class="fig-node-text">
-                          <em>parser host</em>
-                          <strong>SWC</strong>
-                          <span>Speedy compiler. New front door.</span>
-                        </span>
-                        <b class="fig-node-go"></b>
-                      </summary>
-                      <div class="fig-node-panel">
-                        <p>Same pattern as OXC: convert in, compile, convert out. Native paths should beat the Babel plugin once serialization is gone.</p>
-                      </div>
-                    </details>
                   </div>
-                  <div class="fig-legend"><span><i class="add"></i> added</span><span><i class="rem"></i> removed</span><span><i class="chg"></i> changed</span><span><i class="foc"></i> focus</span></div>
                 </div>
               </div>
               <nav class="fig-nav">
@@ -173,41 +155,107 @@
                 <div class="fig-dots-nav">
                   <label class="fig-dot" for="s1"></label>
                   <label class="fig-dot is-current" for="s2"></label>
-                  <label class="fig-dot" for="s3"></label>
-                </div>
-                <label class="fig-btn fig-next" for="s3">Next</label>
-              </nav>
-            </section>
-            <section class="fig-scene">
-              <div class="fig-stage">
-                <div class="fig-scene-head">
-                  <div class="fig-index">03</div>
-                  <div>
-                    <h2>Next is the only transition</h2>
-                    <p>Each scene is one claim. The reader clicks through at their own pace — no autoplay, no choreography, no JavaScript.</p>
-                  </div>
-                </div>
-                <div class="fig-canvas">
-                  <div class="fig-timeline">
-                    <div class="fig-step">Problem</div>
-                    <div class="fig-step" data-tone="focus">Old path</div>
-                    <div class="fig-step" data-tone="added">Insert</div>
-                    <div class="fig-step">New path</div>
-                    <div class="fig-step">Proof</div>
-                  </div>
-                  <div class="fig-callout">Write 5–8 scenes. Put depth inside components, not extra slides.</div>
-                </div>
-              </div>
-              <nav class="fig-nav">
-                <label class="fig-btn" for="s2">Back</label>
-                <div class="fig-dots-nav">
-                  <label class="fig-dot" for="s1"></label>
-                  <label class="fig-dot" for="s2"></label>
-                  <label class="fig-dot is-current" for="s3"></label>
                 </div>
                 <span class="fig-btn fig-next is-disabled">Done</span>
               </nav>
             </section>
+          </div>
+          </div>
+
+          <div class="fig-view" data-view="data">
+            <input type="radio" name="intro-data" id="d1" checked>
+            <div class="fig-scenes">
+              <section class="fig-scene">
+                <div class="fig-stage">
+                  <div class="fig-scene-head">
+                    <div class="fig-index">D1</div>
+                    <div>
+                      <h2>Data view: who processed the payload, and how</h2>
+                      <p>Before vs after. Name the data, the processor, and the HOW that changed — not just the file list.</p>
+                    </div>
+                  </div>
+                  <div class="fig-canvas">
+                    <div class="fig-compare">
+                      <div class="fig-pane" data-label="Before">
+                        <div class="fig-row">
+                          <details class="fig-node tight" data-kind="js"><summary><i class="fig-mark"></i><span class="fig-node-text"><strong>JSX</strong></span><b class="fig-node-go"></b></summary><div class="fig-node-panel"><p>Source bytes. Unchanged.</p></div></details>
+                          <div class="fig-edge" data-label="parse"></div>
+                          <details class="fig-node" data-kind="babel" data-tone="focus">
+                            <summary>
+                              <i class="fig-mark"></i>
+                              <span class="fig-node-text">
+                                <em>how then</em>
+                                <strong>Babel</strong>
+                                <span>Only processor. AST + scopes in one JS heap.</span>
+                              </span>
+                              <b class="fig-node-go"></b>
+                            </summary>
+                            <div class="fig-node-panel">
+                              <p>HOW: parse and bind in Babel, mutate via TS pointers, print back through Babel.</p>
+                            </div>
+                          </details>
+                        </div>
+                      </div>
+                      <div class="fig-pane" data-label="After" data-tone="added">
+                        <div class="fig-row">
+                          <details class="fig-node tight" data-kind="oxc" data-tone="added"><summary><i class="fig-mark"></i><span class="fig-node-text"><strong>OXC tree</strong></span><b class="fig-node-go"></b></summary><div class="fig-node-panel"><p>Native Rust AST. Adapter converts in.</p></div></details>
+                          <div class="fig-edge" data-label="ids"></div>
+                          <details class="fig-node" data-kind="arena" data-tone="added">
+                            <summary>
+                              <i class="fig-mark"></i>
+                              <span class="fig-node-text">
+                                <em>how now</em>
+                                <strong>Arenas</strong>
+                                <span>Same passes. Values are indices, not pointers.</span>
+                              </span>
+                              <b class="fig-node-go"></b>
+                            </summary>
+                            <div class="fig-node-panel">
+                              <p>The data view’s job is to make this HOW change obvious, then let you ask the agent about convert-in fidelity.</p>
+                            </div>
+                          </details>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <nav class="fig-nav">
+                  <span class="fig-btn is-disabled">Back</span>
+                  <div class="fig-dots-nav"><label class="fig-dot is-current" for="d1"></label></div>
+                  <span class="fig-btn fig-next is-disabled">Done</span>
+                </nav>
+              </section>
+            </div>
+          </div>
+
+          <div class="fig-view" data-view="blast">
+            <input type="radio" name="intro-blast" id="b1" checked>
+            <div class="fig-scenes">
+              <section class="fig-scene">
+                <div class="fig-stage">
+                  <div class="fig-scene-head">
+                    <div class="fig-index">B1</div>
+                    <div>
+                      <h2>Blast radius: APIs, stores, callers</h2>
+                      <p>Is this a public API change? A prod database? Or a large private diff with a small external surface?</p>
+                    </div>
+                  </div>
+                  <div class="fig-canvas">
+                    <div class="fig-row">
+                      <div class="fig-risk" data-level="hot"><em>public-ish</em><strong>Host crates</strong><span>New OXC/SWC adapters. Integrators must care.</span></div>
+                      <div class="fig-risk" data-level="watch"><em>plugin API</em><strong>Same shape</strong><span>Still AST in, AST out. Scopes now explicit.</span></div>
+                      <div class="fig-risk" data-level="safe"><em>prod DBs</em><strong>None</strong><span>Compile-time only. No user data plane.</span></div>
+                      <div class="fig-risk" data-level="safe"><em>React DOM</em><strong>Untouched</strong><span>App developers do not get a new runtime API.</span></div>
+                    </div>
+                  </div>
+                </div>
+                <nav class="fig-nav">
+                  <span class="fig-btn is-disabled">Back</span>
+                  <div class="fig-dots-nav"><label class="fig-dot is-current" for="b1"></label></div>
+                  <span class="fig-btn fig-next is-disabled">Done</span>
+                </nav>
+              </section>
+            </div>
           </div>
         </div>
       </article>
@@ -246,9 +294,10 @@
         <a class="card" href="skills/explain-pr/SKILL.md">
           <div class="meta">Skill</div>
           <h3>explain-pr</h3>
-          <p>Copy <code>figure.css</code> next to an HTML file. That is the whole runtime.</p>
+          <p>Copy <code>figure.css</code> and <code>figure.js</code>. Emit Story, Data, and Blast radius views.</p>
         </a>
       </div>
     </main>
+    <script src="figure.js"></script>
   </body>
 </html>

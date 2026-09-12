@@ -17,7 +17,7 @@
             <p class="fig-kicker">Figure · PR walk</p>
             <h1>Oxide scanner on large repos</h1>
             <div class="fig-repo"><a href="https://github.com/tailwindlabs/tailwindcss/pull/19632">tailwindlabs/tailwindcss #19632</a></div>
-            <p class="fig-inspect-hint">Click the scanner, the walks, and mtime to see why large repos paid twice.</p>
+            <p class="fig-inspect-hint">Three views of the same PR. Click a component, type a question, copy the prompt into your coding agent.</p>
           </div>
           <div class="fig-mast-side">
             <span class="fig-stat added">+579</span>
@@ -25,6 +25,15 @@
             <span class="fig-stat">28 files</span>
           </div>
         </header>
+        <nav class="fig-view-tabs">
+          <label class="fig-view-tab" for="view-story">Story<small>what changed</small></label>
+          <label class="fig-view-tab" for="view-data">Data<small>who processed what, how</small></label>
+          <label class="fig-view-tab" for="view-blast">Blast radius<small>APIs, stores, callers</small></label>
+        </nav>
+        <input type="radio" name="view" id="view-story" checked>
+        <input type="radio" name="view" id="view-data">
+        <input type="radio" name="view" id="view-blast">
+        <div class="fig-view" data-view="story">
         <input type="radio" name="walk" id="s1" checked>
         <input type="radio" name="walk" id="s2">
         <input type="radio" name="walk" id="s3">
@@ -335,7 +344,268 @@
             <nav class="fig-nav"><label class="fig-btn" for="s5">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot is-current" for="s6"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
           </section>
         </div>
+        </div>
+
+        <div class="fig-view" data-view="data">
+          <input type="radio" name="data" id="d1" checked>
+          <input type="radio" name="data" id="d2">
+          <input type="radio" name="data" id="d3">
+          <div class="fig-scenes">
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D1</div>
+                  <div>
+                    <h2>Three payloads come out of one walk</h2>
+                    <p>Adapters ask Oxide for class candidates, a file list, and globs. scan() already walked the tree to build those. Reading .files used to walk again — same data, second HOW.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="folder">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>input data</em>
+                          <strong>Source files</strong>
+                          <span>Bytes on disk. The scanner is the only processor that should visit them per scan.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>HOW they were processed twice is the bug: extract candidates, then forget the visit list and walk for .files.</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge" data-label="scan()"></div>
+                    <details class="fig-node" data-kind="scan" data-tone="focus">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>processor</em>
+                          <strong>Scanner</strong>
+                          <span>Walks, extracts class-like tokens, should remember the files it saw.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>After the fix, files and globs are data already in the scanner, not a second processor.</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge" data-label="emits"></div>
+                    <details class="fig-node tight" data-kind="token"><summary><i class="fig-mark"></i><span class="fig-node-text"><strong>candidates</strong></span><b class="fig-node-go"></b></summary><div class="fig-node-panel"><p>The CSS-facing payload. Unchanged contract.</p></div></details>
+                    <details class="fig-node tight" data-kind="file" data-tone="added"><summary><i class="fig-mark"></i><span class="fig-node-text"><strong>files</strong></span><b class="fig-node-go"></b></summary><div class="fig-node-panel"><p>Watch list. HOW changed: reuse walk #1 instead of walking again.</p></div></details>
+                    <details class="fig-node tight" data-kind="filter"><summary><i class="fig-mark"></i><span class="fig-node-text"><strong>globs</strong></span><b class="fig-node-go"></b></summary><div class="fig-node-panel"><p>Also a watch list. Same reuse rule.</p></div></details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label></div><label class="fig-btn fig-next" for="d2">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D2</div>
+                  <div>
+                    <h2>HOW the walk itself is scheduled</h2>
+                    <p>First scan: synchronous walker (cheap on a tiny tree). Later scans: parallel. CLI: skip the walk when the caller already has the file list. mtime is not recorded until scan 2.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="scan" data-tone="focus">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>scan 1 how</em>
+                          <strong>Sync walk</strong>
+                          <span>No thread-pool tax. No mtime map allocated.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>A production CLI build that runs once should not pay to remember timestamps it will never read.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="worker" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>scan 2+ how</em>
+                          <strong>Parallel walk</strong>
+                          <span>Now the tree size is known. Overhead is worth it on a monorepo.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Ask whether a huge first production scan still uses sync, and if that is acceptable vs a heuristic.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="clock" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>stored where</em>
+                          <strong>mtime map</strong>
+                          <span>Lazy. Scan 2 starts it; scan 3+ re-extracts dirty files only.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Scan 2 still re-reads everything. That is the warm-up cost in the data path.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="d1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot is-current" for="d2"></label><label class="fig-dot" for="d3"></label></div><label class="fig-btn fig-next" for="d3">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D3</div>
+                  <div>
+                    <h2>Hot-path bytes: stop cloning the input</h2>
+                    <p>pre_process_input used to take content.to_vec() almost always. It now takes an owned Vec when it can. The cursor that walks every byte got smaller.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="transform" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>how now</em>
+                          <strong>owned input Vec</strong>
+                          <span>~92% of the time, no extra copy of file bytes before extraction.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>This is the inner loop of class extraction. Review the remaining 8% that still copies.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="filter" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>how now</em>
+                          <strong>pre-normalized globs</strong>
+                          <span>Glob work once, not per scan, so the walker is not re-parsing patterns.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Data that used to be recomputed (patterns) is now cached as normalized sources.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="d2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot is-current" for="d3"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+            </section>
+          </div>
+        </div>
+
+        <div class="fig-view" data-view="blast">
+          <input type="radio" name="blast" id="b1" checked>
+          <input type="radio" name="blast" id="b2">
+          <input type="radio" name="blast" id="b3">
+          <div class="fig-scenes">
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">B1</div>
+                  <div>
+                    <h2>Oxide’s public API did not grow</h2>
+                    <p>Callers still ask for scan(), files, and globs. The blast is performance in large repos and adapters that assumed a cheap second walk.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <div class="fig-risk" data-level="safe"><em>public CSS API</em><strong>Unchanged</strong><span>No new utilities, no class-name contract change. Users do not rewrite templates.</span></div>
+                    <div class="fig-risk" data-level="safe"><em>prod databases</em><strong>None</strong><span>Filesystem reads of source files only.</span></div>
+                    <div class="fig-risk" data-level="watch"><em>Oxide API</em><strong>Same three answers</strong><span>Semantics of .files changed (no second walk). Adapters that depended on the double walk’s timing could notice.</span></div>
+                    <div class="fig-risk" data-level="hot"><em>large repos</em><strong>Intentional</strong><span>This is who the PR is for. A regression here is the whole point of the review.</span></div>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot" for="b3"></label></div><label class="fig-btn fig-next" for="b2">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">B2</div>
+                  <div>
+                    <h2>Adapters are the callers</h2>
+                    <p>PostCSS, Vite, webpack, and @tailwindcss/cli. CLI already had the file list — blasting it with a walk was the own-goal.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="adapter" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>callers</em>
+                          <strong>PostCSS / Vite / webpack</strong>
+                          <span>Watch .files and globs. They must not start walking the tree themselves.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Ask whether any adapter still ignores scanner.files and walks content paths on its own.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="package" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>callers</em>
+                          <strong>@tailwindcss/cli</strong>
+                          <span>Already knows changed files. Must skip the walk entirely.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>If CLI still triggers a full walk, the blast (wasted CPU on huge repos) remains.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="b1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot is-current" for="b2"></label><label class="fig-dot" for="b3"></label></div><label class="fig-btn fig-next" for="b3">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">B3</div>
+                  <div>
+                    <h2>Gate on “walk once” and tiny-app tax</h2>
+                    <p>Do not merge if .files still walks, or if the first scan of a 20-file app starts a parallel walker.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <details class="fig-node wide" data-kind="lock" data-tone="changed">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>gate</em>
+                        <strong>Do not merge if…</strong>
+                        <span>scan() + .files still hits the filesystem twice, or mtime is recorded on a one-shot production build.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Those recreate the two bugs this PR exists to kill. Public Tailwind CSS for users can stay identical.</p>
+                    </div>
+                  </details>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="b2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot is-current" for="b3"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+            </section>
+          </div>
+        </div>
       </div>
     </article>
+    <script src="../figure.js"></script>
   </body>
 </html>

@@ -49,6 +49,7 @@
                   <p>At build time Next can prerender a static HTML shell and postpone the bits that need request data. The browser gets one stream: shell first, dynamic holes later.</p>
                 </div>
               </div>
+              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-row">
                   <details class="fig-node" data-kind="html" data-tone="focus">
@@ -86,7 +87,6 @@
                 </div>
               </div>
             </div>
-            <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
           </section>
           <section class="fig-scene">
             <div class="fig-stage">
@@ -97,6 +97,7 @@
                   <p>Partial fallback prerendering could serve a generic fallback. The next visitor still paid for that cold shape. The fallback did not promote itself into a reusable route shell.</p>
                 </div>
               </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-timeline">
                   <div class="fig-step">Build</div>
@@ -139,7 +140,6 @@
                 </div>
               </div>
             </div>
-            <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
           </section>
           <section class="fig-scene">
             <div class="fig-stage">
@@ -150,6 +150,7 @@
                   <p>Wyatt Johnson’s change: once the fallback has gone out, Next renders the real route shell and stores it. The fallback is a one-time cold start, not a permanent personality.</p>
                 </div>
               </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-col">
                   <div class="fig-row">
@@ -205,7 +206,6 @@
                 </div>
               </div>
             </div>
-            <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
           </section>
           <section class="fig-scene">
             <div class="fig-stage">
@@ -216,6 +216,7 @@
                   <p>Visitor B is served the route shell immediately. Dynamic holes still resume on the origin; the static frame no longer has to be invented again.</p>
                 </div>
               </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-row">
                   <div class="fig-user" data-label="Visitor B"></div>
@@ -257,7 +258,6 @@
                 </div>
               </div>
             </div>
-            <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
           </section>
           <section class="fig-scene">
             <div class="fig-stage">
@@ -268,6 +268,7 @@
                   <p>+318 / −102 across 20 files, stacked on Partial Fallback Prerendering (#68958). Review the cache after fallback, not a new rendering model.</p>
                 </div>
               </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
               <div class="fig-canvas">
                 <div class="fig-code" data-caption="behaviour">
                   <span class="fig-line">serve fallback shell</span>
@@ -295,7 +296,6 @@
                 </details>
               </div>
             </div>
-            <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
           </section>
         </div>
         </div>
@@ -314,6 +314,7 @@
                     <p>PPR already split a response: static shell bytes first, then postponed holes that need request data. This PR does not change that split. It changes what happens to the shell bytes after a miss.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label></div><label class="fig-btn fig-next" for="d2">Next</label></nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <details class="fig-node" data-kind="html" data-tone="focus">
@@ -348,7 +349,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label></div><label class="fig-btn fig-next" for="d2">Next</label></nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -359,6 +359,7 @@
                     <p>Visitor A received generic fallback bytes. Nothing in the data path promoted those bytes (or a better shell) into a reusable cache entry. Visitor B’s request repeated the cold work.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><label class="fig-btn" for="d1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot is-current" for="d2"></label><label class="fig-dot" for="d3"></label></div><label class="fig-btn fig-next" for="d3">Next</label></nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <div class="fig-user" data-label="Visitor A"></div>
@@ -395,7 +396,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="d1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot is-current" for="d2"></label><label class="fig-dot" for="d3"></label></div><label class="fig-btn fig-next" for="d3">Next</label></nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -406,6 +406,7 @@
                     <p>Visitor A still gets fallback HTML immediately. After it is on the wire, Next renders the route shell and stores those bytes. Visitor B is served from cache; holes still resume on the origin.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><label class="fig-btn" for="d2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot is-current" for="d3"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
                 <div class="fig-canvas">
                   <div class="fig-col">
                     <div class="fig-row">
@@ -457,7 +458,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="d2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot is-current" for="d3"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
             </section>
           </div>
         </div>
@@ -476,6 +476,7 @@
                     <p>+318 / −102 across 20 files. No new user-facing Next API. The thing that changes in production is which HTML a CDN may keep after a fallback miss.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot" for="b3"></label></div><label class="fig-btn fig-next" for="b2">Next</label></nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <div class="fig-risk" data-level="safe"><em>public Next API</em><strong>None new</strong><span>App authors do not opt in to a new function. This rides on existing PPR / fallback prerender.</span></div>
@@ -485,7 +486,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot" for="b3"></label></div><label class="fig-btn fig-next" for="b2">Next</label></nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -496,6 +496,7 @@
                     <p>Every visitor after the first miss on a fallback route. Not a single tenant’s DB row — a cached document for a URL.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><label class="fig-btn" for="b1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot is-current" for="b2"></label><label class="fig-dot" for="b3"></label></div><label class="fig-btn fig-next" for="b3">Next</label></nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <details class="fig-node" data-kind="users" data-tone="changed">
@@ -529,7 +530,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="b1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot is-current" for="b2"></label><label class="fig-dot" for="b3"></label></div><label class="fig-btn fig-next" for="b3">Next</label></nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -540,6 +540,7 @@
                     <p>Do not merge if the stored shell can include postponed data, or if later requests still skip the new entry.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><label class="fig-btn" for="b2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot is-current" for="b3"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
                 <div class="fig-canvas">
                   <details class="fig-node wide" data-kind="lock" data-tone="changed">
                     <summary>
@@ -557,7 +558,6 @@
                   </details>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="b2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot is-current" for="b3"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
             </section>
           </div>
         </div>

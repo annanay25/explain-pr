@@ -247,7 +247,7 @@ body.fig-page { min-height: 100vh; }
   grid-template-columns: auto 1fr;
   gap: 14px;
   align-items: start;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 .fig-index {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
@@ -280,16 +280,19 @@ body.fig-page { min-height: 100vh; }
   flex-direction: column;
   justify-content: flex-start;
   gap: 16px;
-  padding: 4px 0 12px;
+  padding: 12px 0 12px;
 }
 .fig-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 28px 20px;
+  margin: 0 -28px 4px;
+  padding: 10px 28px 12px;
   border-top: 1px solid var(--fig-rule);
+  border-bottom: 1px solid var(--fig-rule);
   background: #faf6ee;
+  flex-shrink: 0;
 }
 .fig-dots-nav { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
 .fig-dot {
@@ -1296,6 +1299,7 @@ label.fig-btn { cursor: pointer; }
 @media (max-width: 700px) {
   .fig-mast { flex-direction: column; padding: 18px 16px 14px; }
   .fig-stage, .fig-nav { padding-left: 16px; padding-right: 16px; }
+  .fig-nav { margin-left: -16px; margin-right: -16px; }
   .fig-scene { min-height: 320px; }
   .fig-btn { min-width: 84px; }
   .fig-deck { margin-top: 16px; }

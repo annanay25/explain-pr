@@ -1,19 +1,17 @@
 ---
 name: explain-pr
-description: Explain a pull request as multiple visual views (story, data flow, blast radius) using Figure. Use when asked to explain a PR, summarize code changes, show data flow before/after, assess blast radius, or generate an HTML visualization of what a diff does.
+description: Use when asked to explain a PR, summarize code changes, show data flow, assess blast radius, or generate an HTML visualization of what a diff does.
 ---
 
 # Explain a PR with Figure
 
-Produce a **single HTML page with three views** of the same PR:
+Produce **one short HTML walk** of the PR. Not three parallel views. The author should understand the change in a few Next clicks.
 
-1. **Story** — what changed, in claims a human can step through.
-2. **Data** — what payload moved, which component processed it, **how** it did that before vs after.
-3. **Blast radius** — public APIs, prod stores / DBs, callers who feel a mistake.
+Copy `figure.css` and `figure.js` next to the page (or link them). Fonts and icons live in the CSS. `figure.js` only builds the **ask prompt** when a reviewer opens a component. Next is CSS (hidden radios + labels). No npm, no build, **no local server**. Open the `.html` file from disk (`file://`). Do not start Python, `npx serve`, or anything else to preview it.
 
-Copy `figure.css` and `figure.js` next to the page (or link them). Fonts and icons live in the CSS. `figure.js` only builds the **ask prompt** when a reviewer opens a component. Views and Next are CSS (hidden radios + labels). No npm, no build, **no local server**. Open the `.html` file from disk (`file://`). Do not start Python, `npx serve`, or anything else to preview it.
+Do not write a prose essay. **3 scenes. 5 is the hard max.** One claim per scene.
 
-Do not write a prose essay. Each view is 3–5 scenes (8 max). The reader switches views with tabs, advances with **Next**.
+The component palette is `catalog.html`. Pick nodes, clusters, compare panes, metrics, risk tiles, and arrows that fit **this** PR. Do not invent a Story / Data / Blast tab set, and do not emit empty slides to “cover” those old views.
 
 ## Language
 
@@ -37,111 +35,79 @@ Bad: “The page reads that one object instead of walking the prefix. `scan_buck
 
 Good: “The page reads that catalog instead of listing every file in storage. A Scan bucket checkbox still does the old, slower listing when you need brand-new blocks.”
 
+## Length
+
+The old three-view walk was too long. Compress.
+
+- Merge before and after onto **one** compare (or one flow with a strike). Do not spend a scene on “it was slow” and another on “here is the new file.”
+- Extra facts go in **panels**, not extra slides.
+- If two sentences would retell the same claim, delete a scene.
+- Typical shape (not a template): (1) what changed, (2) how it works now, (3) what still hurts / do not merge if. Skip a beat that this PR does not have.
+
 ## Output skeleton
+
+No view tabs. Radios `#s1`–`s5` on the deck. Put **Back / dots / Next above the graphic** (nav is a sibling of `.fig-stage`; CSS puts it between the title and the canvas).
 
 ```html
 <link rel="stylesheet" href="figure.css" />
-...
-<nav class="fig-view-tabs">
-  <label class="fig-view-tab" for="view-story">Story<small>what changed</small></label>
-  <label class="fig-view-tab" for="view-data">Data<small>who processed what, how</small></label>
-  <label class="fig-view-tab" for="view-blast">Blast radius<small>APIs, stores, callers</small></label>
-</nav>
-<input type="radio" name="view" id="view-story" checked>
-<input type="radio" name="view" id="view-data">
-<input type="radio" name="view" id="view-blast">
-
-<div class="fig-view" data-view="story">
-  <input type="radio" name="walk" id="s1" checked>
-  <input type="radio" name="walk" id="s2">
-  <div class="fig-scenes"> ... sections with ids s1/s2 ... </div>
-</div>
-<div class="fig-view" data-view="data">
-  <input type="radio" name="data" id="d1" checked>
-  <div class="fig-scenes"> ... </div>
-</div>
-<div class="fig-view" data-view="blast">
-  <input type="radio" name="blast" id="b1" checked>
-  <div class="fig-scenes"> ... </div>
-</div>
-...
+<article class="fig-deck">
+  <div class="fig-shell">
+    <header class="fig-mast">
+      <div>
+        <p class="fig-kicker">Figure · PR walk</p>
+        <h1>Plain-English title</h1>
+        <div class="fig-repo"><a href="PR_URL">org/repo #123</a></div>
+      </div>
+    </header>
+    <input type="radio" name="walk" id="s1" checked>
+    <input type="radio" name="walk" id="s2">
+    <input type="radio" name="walk" id="s3">
+    <div class="fig-scenes">
+      <section class="fig-scene">
+        <div class="fig-stage">
+          <div class="fig-scene-head">
+            <div class="fig-index">01</div>
+            <div>
+              <h2>One spoken claim</h2>
+              <p>One sentence of consequence.</p>
+            </div>
+          </div>
+          <div class="fig-canvas">…components from the catalog…</div>
+        </div>
+        <nav class="fig-nav">
+          <span class="fig-btn is-disabled">Back</span>
+          <div class="fig-dots-nav">
+            <label class="fig-dot is-current" for="s1"></label>
+            <label class="fig-dot" for="s2"></label>
+            <label class="fig-dot" for="s3"></label>
+          </div>
+          <label class="fig-btn fig-next" for="s2">Next</label>
+        </nav>
+      </section>
+      <!-- more scenes -->
+    </div>
+  </div>
+</article>
 <script src="figure.js"></script>
 ```
 
-Scene radios: Story `#s1`–`#s8`, Data `#d1`–`#d8`, Blast `#b1`–`#b8`. Put a `.fig-repo` link and the PR title in `.fig-mast h1` — the prompt composer reads those.
-
-If this repo is not on disk, copy `figure.css` and `figure.js` verbatim.
+Put a `.fig-repo` link and the PR title in `.fig-mast h1` — the prompt composer reads those. If this repo is not on disk, copy `figure.css` and `figure.js` verbatim.
 
 ## How to think
 
 1. Read the PR title, body, and the shape of the diff (not every line).
-2. Name the system. Then split work into the three views — do not dump everything into Story.
-3. One claim per scene.
-4. Story: before → after → mechanism → consequence. Say those in English first (“it listed every file”, not “it walked the prefix”).
-5. Data: name the **payload**, the **processor**, and the **HOW** (parse, copy, cache, serialize, walk twice, …) in the same spoken English. Draw before and after. Highlight the component whose HOW changed. Function names can label a card; they must not be the claim.
-6. Blast: public API / plugin contract / prod DB or cache / who callers are. Use `.fig-risk` with `data-level="hot|watch|safe"`. End with a “do not merge if…” gate.
-7. Extra depth is a node the reviewer can open and **ask**, not extra slides.
-
-## Data view (required)
-
-Ask, per stage: *what is the data, who touches it, how did they touch it, how do they now?*
-
-Typical cards:
-
-- payload: `file`, `js`, `html`, `token`, `ast`, `stream`
-- processor: `babel`, `scan`, `server`, `worker`, `adapter`
-- store: `cache`, `graph`, `arena`, `db`
-
-Edge labels are the operation (`parse`, `serialize`, `walk #2`, `store`).
-
-Do **not** make Data a copy of Story with different titles. If Story said “the page used to list every file,” Data says “it downloaded one catalog, copied a short summary per block, then fetched full metadata only for the page you asked for.” Still specific — just not a pile of identifiers.
-
-## Blast radius (required)
-
-Put four `.fig-risk` tiles on scene 1:
-
-```html
-<div class="fig-risk" data-level="hot"><em>public API</em><strong>Environment API</strong><span>…</span></div>
-<div class="fig-risk" data-level="watch"><em>compat</em><strong>Old server API</strong><span>…</span></div>
-<div class="fig-risk" data-level="safe"><em>prod databases</em><strong>None</strong><span>…</span></div>
-```
-
-Be honest. A 123k-line compiler port with **no** DB and **no** ReactDOM change should say that. A 20-file cache write that can leak cookies into a CDN object is **hot** even if the diff is small.
-
-Name callers (framework authors, later visitors, PostCSS adapters). End with a gate node: “Do not merge if…”
-
-`.fig-page` and `.fig-shell` are chrome. Glyphs for documents/terminals are `data-kind="doc"` / `data-kind="term"`.
+2. Name the system. Cut to **three claims** an author can hold. Drop the rest into panels.
+3. Draw. Open `catalog.html` and pick marks that match roles. Distinct `data-kind` for distinct components.
+4. If the diff changes types or functions, draw that layout on the “how” scene: a `.fig-cluster` per type, `fn` cards inside, arrows labeled `calls`. Function names label cards; they must not be the claim.
+5. If a public API, prod store, or caller can break, put `.fig-risk` tiles (`hot|watch|safe`) on the last scene and a “Do not merge if…” node. If blast is none, one `safe` tile is enough — do not add a view for it.
 
 ## Inspect + ask prompt
 
 Every named component is `<details class="fig-node" data-kind="…">` with kind, name, role, and a short panel of facts.
 
-`figure.js` appends, on every node:
+`figure.js` appends, on every node: **Your questions**, a **Prompt for your coding agent**, **Copy prompt**.
 
-- a **Your questions** textarea
-- a **Prompt for your coding agent** textarea, prefilled from the PR title, view, scene claim, and panel text
-- **Copy prompt**
-
-Do not omit panel facts — they become `data-known` in the prompt. The reviewer types what the walkthrough did not answer. They paste the prompt back into Cursor / Codex / Claude.
-
-Example node:
-
-```html
-<details class="fig-node" data-kind="oxc" data-tone="added">
-  <summary>
-    <i class="fig-mark"></i>
-    <span class="fig-node-text">
-      <em>parser host</em>
-      <strong>OXC</strong>
-      <span>Rust parser. Thin adapter crate in this repo.</span>
-    </span>
-    <b class="fig-node-go"></b>
-  </summary>
-  <div class="fig-node-panel">
-    <p>What this component actually does in this PR, including HOW it processes data.</p>
-  </div>
-</details>
-```
+Do not omit panel facts — they become `data-known` in the prompt.
 
 Modifiers: `.tight`, `.wide`, `open` to start expanded (use once per scene for the main object).
 
@@ -170,6 +136,7 @@ Pick the mark that explains the **role**. Babel / OXC / SWC / named environments
 | `lock` / `key` / `flag` / `test` / `event` / `token` | Signals |
 | `clock` / `filter` / `branch` / `tree` / `config` / `log` / `error` | Ops |
 | `request` / `response` / `snapshot` / `build` / `pipeline` | Flow |
+| `type` / `fn` / `var` | Class/struct/object, function/method, variable/field |
 | `box` | Last resort unnamed module |
 
 Arrow: `<div class="fig-edge" data-label="GET"></div>`. Add `down` or `strike`.
@@ -178,14 +145,34 @@ Arrow: `<div class="fig-edge" data-label="GET"></div>`. Add `down` or `strike`.
 
 `.fig-row`, `.fig-col`, `.fig-cluster`, `.fig-compare` + `.fig-pane`, `.fig-stack` + `.fig-layer`, `.fig-pipe` + `.fig-phase`, `.fig-timeline` + `.fig-step`, `.fig-code` + `.fig-line.added|.removed`, `.fig-metric`, `.fig-callout`, `.fig-datapoints`, `.fig-risk`.
 
-To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows.
+To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. For code layout, put functions in a `.fig-cluster` labeled with the type name; `calls` arrows go between `fn` cards.
+
+Example node:
+
+```html
+<details class="fig-node" data-kind="oxc" data-tone="added">
+  <summary>
+    <i class="fig-mark"></i>
+    <span class="fig-node-text">
+      <em>parser host</em>
+      <strong>OXC</strong>
+      <span>Rust parser. Thin adapter crate in this repo.</span>
+    </span>
+    <b class="fig-node-go"></b>
+  </summary>
+  <div class="fig-node-panel">
+    <p>What this component actually does in this PR, including HOW it processes data.</p>
+  </div>
+</details>
+```
 
 ## Rules
 
 - Abstract shapes only. No logos.
 - No CSS animations, no autoplay. `figure.js` is only the prompt composer.
 - Real names from the PR. Do not invent subsystems. Put those names on cards; keep claims in English.
-- Always emit all three views. If blast is “none,” say so with `.fig-risk` `safe` tiles — do not skip the view.
+- **One walk. No Story / Data / Blast tabs.** Extra depth is a node the reviewer can open, not another view.
 - Distinct `data-kind` for distinct components.
 - Open the HTML file in a browser (File → Open, or double-click). Nothing to install. Do not start a server.
 - Re-read every visible sentence against the Language section before you stop.
+- If you have more than five scenes, you failed to compress. Merge, then stop.

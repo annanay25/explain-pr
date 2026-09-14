@@ -50,6 +50,7 @@
                   <p>Joseph Savona’s PR moves the TypeScript React Compiler into Rust with the same HIR, CFG, SSA, and pass order. The public shape is still “Babel-like AST in, AST out.”</p>
                 </div>
               </div>
+              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-row">
                   <div class="fig-metric" data-value="1,725" data-tone="added">fixtures match TS output</div>
@@ -76,7 +77,6 @@
                 </details>
               </div>
             </div>
-            <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
           </section>
           <section class="fig-scene">
             <div class="fig-stage">
@@ -87,6 +87,7 @@
                   <p>Source is parsed by Babel. The TS compiler relies on Babel’s scope analysis, lowers to HIR, runs passes, and writes JavaScript back through Babel.</p>
                 </div>
               </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-row">
                   <details class="fig-node tight" data-kind="file">
@@ -147,7 +148,6 @@
                 </div>
               </div>
             </div>
-            <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
           </section>
           <section class="fig-scene">
             <div class="fig-stage">
@@ -158,6 +158,7 @@
                   <p>Integrations convert native ASTs into the Rust Babel-AST plus scope info, call the compiler, and convert back. Babel is a guest now, not the only host.</p>
                 </div>
               </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-row">
                   <div class="fig-cluster" data-label="Hosts">
@@ -261,7 +262,6 @@
                 </div>
               </div>
             </div>
-            <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
           </section>
           <section class="fig-scene">
             <div class="fig-stage">
@@ -272,6 +272,7 @@
                   <p>AST lowers to a high-level IR with a control-flow graph and SSA. Passes run in the same order as TypeScript. Rust mainly changes how values are stored.</p>
                 </div>
               </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-row">
                   <details class="fig-node tight" data-kind="ast">
@@ -359,7 +360,6 @@
                 </div>
               </div>
             </div>
-            <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
           </section>
           <section class="fig-scene">
             <div class="fig-stage">
@@ -370,6 +370,7 @@
                   <p>yarn snap --rust compares final JS and errors. A separate script diffs compiler state after every pass, which is how the port was kept honest.</p>
                 </div>
               </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s6">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-compare">
                   <div class="fig-pane" data-label="Output">
@@ -411,7 +412,6 @@
                 </div>
               </div>
             </div>
-            <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label><label class="fig-dot" for="s6"></label></div><label class="fig-btn fig-next" for="s6">Next</label></nav>
           </section>
           <section class="fig-scene">
             <div class="fig-stage">
@@ -422,6 +422,7 @@
                   <p>Scope analysis still comes from the host. Returning a whole program should become a list of patches. Native OXC/SWC paths should beat the Babel plugin once serialization is out of the way.</p>
                 </div>
               </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s5">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot is-current" for="s6"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
               <div class="fig-canvas">
                 <div class="fig-row">
                   <details class="fig-node" data-kind="hook" data-tone="changed">
@@ -484,7 +485,6 @@
                 <div class="fig-legend"><span><i class="add"></i> added</span><span><i class="rem"></i> removed</span><span><i class="chg"></i> changed</span><span><i class="foc"></i> focus</span></div>
               </div>
             </div>
-            <nav class="fig-nav"><label class="fig-btn" for="s5">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label><label class="fig-dot is-current" for="s6"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
           </section>
         </div>
         </div>
@@ -504,6 +504,7 @@
                     <p>JSX bytes became a Babel AST. Babel also owned scopes. The TypeScript compiler mutated that tree in memory (a pointer graph) and wrote JavaScript back through Babel.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d2">Next</label></nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <details class="fig-node tight" data-kind="js">
@@ -548,7 +549,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d2">Next</label></nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -559,6 +559,7 @@
                     <p>Each host converts its native tree into the compiler’s Babel-shaped AST plus scopes, then converts the result back. Inside the crate the payload is ids into arenas, not pointers.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><label class="fig-btn" for="d1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot is-current" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d3">Next</label></nav>
                 <div class="fig-canvas">
                   <div class="fig-compare">
                     <div class="fig-pane" data-label="Host converts in">
@@ -587,7 +588,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="d1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot is-current" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d3">Next</label></nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -598,6 +598,7 @@
                     <p>Parse and bind still happen on the host. Lower / pass / codegen still happen in the compiler. The new work is the conversion at the boundary and arena addressing inside.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><label class="fig-btn" for="d2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot is-current" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d4">Next</label></nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <details class="fig-node" data-kind="parser">
@@ -645,7 +646,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="d2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot is-current" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d4">Next</label></nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -656,6 +656,7 @@
                     <p>Printed JS and diagnostics are the contract with TypeScript. Hosts still swap a whole AST; patches are planned, not shipped.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><label class="fig-btn" for="d3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot is-current" for="d4"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <details class="fig-node" data-kind="snapshot" data-tone="added">
@@ -689,7 +690,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="d3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot is-current" for="d4"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
             </section>
           </div>
         </div>
@@ -709,6 +709,7 @@
                     <p>This is a compiler-port PR. App developers do not get a new React API. Integrators and host authors do.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot" for="b3"></label><label class="fig-dot" for="b4"></label></div><label class="fig-btn fig-next" for="b2">Next</label></nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <div class="fig-risk" data-level="safe"><em>prod databases</em><strong>None</strong><span>No user store, no query path, no migration.</span></div>
@@ -718,7 +719,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot" for="b3"></label><label class="fig-dot" for="b4"></label></div><label class="fig-btn fig-next" for="b2">Next</label></nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -729,6 +729,7 @@
                     <p>+123k is mostly the Rust crate. Review the host contract and the adapters, not every arena file.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><label class="fig-btn" for="b1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot is-current" for="b2"></label><label class="fig-dot" for="b3"></label><label class="fig-dot" for="b4"></label></div><label class="fig-btn fig-next" for="b3">Next</label></nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <details class="fig-node" data-kind="api" data-tone="changed">
@@ -776,7 +777,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="b1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot is-current" for="b2"></label><label class="fig-dot" for="b3"></label><label class="fig-dot" for="b4"></label></div><label class="fig-btn fig-next" for="b3">Next</label></nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -787,6 +787,7 @@
                     <p>A bug here ships as wrong memoization in user apps after a compiler upgrade — not as a downed database.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><label class="fig-btn" for="b2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot is-current" for="b3"></label><label class="fig-dot" for="b4"></label></div><label class="fig-btn fig-next" for="b4">Next</label></nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <details class="fig-node" data-kind="build" data-tone="changed">
@@ -820,7 +821,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="b2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot is-current" for="b3"></label><label class="fig-dot" for="b4"></label></div><label class="fig-btn fig-next" for="b4">Next</label></nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -831,6 +831,7 @@
                     <p>Host scope contract, adapter fidelity, and fixture coverage. Not React DOM, not a database checklist.</p>
                   </div>
                 </div>
+                <nav class="fig-nav"><label class="fig-btn" for="b3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot" for="b3"></label><label class="fig-dot is-current" for="b4"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
                 <div class="fig-canvas">
                   <div class="fig-callout" data-tone="focus">No public REST, no prod DB, no user PII. The blast is compiler integrators and the JS they emit into everyone else’s apps.</div>
                   <details class="fig-node wide" data-kind="lock" data-tone="changed">
@@ -849,7 +850,6 @@
                   </details>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="b3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot" for="b3"></label><label class="fig-dot is-current" for="b4"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
             </section>
           </div>
         </div>

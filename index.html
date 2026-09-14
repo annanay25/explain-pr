@@ -12,10 +12,9 @@
       <section class="hero">
         <h1>Explain the change,<br />not the diff.</h1>
         <p>
-          A coding agent emits several views of the same PR: the story, the data
-          path, and the blast radius. Click any component, type what you still
-          want to know, and copy a prompt back into the agent. One CSS file, a
-          tiny script for the prompt box, no npm.
+          A coding agent emits a short walk of the PR. Click any component, type
+          what you still want to know, and copy a prompt back into the agent.
+          One CSS file, a tiny script for the prompt box, no npm.
         </p>
       </section>
 
@@ -25,19 +24,10 @@
             <div>
               <p class="fig-kicker">Figure · PR walk</p>
               <h1>What this library is for</h1>
-              <div class="fig-repo">Figure · demo of Story, Data, and Blast radius</div>
-              <p class="fig-inspect-hint">Switch views. Open a card. Type a question. Copy the prompt.</p>
+              <div class="fig-repo">Figure · demo walk</div>
+              <p class="fig-inspect-hint">Open a card. Type a question. Copy the prompt.</p>
             </div>
           </header>
-          <nav class="fig-view-tabs">
-            <label class="fig-view-tab" for="view-story">Story<small>what changed</small></label>
-            <label class="fig-view-tab" for="view-data">Data<small>who processed what, how</small></label>
-            <label class="fig-view-tab" for="view-blast">Blast radius<small>APIs, stores, callers</small></label>
-          </nav>
-          <input type="radio" name="view" id="view-story" checked>
-          <input type="radio" name="view" id="view-data">
-          <input type="radio" name="view" id="view-blast">
-          <div class="fig-view" data-view="story">
           <input type="radio" name="intro" id="s1" checked>
           <input type="radio" name="intro" id="s2">
           <div class="fig-scenes">
@@ -50,6 +40,14 @@
                     <p>The diff lists files. A walkthrough names the actors and what started happening between them.</p>
                   </div>
                 </div>
+                <nav class="fig-nav">
+                <span class="fig-btn is-disabled">Back</span>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot is-current" for="s1"></label>
+                  <label class="fig-dot" for="s2"></label>
+                </div>
+                <label class="fig-btn fig-next" for="s2">Next</label>
+              </nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <details class="fig-node" data-kind="user">
@@ -99,14 +97,6 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav">
-                <span class="fig-btn is-disabled">Back</span>
-                <div class="fig-dots-nav">
-                  <label class="fig-dot is-current" for="s1"></label>
-                  <label class="fig-dot" for="s2"></label>
-                </div>
-                <label class="fig-btn fig-next" for="s2">Next</label>
-              </nav>
             </section>
             <section class="fig-scene">
               <div class="fig-stage">
@@ -117,6 +107,14 @@
                     <p>Kind, name, and a one-line role on the card. Open it, type your own questions, copy the prompt into your coding agent.</p>
                   </div>
                 </div>
+                <nav class="fig-nav">
+                <label class="fig-btn" for="s1">Back</label>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot" for="s1"></label>
+                  <label class="fig-dot is-current" for="s2"></label>
+                </div>
+                <span class="fig-btn fig-next is-disabled">Done</span>
+              </nav>
                 <div class="fig-canvas">
                   <div class="fig-row">
                     <details class="fig-node" data-kind="babel" data-tone="changed" open>
@@ -150,112 +148,7 @@
                   </div>
                 </div>
               </div>
-              <nav class="fig-nav">
-                <label class="fig-btn" for="s1">Back</label>
-                <div class="fig-dots-nav">
-                  <label class="fig-dot" for="s1"></label>
-                  <label class="fig-dot is-current" for="s2"></label>
-                </div>
-                <span class="fig-btn fig-next is-disabled">Done</span>
-              </nav>
             </section>
-          </div>
-          </div>
-
-          <div class="fig-view" data-view="data">
-            <input type="radio" name="intro-data" id="d1" checked>
-            <div class="fig-scenes">
-              <section class="fig-scene">
-                <div class="fig-stage">
-                  <div class="fig-scene-head">
-                    <div class="fig-index">D1</div>
-                    <div>
-                      <h2>Data view: who processed the payload, and how</h2>
-                      <p>Before vs after. Name the data, the processor, and the HOW that changed — not just the file list.</p>
-                    </div>
-                  </div>
-                  <div class="fig-canvas">
-                    <div class="fig-compare">
-                      <div class="fig-pane" data-label="Before">
-                        <div class="fig-row">
-                          <details class="fig-node tight" data-kind="js"><summary><i class="fig-mark"></i><span class="fig-node-text"><strong>JSX</strong></span><b class="fig-node-go"></b></summary><div class="fig-node-panel"><p>Source bytes. Unchanged.</p></div></details>
-                          <div class="fig-edge" data-label="parse"></div>
-                          <details class="fig-node" data-kind="babel" data-tone="focus">
-                            <summary>
-                              <i class="fig-mark"></i>
-                              <span class="fig-node-text">
-                                <em>how then</em>
-                                <strong>Babel</strong>
-                                <span>Only processor. AST + scopes in one JS heap.</span>
-                              </span>
-                              <b class="fig-node-go"></b>
-                            </summary>
-                            <div class="fig-node-panel">
-                              <p>HOW: parse and bind in Babel, mutate via TS pointers, print back through Babel.</p>
-                            </div>
-                          </details>
-                        </div>
-                      </div>
-                      <div class="fig-pane" data-label="After" data-tone="added">
-                        <div class="fig-row">
-                          <details class="fig-node tight" data-kind="oxc" data-tone="added"><summary><i class="fig-mark"></i><span class="fig-node-text"><strong>OXC tree</strong></span><b class="fig-node-go"></b></summary><div class="fig-node-panel"><p>Native Rust AST. Adapter converts in.</p></div></details>
-                          <div class="fig-edge" data-label="ids"></div>
-                          <details class="fig-node" data-kind="arena" data-tone="added">
-                            <summary>
-                              <i class="fig-mark"></i>
-                              <span class="fig-node-text">
-                                <em>how now</em>
-                                <strong>Arenas</strong>
-                                <span>Same passes. Values are indices, not pointers.</span>
-                              </span>
-                              <b class="fig-node-go"></b>
-                            </summary>
-                            <div class="fig-node-panel">
-                              <p>The data view’s job is to make this HOW change obvious, then let you ask the agent about convert-in fidelity.</p>
-                            </div>
-                          </details>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <nav class="fig-nav">
-                  <span class="fig-btn is-disabled">Back</span>
-                  <div class="fig-dots-nav"><label class="fig-dot is-current" for="d1"></label></div>
-                  <span class="fig-btn fig-next is-disabled">Done</span>
-                </nav>
-              </section>
-            </div>
-          </div>
-
-          <div class="fig-view" data-view="blast">
-            <input type="radio" name="intro-blast" id="b1" checked>
-            <div class="fig-scenes">
-              <section class="fig-scene">
-                <div class="fig-stage">
-                  <div class="fig-scene-head">
-                    <div class="fig-index">B1</div>
-                    <div>
-                      <h2>Blast radius: APIs, stores, callers</h2>
-                      <p>Is this a public API change? A prod database? Or a large private diff with a small external surface?</p>
-                    </div>
-                  </div>
-                  <div class="fig-canvas">
-                    <div class="fig-row">
-                      <div class="fig-risk" data-level="hot"><em>public-ish</em><strong>Host crates</strong><span>New OXC/SWC adapters. Integrators must care.</span></div>
-                      <div class="fig-risk" data-level="watch"><em>plugin API</em><strong>Same shape</strong><span>Still AST in, AST out. Scopes now explicit.</span></div>
-                      <div class="fig-risk" data-level="safe"><em>prod DBs</em><strong>None</strong><span>Compile-time only. No user data plane.</span></div>
-                      <div class="fig-risk" data-level="safe"><em>React DOM</em><strong>Untouched</strong><span>App developers do not get a new runtime API.</span></div>
-                    </div>
-                  </div>
-                </div>
-                <nav class="fig-nav">
-                  <span class="fig-btn is-disabled">Back</span>
-                  <div class="fig-dots-nav"><label class="fig-dot is-current" for="b1"></label></div>
-                  <span class="fig-btn fig-next is-disabled">Done</span>
-                </nav>
-              </section>
-            </div>
           </div>
         </div>
       </article>
@@ -299,7 +192,7 @@
         <a class="card" href="skills/explain-pr/SKILL.md">
           <div class="meta">Skill</div>
           <h3>explain-pr</h3>
-          <p>Copy <code>figure.css</code> and <code>figure.js</code>. Emit Story, Data, and Blast radius views.</p>
+          <p>Copy <code>figure.css</code> and <code>figure.js</code>. One short walk. Pick components from the catalog.</p>
         </a>
       </div>
     </main>

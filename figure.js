@@ -1,7 +1,5 @@
-/* Prompt composer for inspectable nodes. Views and Next stay CSS-only. */
+/* Prompt composer for inspectable nodes. Next stays CSS-only. */
 (function () {
-  const VIEW = { story: "Story", data: "Data flow", blast: "Blast radius" };
-
   function text(el, sel) {
     return (el.querySelector(sel)?.textContent || "").replace(/\s+/g, " ").trim();
   }
@@ -26,7 +24,6 @@
       "Review this pull request with me as a careful reviewer.",
       "",
       "PR: " + (ask.dataset.pr || "") + (ask.dataset.title ? " — " + ask.dataset.title : ""),
-      "View: " + (ask.dataset.view || "Story"),
       "Component: " + (ask.dataset.component || "") + (ask.dataset.kind ? " (" + ask.dataset.kind + ")" : ""),
       "Scene claim: " + (ask.dataset.claim || ""),
       "",
@@ -82,8 +79,6 @@
 
     const deck = node.closest(".fig-deck");
     const scene = node.closest(".fig-scene");
-    const viewEl = node.closest(".fig-view");
-    const viewKey = viewEl?.getAttribute("data-view") || "story";
 
     const ask = document.createElement("aside");
     ask.className = "fig-ask";
@@ -91,7 +86,6 @@
     ask.dataset.title = (deck?.querySelector(".fig-mast h1")?.textContent || "").trim();
     ask.dataset.component = text(node, "strong") || node.getAttribute("data-kind") || "component";
     ask.dataset.kind = text(node, "em") || node.getAttribute("data-kind") || "";
-    ask.dataset.view = VIEW[viewKey] || viewKey;
     ask.dataset.claim = (scene?.querySelector("h2")?.textContent || "").trim();
     const role = text(node, ".fig-node-text span");
     const known = [role, knownText(node)].filter(Boolean).join("\n");

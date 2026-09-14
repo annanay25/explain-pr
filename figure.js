@@ -21,16 +21,16 @@
     const q = (questions || "").trim() || "(write your questions here)";
     const known = ask.dataset.known || "";
     return [
-      "Review this pull request with me as a careful reviewer.",
+      "You wrote this PR and you generated the walk I'm looking at so I could understand the change. This is a follow-up about one piece of that picture — not a first look.",
       "",
       "PR: " + (ask.dataset.pr || "") + (ask.dataset.title ? " — " + ask.dataset.title : ""),
       "Component: " + (ask.dataset.component || "") + (ask.dataset.kind ? " (" + ask.dataset.kind + ")" : ""),
-      "Scene claim: " + (ask.dataset.claim || ""),
+      "Scene: " + (ask.dataset.claim || ""),
       "",
-      "What the walkthrough already said about this component:",
-      known || "(no extra notes — use the PR and surrounding code)",
+      "What you already put on this card:",
+      known || "(nothing extra on the card — go to the diff and the real files)",
       "",
-      "I clicked this component because I want more than the diagram. Use the PR diff and the real code. Quote file paths. If the walkthrough oversimplified or is wrong, say so.",
+      "Go deeper on this component. Quote file paths. If the walk oversimplified or is wrong, correct it.",
       "",
       "My questions:",
       q,
@@ -93,7 +93,7 @@
 
     ask.innerHTML =
       '<div class="fig-ask-label">Your questions</div>' +
-      '<textarea class="fig-ask-q" rows="3" placeholder="What do you still want to know about this component?"></textarea>' +
+      '<textarea class="fig-ask-q" rows="3" placeholder="What should we go deeper on?"></textarea>' +
       '<div class="fig-ask-label">Prompt for your coding agent</div>' +
       '<textarea class="fig-ask-prompt" rows="8" readonly></textarea>' +
       '<button type="button" class="fig-btn fig-copy">Copy prompt</button>';

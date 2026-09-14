@@ -238,7 +238,7 @@ body.fig-page { min-height: 100vh; }
 
 .fig-stage {
   flex: 1;
-  padding: 24px 28px 10px;
+  padding: 0 28px 10px;
   display: flex;
   flex-direction: column;
 }
@@ -247,7 +247,7 @@ body.fig-page { min-height: 100vh; }
   grid-template-columns: auto 1fr;
   gap: 14px;
   align-items: start;
-  margin-bottom: 12px;
+  padding: 18px 0 12px;
 }
 .fig-index {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
@@ -283,13 +283,13 @@ body.fig-page { min-height: 100vh; }
   padding: 12px 0 12px;
 }
 .fig-nav {
+  order: -1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin: 0 -28px 4px;
+  margin: 0 -28px;
   padding: 10px 28px 12px;
-  border-top: 1px solid var(--fig-rule);
   border-bottom: 1px solid var(--fig-rule);
   background: #faf6ee;
   flex-shrink: 0;
@@ -343,7 +343,8 @@ label.fig-btn { cursor: pointer; }
   border-radius: 16px;
   padding: 22px 16px 14px;
   position: relative;
-  min-width: min(100%, 220px);
+  min-width: 0;
+  max-width: 100%;
   background: rgba(255,255,255,0.35);
 }
 .fig-cluster::before {
@@ -359,16 +360,77 @@ label.fig-btn { cursor: pointer; }
   text-transform: uppercase;
   color: var(--fig-muted);
 }
+.fig-cluster:has(> .fig-node[data-kind="type"]) {
+  padding-top: 14px;
+}
+.fig-cluster:has(> .fig-node[data-kind="type"])::before {
+  content: none;
+}
+.fig-cluster > .fig-node {
+  width: 100%;
+}
+.fig-cluster .fig-col > .fig-node {
+  width: 100%;
+}
+.fig-enclose {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  background: #fffaf2;
+  border: 1px solid var(--fig-rule);
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(26, 23, 20, 0.05);
+  overflow: hidden;
+}
+.fig-enclose[data-tone="added"] { border-color: color-mix(in srgb, var(--fig-added) 35%, var(--fig-rule)); }
+.fig-enclose[data-tone="removed"] { border-color: color-mix(in srgb, var(--fig-removed) 35%, var(--fig-rule)); }
+.fig-enclose[data-tone="changed"] { border-color: color-mix(in srgb, var(--fig-changed) 35%, var(--fig-rule)); }
+.fig-enclose[data-tone="focus"] { border-color: color-mix(in srgb, var(--fig-focus) 35%, var(--fig-rule)); }
+.fig-enclose > .fig-node[data-kind="type"] {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.fig-enclose > .fig-node[data-kind="type"][open] > summary {
+  border-radius: 0;
+}
+.fig-enclose-body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px 12px 14px;
+  background: color-mix(in srgb, #fff 78%, var(--fig-paper-2, #f3eee6));
+  border-top: 1px dashed var(--fig-rule);
+}
+.fig-enclose-body > .fig-col {
+  width: 100%;
+  align-items: stretch;
+}
+.fig-enclose-body .fig-node {
+  width: 100%;
+  background: #fff;
+}
 .fig-compare { gap: 18px; align-items: stretch; justify-content: center; flex-wrap: wrap; }
 .fig-pane {
   display: flex;
   flex-direction: column;
   gap: 14px;
   flex: 1 1 280px;
+  min-width: 0;
   border: 1px solid var(--fig-rule);
   border-radius: 14px;
   padding: 16px 14px 14px;
   background: #fff;
+}
+.fig-pane > .fig-node,
+.fig-pane > .fig-enclose {
+  width: 100%;
 }
 .fig-pane::before {
   content: attr(data-label);
@@ -433,7 +495,7 @@ label.fig-btn { cursor: pointer; }
   background: var(--fig-rule);
 }
 
-.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform, .fig-babel, .fig-oxc, .fig-swc, .fig-rust, .fig-compiler, .fig-parser, .fig-ast, .fig-ir, .fig-hir, .fig-plugin, .fig-env, .fig-scan, .fig-crate, .fig-wasm, .fig-hook, .fig-runtime, .fig-doc, .fig-term, .fig-fallback, .fig-route, .fig-module, .fig-graph, .fig-css, .fig-js, .fig-snippet, .fig-html, .fig-stream, .fig-arena, .fig-bundler, .fig-adapter, .fig-snapshot, .fig-tree, .fig-config, .fig-log, .fig-error, .fig-request, .fig-response, .fig-client, .fig-package, .fig-build, .fig-pipeline {
+.fig-user, .fig-users, .fig-server, .fig-db, .fig-box, .fig-file, .fig-folder, .fig-cloud, .fig-cache, .fig-queue, .fig-api, .fig-browser, .fig-worker, .fig-lock, .fig-key, .fig-flag, .fig-test, .fig-event, .fig-token, .fig-mobile, .fig-globe, .fig-clock, .fig-filter, .fig-branch, .fig-bucket, .fig-transform, .fig-babel, .fig-oxc, .fig-swc, .fig-rust, .fig-compiler, .fig-parser, .fig-ast, .fig-ir, .fig-hir, .fig-plugin, .fig-env, .fig-scan, .fig-crate, .fig-wasm, .fig-hook, .fig-runtime, .fig-doc, .fig-term, .fig-fallback, .fig-route, .fig-module, .fig-graph, .fig-css, .fig-js, .fig-snippet, .fig-html, .fig-stream, .fig-arena, .fig-bundler, .fig-adapter, .fig-snapshot, .fig-tree, .fig-config, .fig-log, .fig-error, .fig-request, .fig-response, .fig-client, .fig-package, .fig-build, .fig-pipeline, .fig-type, .fig-fn, .fig-var {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -445,7 +507,7 @@ label.fig-btn { cursor: pointer; }
   font-weight: 500;
   text-align: center;
 }
-.fig-user::before, .fig-users::before, .fig-server::before, .fig-db::before, .fig-box::before, .fig-file::before, .fig-folder::before, .fig-cloud::before, .fig-cache::before, .fig-queue::before, .fig-api::before, .fig-browser::before, .fig-worker::before, .fig-lock::before, .fig-key::before, .fig-flag::before, .fig-test::before, .fig-event::before, .fig-token::before, .fig-mobile::before, .fig-globe::before, .fig-clock::before, .fig-filter::before, .fig-branch::before, .fig-bucket::before, .fig-transform::before, .fig-babel::before, .fig-oxc::before, .fig-swc::before, .fig-rust::before, .fig-compiler::before, .fig-parser::before, .fig-ast::before, .fig-ir::before, .fig-hir::before, .fig-plugin::before, .fig-env::before, .fig-scan::before, .fig-crate::before, .fig-wasm::before, .fig-hook::before, .fig-runtime::before, .fig-doc::before, .fig-term::before, .fig-fallback::before, .fig-route::before, .fig-module::before, .fig-graph::before, .fig-css::before, .fig-js::before, .fig-snippet::before, .fig-html::before, .fig-stream::before, .fig-arena::before, .fig-bundler::before, .fig-adapter::before, .fig-snapshot::before, .fig-tree::before, .fig-config::before, .fig-log::before, .fig-error::before, .fig-request::before, .fig-response::before, .fig-client::before, .fig-package::before, .fig-build::before, .fig-pipeline::before {
+.fig-user::before, .fig-users::before, .fig-server::before, .fig-db::before, .fig-box::before, .fig-file::before, .fig-folder::before, .fig-cloud::before, .fig-cache::before, .fig-queue::before, .fig-api::before, .fig-browser::before, .fig-worker::before, .fig-lock::before, .fig-key::before, .fig-flag::before, .fig-test::before, .fig-event::before, .fig-token::before, .fig-mobile::before, .fig-globe::before, .fig-clock::before, .fig-filter::before, .fig-branch::before, .fig-bucket::before, .fig-transform::before, .fig-babel::before, .fig-oxc::before, .fig-swc::before, .fig-rust::before, .fig-compiler::before, .fig-parser::before, .fig-ast::before, .fig-ir::before, .fig-hir::before, .fig-plugin::before, .fig-env::before, .fig-scan::before, .fig-crate::before, .fig-wasm::before, .fig-hook::before, .fig-runtime::before, .fig-doc::before, .fig-term::before, .fig-fallback::before, .fig-route::before, .fig-module::before, .fig-graph::before, .fig-css::before, .fig-js::before, .fig-snippet::before, .fig-html::before, .fig-stream::before, .fig-arena::before, .fig-bundler::before, .fig-adapter::before, .fig-snapshot::before, .fig-tree::before, .fig-config::before, .fig-log::before, .fig-error::before, .fig-request::before, .fig-response::before, .fig-client::before, .fig-package::before, .fig-build::before, .fig-pipeline::before, .fig-type::before, .fig-fn::before, .fig-var::before {
   content: "";
   width: 64px;
   height: 64px;
@@ -456,12 +518,12 @@ label.fig-btn { cursor: pointer; }
   background-position: center;
   background-size: 42px;
 }
-.fig-user::after, .fig-users::after, .fig-server::after, .fig-db::after, .fig-box::after, .fig-file::after, .fig-folder::after, .fig-cloud::after, .fig-cache::after, .fig-queue::after, .fig-api::after, .fig-browser::after, .fig-worker::after, .fig-lock::after, .fig-key::after, .fig-flag::after, .fig-test::after, .fig-event::after, .fig-token::after, .fig-mobile::after, .fig-globe::after, .fig-clock::after, .fig-filter::after, .fig-branch::after, .fig-bucket::after, .fig-transform::after, .fig-babel::after, .fig-oxc::after, .fig-swc::after, .fig-rust::after, .fig-compiler::after, .fig-parser::after, .fig-ast::after, .fig-ir::after, .fig-hir::after, .fig-plugin::after, .fig-env::after, .fig-scan::after, .fig-crate::after, .fig-wasm::after, .fig-hook::after, .fig-runtime::after, .fig-doc::after, .fig-term::after, .fig-fallback::after, .fig-route::after, .fig-module::after, .fig-graph::after, .fig-css::after, .fig-js::after, .fig-snippet::after, .fig-html::after, .fig-stream::after, .fig-arena::after, .fig-bundler::after, .fig-adapter::after, .fig-snapshot::after, .fig-tree::after, .fig-config::after, .fig-log::after, .fig-error::after, .fig-request::after, .fig-response::after, .fig-client::after, .fig-package::after, .fig-build::after, .fig-pipeline::after {
+.fig-user::after, .fig-users::after, .fig-server::after, .fig-db::after, .fig-box::after, .fig-file::after, .fig-folder::after, .fig-cloud::after, .fig-cache::after, .fig-queue::after, .fig-api::after, .fig-browser::after, .fig-worker::after, .fig-lock::after, .fig-key::after, .fig-flag::after, .fig-test::after, .fig-event::after, .fig-token::after, .fig-mobile::after, .fig-globe::after, .fig-clock::after, .fig-filter::after, .fig-branch::after, .fig-bucket::after, .fig-transform::after, .fig-babel::after, .fig-oxc::after, .fig-swc::after, .fig-rust::after, .fig-compiler::after, .fig-parser::after, .fig-ast::after, .fig-ir::after, .fig-hir::after, .fig-plugin::after, .fig-env::after, .fig-scan::after, .fig-crate::after, .fig-wasm::after, .fig-hook::after, .fig-runtime::after, .fig-doc::after, .fig-term::after, .fig-fallback::after, .fig-route::after, .fig-module::after, .fig-graph::after, .fig-css::after, .fig-js::after, .fig-snippet::after, .fig-html::after, .fig-stream::after, .fig-arena::after, .fig-bundler::after, .fig-adapter::after, .fig-snapshot::after, .fig-tree::after, .fig-config::after, .fig-log::after, .fig-error::after, .fig-request::after, .fig-response::after, .fig-client::after, .fig-package::after, .fig-build::after, .fig-pipeline::after, .fig-type::after, .fig-fn::after, .fig-var::after {
   content: attr(data-label);
   max-width: 110px;
   line-height: 1.25;
 }
-.fig-user[data-note]::after, .fig-users[data-note]::after, .fig-server[data-note]::after, .fig-db[data-note]::after, .fig-box[data-note]::after, .fig-file[data-note]::after, .fig-folder[data-note]::after, .fig-cloud[data-note]::after, .fig-cache[data-note]::after, .fig-queue[data-note]::after, .fig-api[data-note]::after, .fig-browser[data-note]::after, .fig-worker[data-note]::after, .fig-lock[data-note]::after, .fig-key[data-note]::after, .fig-flag[data-note]::after, .fig-test[data-note]::after, .fig-event[data-note]::after, .fig-token[data-note]::after, .fig-mobile[data-note]::after, .fig-globe[data-note]::after, .fig-clock[data-note]::after, .fig-filter[data-note]::after, .fig-branch[data-note]::after, .fig-bucket[data-note]::after, .fig-transform[data-note]::after, .fig-babel[data-note]::after, .fig-oxc[data-note]::after, .fig-swc[data-note]::after, .fig-rust[data-note]::after, .fig-compiler[data-note]::after, .fig-parser[data-note]::after, .fig-ast[data-note]::after, .fig-ir[data-note]::after, .fig-hir[data-note]::after, .fig-plugin[data-note]::after, .fig-env[data-note]::after, .fig-scan[data-note]::after, .fig-crate[data-note]::after, .fig-wasm[data-note]::after, .fig-hook[data-note]::after, .fig-runtime[data-note]::after, .fig-doc[data-note]::after, .fig-term[data-note]::after, .fig-fallback[data-note]::after, .fig-route[data-note]::after, .fig-module[data-note]::after, .fig-graph[data-note]::after, .fig-css[data-note]::after, .fig-js[data-note]::after, .fig-snippet[data-note]::after, .fig-html[data-note]::after, .fig-stream[data-note]::after, .fig-arena[data-note]::after, .fig-bundler[data-note]::after, .fig-adapter[data-note]::after, .fig-snapshot[data-note]::after, .fig-tree[data-note]::after, .fig-config[data-note]::after, .fig-log[data-note]::after, .fig-error[data-note]::after, .fig-request[data-note]::after, .fig-response[data-note]::after, .fig-client[data-note]::after, .fig-package[data-note]::after, .fig-build[data-note]::after, .fig-pipeline[data-note]::after {
+.fig-user[data-note]::after, .fig-users[data-note]::after, .fig-server[data-note]::after, .fig-db[data-note]::after, .fig-box[data-note]::after, .fig-file[data-note]::after, .fig-folder[data-note]::after, .fig-cloud[data-note]::after, .fig-cache[data-note]::after, .fig-queue[data-note]::after, .fig-api[data-note]::after, .fig-browser[data-note]::after, .fig-worker[data-note]::after, .fig-lock[data-note]::after, .fig-key[data-note]::after, .fig-flag[data-note]::after, .fig-test[data-note]::after, .fig-event[data-note]::after, .fig-token[data-note]::after, .fig-mobile[data-note]::after, .fig-globe[data-note]::after, .fig-clock[data-note]::after, .fig-filter[data-note]::after, .fig-branch[data-note]::after, .fig-bucket[data-note]::after, .fig-transform[data-note]::after, .fig-babel[data-note]::after, .fig-oxc[data-note]::after, .fig-swc[data-note]::after, .fig-rust[data-note]::after, .fig-compiler[data-note]::after, .fig-parser[data-note]::after, .fig-ast[data-note]::after, .fig-ir[data-note]::after, .fig-hir[data-note]::after, .fig-plugin[data-note]::after, .fig-env[data-note]::after, .fig-scan[data-note]::after, .fig-crate[data-note]::after, .fig-wasm[data-note]::after, .fig-hook[data-note]::after, .fig-runtime[data-note]::after, .fig-doc[data-note]::after, .fig-term[data-note]::after, .fig-fallback[data-note]::after, .fig-route[data-note]::after, .fig-module[data-note]::after, .fig-graph[data-note]::after, .fig-css[data-note]::after, .fig-js[data-note]::after, .fig-snippet[data-note]::after, .fig-html[data-note]::after, .fig-stream[data-note]::after, .fig-arena[data-note]::after, .fig-bundler[data-note]::after, .fig-adapter[data-note]::after, .fig-snapshot[data-note]::after, .fig-tree[data-note]::after, .fig-config[data-note]::after, .fig-log[data-note]::after, .fig-error[data-note]::after, .fig-request[data-note]::after, .fig-response[data-note]::after, .fig-client[data-note]::after, .fig-package[data-note]::after, .fig-build[data-note]::after, .fig-pipeline[data-note]::after, .fig-type[data-note]::after, .fig-fn[data-note]::after, .fig-var[data-note]::after {
   content: attr(data-label) "\A" attr(data-note);
   white-space: pre-line;
 }
@@ -800,17 +862,32 @@ label.fig-btn { cursor: pointer; }
 .fig-mark[data-kind="pipeline"] {
   background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%226%22%20y%3D%2224%22%20width%3D%2214%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2225%22%20y%3D%2224%22%20width%3D%2214%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Crect%20x%3D%2244%22%20y%3D%2224%22%20width%3D%2214%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Cpath%20d%3D%22M20%2032h5M39%2032h5%22%2F%3E%3C%2Fsvg%3E");
 }
+.fig-type::before,
+.fig-node[data-kind="type"] > summary > .fig-mark,
+.fig-mark[data-kind="type"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2212%22%20y%3D%2210%22%20width%3D%2240%22%20height%3D%2244%22%20rx%3D%224%22%2F%3E%3Cpath%20d%3D%22M12%2024h40%22%2F%3E%3Cpath%20d%3D%22M20%2034h24M20%2042h16%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-fn::before,
+.fig-node[data-kind="fn"] > summary > .fig-mark,
+.fig-mark[data-kind="fn"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M22%2012c-10%204-12%2016-12%2020s2%2016%2012%2020%22%2F%3E%3Cpath%20d%3D%22M42%2012c10%204%2012%2016%2012%2020s-2%2016-12%2020%22%2F%3E%3Cpath%20d%3D%22M26%2032h12%22%2F%3E%3C%2Fsvg%3E");
+}
+.fig-var::before,
+.fig-node[data-kind="var"] > summary > .fig-mark,
+.fig-mark[data-kind="var"] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20stroke%3D%22%231a1714%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2212%22%20y%3D%2218%22%20width%3D%2218%22%20height%3D%2228%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M36%2028h16M36%2036h16%22%2F%3E%3C%2Fsvg%3E");
+}
 
 [data-tone="added"] { color: var(--fig-added); }
 [data-tone="removed"] { color: var(--fig-removed); }
 [data-tone="changed"] { color: var(--fig-changed); }
 [data-tone="focus"] { color: var(--fig-focus); }
 [data-tone="ghost"] { color: var(--fig-ghost); opacity: 0.72; }
-.fig-user[data-tone="added"]::before, .fig-users[data-tone="added"]::before, .fig-server[data-tone="added"]::before, .fig-db[data-tone="added"]::before, .fig-box[data-tone="added"]::before, .fig-file[data-tone="added"]::before, .fig-folder[data-tone="added"]::before, .fig-cloud[data-tone="added"]::before, .fig-cache[data-tone="added"]::before, .fig-queue[data-tone="added"]::before, .fig-api[data-tone="added"]::before, .fig-browser[data-tone="added"]::before, .fig-worker[data-tone="added"]::before, .fig-lock[data-tone="added"]::before, .fig-key[data-tone="added"]::before, .fig-flag[data-tone="added"]::before, .fig-test[data-tone="added"]::before, .fig-event[data-tone="added"]::before, .fig-token[data-tone="added"]::before, .fig-mobile[data-tone="added"]::before, .fig-globe[data-tone="added"]::before, .fig-clock[data-tone="added"]::before, .fig-filter[data-tone="added"]::before, .fig-branch[data-tone="added"]::before, .fig-bucket[data-tone="added"]::before, .fig-transform[data-tone="added"]::before, .fig-babel[data-tone="added"]::before, .fig-oxc[data-tone="added"]::before, .fig-swc[data-tone="added"]::before, .fig-rust[data-tone="added"]::before, .fig-compiler[data-tone="added"]::before, .fig-parser[data-tone="added"]::before, .fig-ast[data-tone="added"]::before, .fig-ir[data-tone="added"]::before, .fig-hir[data-tone="added"]::before, .fig-plugin[data-tone="added"]::before, .fig-env[data-tone="added"]::before, .fig-scan[data-tone="added"]::before, .fig-crate[data-tone="added"]::before, .fig-wasm[data-tone="added"]::before, .fig-hook[data-tone="added"]::before, .fig-runtime[data-tone="added"]::before, .fig-doc[data-tone="added"]::before, .fig-term[data-tone="added"]::before, .fig-fallback[data-tone="added"]::before, .fig-route[data-tone="added"]::before, .fig-module[data-tone="added"]::before, .fig-graph[data-tone="added"]::before, .fig-css[data-tone="added"]::before, .fig-js[data-tone="added"]::before, .fig-snippet[data-tone="added"]::before, .fig-html[data-tone="added"]::before, .fig-stream[data-tone="added"]::before, .fig-arena[data-tone="added"]::before, .fig-bundler[data-tone="added"]::before, .fig-adapter[data-tone="added"]::before, .fig-snapshot[data-tone="added"]::before, .fig-tree[data-tone="added"]::before, .fig-config[data-tone="added"]::before, .fig-log[data-tone="added"]::before, .fig-error[data-tone="added"]::before, .fig-request[data-tone="added"]::before, .fig-response[data-tone="added"]::before, .fig-client[data-tone="added"]::before, .fig-package[data-tone="added"]::before, .fig-build[data-tone="added"]::before, .fig-pipeline[data-tone="added"]::before, .fig-node[data-tone="added"] > summary > .fig-mark, .fig-glyph[data-tone="added"] > .fig-mark { background-color: var(--fig-added-bg); border-color: color-mix(in srgb, var(--fig-added) 35%, white); }
-.fig-user[data-tone="removed"]::before, .fig-users[data-tone="removed"]::before, .fig-server[data-tone="removed"]::before, .fig-db[data-tone="removed"]::before, .fig-box[data-tone="removed"]::before, .fig-file[data-tone="removed"]::before, .fig-folder[data-tone="removed"]::before, .fig-cloud[data-tone="removed"]::before, .fig-cache[data-tone="removed"]::before, .fig-queue[data-tone="removed"]::before, .fig-api[data-tone="removed"]::before, .fig-browser[data-tone="removed"]::before, .fig-worker[data-tone="removed"]::before, .fig-lock[data-tone="removed"]::before, .fig-key[data-tone="removed"]::before, .fig-flag[data-tone="removed"]::before, .fig-test[data-tone="removed"]::before, .fig-event[data-tone="removed"]::before, .fig-token[data-tone="removed"]::before, .fig-mobile[data-tone="removed"]::before, .fig-globe[data-tone="removed"]::before, .fig-clock[data-tone="removed"]::before, .fig-filter[data-tone="removed"]::before, .fig-branch[data-tone="removed"]::before, .fig-bucket[data-tone="removed"]::before, .fig-transform[data-tone="removed"]::before, .fig-babel[data-tone="removed"]::before, .fig-oxc[data-tone="removed"]::before, .fig-swc[data-tone="removed"]::before, .fig-rust[data-tone="removed"]::before, .fig-compiler[data-tone="removed"]::before, .fig-parser[data-tone="removed"]::before, .fig-ast[data-tone="removed"]::before, .fig-ir[data-tone="removed"]::before, .fig-hir[data-tone="removed"]::before, .fig-plugin[data-tone="removed"]::before, .fig-env[data-tone="removed"]::before, .fig-scan[data-tone="removed"]::before, .fig-crate[data-tone="removed"]::before, .fig-wasm[data-tone="removed"]::before, .fig-hook[data-tone="removed"]::before, .fig-runtime[data-tone="removed"]::before, .fig-doc[data-tone="removed"]::before, .fig-term[data-tone="removed"]::before, .fig-fallback[data-tone="removed"]::before, .fig-route[data-tone="removed"]::before, .fig-module[data-tone="removed"]::before, .fig-graph[data-tone="removed"]::before, .fig-css[data-tone="removed"]::before, .fig-js[data-tone="removed"]::before, .fig-snippet[data-tone="removed"]::before, .fig-html[data-tone="removed"]::before, .fig-stream[data-tone="removed"]::before, .fig-arena[data-tone="removed"]::before, .fig-bundler[data-tone="removed"]::before, .fig-adapter[data-tone="removed"]::before, .fig-snapshot[data-tone="removed"]::before, .fig-tree[data-tone="removed"]::before, .fig-config[data-tone="removed"]::before, .fig-log[data-tone="removed"]::before, .fig-error[data-tone="removed"]::before, .fig-request[data-tone="removed"]::before, .fig-response[data-tone="removed"]::before, .fig-client[data-tone="removed"]::before, .fig-package[data-tone="removed"]::before, .fig-build[data-tone="removed"]::before, .fig-pipeline[data-tone="removed"]::before, .fig-node[data-tone="removed"] > summary > .fig-mark, .fig-glyph[data-tone="removed"] > .fig-mark { background-color: var(--fig-removed-bg); border-color: color-mix(in srgb, var(--fig-removed) 35%, white); }
-.fig-user[data-tone="changed"]::before, .fig-users[data-tone="changed"]::before, .fig-server[data-tone="changed"]::before, .fig-db[data-tone="changed"]::before, .fig-box[data-tone="changed"]::before, .fig-file[data-tone="changed"]::before, .fig-folder[data-tone="changed"]::before, .fig-cloud[data-tone="changed"]::before, .fig-cache[data-tone="changed"]::before, .fig-queue[data-tone="changed"]::before, .fig-api[data-tone="changed"]::before, .fig-browser[data-tone="changed"]::before, .fig-worker[data-tone="changed"]::before, .fig-lock[data-tone="changed"]::before, .fig-key[data-tone="changed"]::before, .fig-flag[data-tone="changed"]::before, .fig-test[data-tone="changed"]::before, .fig-event[data-tone="changed"]::before, .fig-token[data-tone="changed"]::before, .fig-mobile[data-tone="changed"]::before, .fig-globe[data-tone="changed"]::before, .fig-clock[data-tone="changed"]::before, .fig-filter[data-tone="changed"]::before, .fig-branch[data-tone="changed"]::before, .fig-bucket[data-tone="changed"]::before, .fig-transform[data-tone="changed"]::before, .fig-babel[data-tone="changed"]::before, .fig-oxc[data-tone="changed"]::before, .fig-swc[data-tone="changed"]::before, .fig-rust[data-tone="changed"]::before, .fig-compiler[data-tone="changed"]::before, .fig-parser[data-tone="changed"]::before, .fig-ast[data-tone="changed"]::before, .fig-ir[data-tone="changed"]::before, .fig-hir[data-tone="changed"]::before, .fig-plugin[data-tone="changed"]::before, .fig-env[data-tone="changed"]::before, .fig-scan[data-tone="changed"]::before, .fig-crate[data-tone="changed"]::before, .fig-wasm[data-tone="changed"]::before, .fig-hook[data-tone="changed"]::before, .fig-runtime[data-tone="changed"]::before, .fig-doc[data-tone="changed"]::before, .fig-term[data-tone="changed"]::before, .fig-fallback[data-tone="changed"]::before, .fig-route[data-tone="changed"]::before, .fig-module[data-tone="changed"]::before, .fig-graph[data-tone="changed"]::before, .fig-css[data-tone="changed"]::before, .fig-js[data-tone="changed"]::before, .fig-snippet[data-tone="changed"]::before, .fig-html[data-tone="changed"]::before, .fig-stream[data-tone="changed"]::before, .fig-arena[data-tone="changed"]::before, .fig-bundler[data-tone="changed"]::before, .fig-adapter[data-tone="changed"]::before, .fig-snapshot[data-tone="changed"]::before, .fig-tree[data-tone="changed"]::before, .fig-config[data-tone="changed"]::before, .fig-log[data-tone="changed"]::before, .fig-error[data-tone="changed"]::before, .fig-request[data-tone="changed"]::before, .fig-response[data-tone="changed"]::before, .fig-client[data-tone="changed"]::before, .fig-package[data-tone="changed"]::before, .fig-build[data-tone="changed"]::before, .fig-pipeline[data-tone="changed"]::before, .fig-node[data-tone="changed"] > summary > .fig-mark, .fig-glyph[data-tone="changed"] > .fig-mark { background-color: var(--fig-changed-bg); border-color: color-mix(in srgb, var(--fig-changed) 35%, white); }
-.fig-user[data-tone="focus"]::before, .fig-users[data-tone="focus"]::before, .fig-server[data-tone="focus"]::before, .fig-db[data-tone="focus"]::before, .fig-box[data-tone="focus"]::before, .fig-file[data-tone="focus"]::before, .fig-folder[data-tone="focus"]::before, .fig-cloud[data-tone="focus"]::before, .fig-cache[data-tone="focus"]::before, .fig-queue[data-tone="focus"]::before, .fig-api[data-tone="focus"]::before, .fig-browser[data-tone="focus"]::before, .fig-worker[data-tone="focus"]::before, .fig-lock[data-tone="focus"]::before, .fig-key[data-tone="focus"]::before, .fig-flag[data-tone="focus"]::before, .fig-test[data-tone="focus"]::before, .fig-event[data-tone="focus"]::before, .fig-token[data-tone="focus"]::before, .fig-mobile[data-tone="focus"]::before, .fig-globe[data-tone="focus"]::before, .fig-clock[data-tone="focus"]::before, .fig-filter[data-tone="focus"]::before, .fig-branch[data-tone="focus"]::before, .fig-bucket[data-tone="focus"]::before, .fig-transform[data-tone="focus"]::before, .fig-babel[data-tone="focus"]::before, .fig-oxc[data-tone="focus"]::before, .fig-swc[data-tone="focus"]::before, .fig-rust[data-tone="focus"]::before, .fig-compiler[data-tone="focus"]::before, .fig-parser[data-tone="focus"]::before, .fig-ast[data-tone="focus"]::before, .fig-ir[data-tone="focus"]::before, .fig-hir[data-tone="focus"]::before, .fig-plugin[data-tone="focus"]::before, .fig-env[data-tone="focus"]::before, .fig-scan[data-tone="focus"]::before, .fig-crate[data-tone="focus"]::before, .fig-wasm[data-tone="focus"]::before, .fig-hook[data-tone="focus"]::before, .fig-runtime[data-tone="focus"]::before, .fig-doc[data-tone="focus"]::before, .fig-term[data-tone="focus"]::before, .fig-fallback[data-tone="focus"]::before, .fig-route[data-tone="focus"]::before, .fig-module[data-tone="focus"]::before, .fig-graph[data-tone="focus"]::before, .fig-css[data-tone="focus"]::before, .fig-js[data-tone="focus"]::before, .fig-snippet[data-tone="focus"]::before, .fig-html[data-tone="focus"]::before, .fig-stream[data-tone="focus"]::before, .fig-arena[data-tone="focus"]::before, .fig-bundler[data-tone="focus"]::before, .fig-adapter[data-tone="focus"]::before, .fig-snapshot[data-tone="focus"]::before, .fig-tree[data-tone="focus"]::before, .fig-config[data-tone="focus"]::before, .fig-log[data-tone="focus"]::before, .fig-error[data-tone="focus"]::before, .fig-request[data-tone="focus"]::before, .fig-response[data-tone="focus"]::before, .fig-client[data-tone="focus"]::before, .fig-package[data-tone="focus"]::before, .fig-build[data-tone="focus"]::before, .fig-pipeline[data-tone="focus"]::before, .fig-node[data-tone="focus"] > summary > .fig-mark, .fig-glyph[data-tone="focus"] > .fig-mark { background-color: var(--fig-focus-bg); border-color: color-mix(in srgb, var(--fig-focus) 35%, white); }
-.fig-user[data-tone="ghost"]::before, .fig-users[data-tone="ghost"]::before, .fig-server[data-tone="ghost"]::before, .fig-db[data-tone="ghost"]::before, .fig-box[data-tone="ghost"]::before, .fig-file[data-tone="ghost"]::before, .fig-folder[data-tone="ghost"]::before, .fig-cloud[data-tone="ghost"]::before, .fig-cache[data-tone="ghost"]::before, .fig-queue[data-tone="ghost"]::before, .fig-api[data-tone="ghost"]::before, .fig-browser[data-tone="ghost"]::before, .fig-worker[data-tone="ghost"]::before, .fig-lock[data-tone="ghost"]::before, .fig-key[data-tone="ghost"]::before, .fig-flag[data-tone="ghost"]::before, .fig-test[data-tone="ghost"]::before, .fig-event[data-tone="ghost"]::before, .fig-token[data-tone="ghost"]::before, .fig-mobile[data-tone="ghost"]::before, .fig-globe[data-tone="ghost"]::before, .fig-clock[data-tone="ghost"]::before, .fig-filter[data-tone="ghost"]::before, .fig-branch[data-tone="ghost"]::before, .fig-bucket[data-tone="ghost"]::before, .fig-transform[data-tone="ghost"]::before, .fig-babel[data-tone="ghost"]::before, .fig-oxc[data-tone="ghost"]::before, .fig-swc[data-tone="ghost"]::before, .fig-rust[data-tone="ghost"]::before, .fig-compiler[data-tone="ghost"]::before, .fig-parser[data-tone="ghost"]::before, .fig-ast[data-tone="ghost"]::before, .fig-ir[data-tone="ghost"]::before, .fig-hir[data-tone="ghost"]::before, .fig-plugin[data-tone="ghost"]::before, .fig-env[data-tone="ghost"]::before, .fig-scan[data-tone="ghost"]::before, .fig-crate[data-tone="ghost"]::before, .fig-wasm[data-tone="ghost"]::before, .fig-hook[data-tone="ghost"]::before, .fig-runtime[data-tone="ghost"]::before, .fig-doc[data-tone="ghost"]::before, .fig-term[data-tone="ghost"]::before, .fig-fallback[data-tone="ghost"]::before, .fig-route[data-tone="ghost"]::before, .fig-module[data-tone="ghost"]::before, .fig-graph[data-tone="ghost"]::before, .fig-css[data-tone="ghost"]::before, .fig-js[data-tone="ghost"]::before, .fig-snippet[data-tone="ghost"]::before, .fig-html[data-tone="ghost"]::before, .fig-stream[data-tone="ghost"]::before, .fig-arena[data-tone="ghost"]::before, .fig-bundler[data-tone="ghost"]::before, .fig-adapter[data-tone="ghost"]::before, .fig-snapshot[data-tone="ghost"]::before, .fig-tree[data-tone="ghost"]::before, .fig-config[data-tone="ghost"]::before, .fig-log[data-tone="ghost"]::before, .fig-error[data-tone="ghost"]::before, .fig-request[data-tone="ghost"]::before, .fig-response[data-tone="ghost"]::before, .fig-client[data-tone="ghost"]::before, .fig-package[data-tone="ghost"]::before, .fig-build[data-tone="ghost"]::before, .fig-pipeline[data-tone="ghost"]::before, .fig-node[data-tone="ghost"] > summary > .fig-mark, .fig-glyph[data-tone="ghost"] > .fig-mark { background-color: transparent; border-style: dashed; }
+.fig-user[data-tone="added"]::before, .fig-users[data-tone="added"]::before, .fig-server[data-tone="added"]::before, .fig-db[data-tone="added"]::before, .fig-box[data-tone="added"]::before, .fig-file[data-tone="added"]::before, .fig-folder[data-tone="added"]::before, .fig-cloud[data-tone="added"]::before, .fig-cache[data-tone="added"]::before, .fig-queue[data-tone="added"]::before, .fig-api[data-tone="added"]::before, .fig-browser[data-tone="added"]::before, .fig-worker[data-tone="added"]::before, .fig-lock[data-tone="added"]::before, .fig-key[data-tone="added"]::before, .fig-flag[data-tone="added"]::before, .fig-test[data-tone="added"]::before, .fig-event[data-tone="added"]::before, .fig-token[data-tone="added"]::before, .fig-mobile[data-tone="added"]::before, .fig-globe[data-tone="added"]::before, .fig-clock[data-tone="added"]::before, .fig-filter[data-tone="added"]::before, .fig-branch[data-tone="added"]::before, .fig-bucket[data-tone="added"]::before, .fig-transform[data-tone="added"]::before, .fig-babel[data-tone="added"]::before, .fig-oxc[data-tone="added"]::before, .fig-swc[data-tone="added"]::before, .fig-rust[data-tone="added"]::before, .fig-compiler[data-tone="added"]::before, .fig-parser[data-tone="added"]::before, .fig-ast[data-tone="added"]::before, .fig-ir[data-tone="added"]::before, .fig-hir[data-tone="added"]::before, .fig-plugin[data-tone="added"]::before, .fig-env[data-tone="added"]::before, .fig-scan[data-tone="added"]::before, .fig-crate[data-tone="added"]::before, .fig-wasm[data-tone="added"]::before, .fig-hook[data-tone="added"]::before, .fig-runtime[data-tone="added"]::before, .fig-doc[data-tone="added"]::before, .fig-term[data-tone="added"]::before, .fig-fallback[data-tone="added"]::before, .fig-route[data-tone="added"]::before, .fig-module[data-tone="added"]::before, .fig-graph[data-tone="added"]::before, .fig-css[data-tone="added"]::before, .fig-js[data-tone="added"]::before, .fig-snippet[data-tone="added"]::before, .fig-html[data-tone="added"]::before, .fig-stream[data-tone="added"]::before, .fig-arena[data-tone="added"]::before, .fig-bundler[data-tone="added"]::before, .fig-adapter[data-tone="added"]::before, .fig-snapshot[data-tone="added"]::before, .fig-tree[data-tone="added"]::before, .fig-config[data-tone="added"]::before, .fig-log[data-tone="added"]::before, .fig-error[data-tone="added"]::before, .fig-request[data-tone="added"]::before, .fig-response[data-tone="added"]::before, .fig-client[data-tone="added"]::before, .fig-package[data-tone="added"]::before, .fig-build[data-tone="added"]::before, .fig-pipeline[data-tone="added"]::before, .fig-type[data-tone="added"]::before, .fig-fn[data-tone="added"]::before, .fig-var[data-tone="added"]::before, .fig-node[data-tone="added"] > summary > .fig-mark, .fig-glyph[data-tone="added"] > .fig-mark { background-color: var(--fig-added-bg); border-color: color-mix(in srgb, var(--fig-added) 35%, white); }
+.fig-user[data-tone="removed"]::before, .fig-users[data-tone="removed"]::before, .fig-server[data-tone="removed"]::before, .fig-db[data-tone="removed"]::before, .fig-box[data-tone="removed"]::before, .fig-file[data-tone="removed"]::before, .fig-folder[data-tone="removed"]::before, .fig-cloud[data-tone="removed"]::before, .fig-cache[data-tone="removed"]::before, .fig-queue[data-tone="removed"]::before, .fig-api[data-tone="removed"]::before, .fig-browser[data-tone="removed"]::before, .fig-worker[data-tone="removed"]::before, .fig-lock[data-tone="removed"]::before, .fig-key[data-tone="removed"]::before, .fig-flag[data-tone="removed"]::before, .fig-test[data-tone="removed"]::before, .fig-event[data-tone="removed"]::before, .fig-token[data-tone="removed"]::before, .fig-mobile[data-tone="removed"]::before, .fig-globe[data-tone="removed"]::before, .fig-clock[data-tone="removed"]::before, .fig-filter[data-tone="removed"]::before, .fig-branch[data-tone="removed"]::before, .fig-bucket[data-tone="removed"]::before, .fig-transform[data-tone="removed"]::before, .fig-babel[data-tone="removed"]::before, .fig-oxc[data-tone="removed"]::before, .fig-swc[data-tone="removed"]::before, .fig-rust[data-tone="removed"]::before, .fig-compiler[data-tone="removed"]::before, .fig-parser[data-tone="removed"]::before, .fig-ast[data-tone="removed"]::before, .fig-ir[data-tone="removed"]::before, .fig-hir[data-tone="removed"]::before, .fig-plugin[data-tone="removed"]::before, .fig-env[data-tone="removed"]::before, .fig-scan[data-tone="removed"]::before, .fig-crate[data-tone="removed"]::before, .fig-wasm[data-tone="removed"]::before, .fig-hook[data-tone="removed"]::before, .fig-runtime[data-tone="removed"]::before, .fig-doc[data-tone="removed"]::before, .fig-term[data-tone="removed"]::before, .fig-fallback[data-tone="removed"]::before, .fig-route[data-tone="removed"]::before, .fig-module[data-tone="removed"]::before, .fig-graph[data-tone="removed"]::before, .fig-css[data-tone="removed"]::before, .fig-js[data-tone="removed"]::before, .fig-snippet[data-tone="removed"]::before, .fig-html[data-tone="removed"]::before, .fig-stream[data-tone="removed"]::before, .fig-arena[data-tone="removed"]::before, .fig-bundler[data-tone="removed"]::before, .fig-adapter[data-tone="removed"]::before, .fig-snapshot[data-tone="removed"]::before, .fig-tree[data-tone="removed"]::before, .fig-config[data-tone="removed"]::before, .fig-log[data-tone="removed"]::before, .fig-error[data-tone="removed"]::before, .fig-request[data-tone="removed"]::before, .fig-response[data-tone="removed"]::before, .fig-client[data-tone="removed"]::before, .fig-package[data-tone="removed"]::before, .fig-build[data-tone="removed"]::before, .fig-pipeline[data-tone="removed"]::before, .fig-type[data-tone="removed"]::before, .fig-fn[data-tone="removed"]::before, .fig-var[data-tone="removed"]::before, .fig-node[data-tone="removed"] > summary > .fig-mark, .fig-glyph[data-tone="removed"] > .fig-mark { background-color: var(--fig-removed-bg); border-color: color-mix(in srgb, var(--fig-removed) 35%, white); }
+.fig-user[data-tone="changed"]::before, .fig-users[data-tone="changed"]::before, .fig-server[data-tone="changed"]::before, .fig-db[data-tone="changed"]::before, .fig-box[data-tone="changed"]::before, .fig-file[data-tone="changed"]::before, .fig-folder[data-tone="changed"]::before, .fig-cloud[data-tone="changed"]::before, .fig-cache[data-tone="changed"]::before, .fig-queue[data-tone="changed"]::before, .fig-api[data-tone="changed"]::before, .fig-browser[data-tone="changed"]::before, .fig-worker[data-tone="changed"]::before, .fig-lock[data-tone="changed"]::before, .fig-key[data-tone="changed"]::before, .fig-flag[data-tone="changed"]::before, .fig-test[data-tone="changed"]::before, .fig-event[data-tone="changed"]::before, .fig-token[data-tone="changed"]::before, .fig-mobile[data-tone="changed"]::before, .fig-globe[data-tone="changed"]::before, .fig-clock[data-tone="changed"]::before, .fig-filter[data-tone="changed"]::before, .fig-branch[data-tone="changed"]::before, .fig-bucket[data-tone="changed"]::before, .fig-transform[data-tone="changed"]::before, .fig-babel[data-tone="changed"]::before, .fig-oxc[data-tone="changed"]::before, .fig-swc[data-tone="changed"]::before, .fig-rust[data-tone="changed"]::before, .fig-compiler[data-tone="changed"]::before, .fig-parser[data-tone="changed"]::before, .fig-ast[data-tone="changed"]::before, .fig-ir[data-tone="changed"]::before, .fig-hir[data-tone="changed"]::before, .fig-plugin[data-tone="changed"]::before, .fig-env[data-tone="changed"]::before, .fig-scan[data-tone="changed"]::before, .fig-crate[data-tone="changed"]::before, .fig-wasm[data-tone="changed"]::before, .fig-hook[data-tone="changed"]::before, .fig-runtime[data-tone="changed"]::before, .fig-doc[data-tone="changed"]::before, .fig-term[data-tone="changed"]::before, .fig-fallback[data-tone="changed"]::before, .fig-route[data-tone="changed"]::before, .fig-module[data-tone="changed"]::before, .fig-graph[data-tone="changed"]::before, .fig-css[data-tone="changed"]::before, .fig-js[data-tone="changed"]::before, .fig-snippet[data-tone="changed"]::before, .fig-html[data-tone="changed"]::before, .fig-stream[data-tone="changed"]::before, .fig-arena[data-tone="changed"]::before, .fig-bundler[data-tone="changed"]::before, .fig-adapter[data-tone="changed"]::before, .fig-snapshot[data-tone="changed"]::before, .fig-tree[data-tone="changed"]::before, .fig-config[data-tone="changed"]::before, .fig-log[data-tone="changed"]::before, .fig-error[data-tone="changed"]::before, .fig-request[data-tone="changed"]::before, .fig-response[data-tone="changed"]::before, .fig-client[data-tone="changed"]::before, .fig-package[data-tone="changed"]::before, .fig-build[data-tone="changed"]::before, .fig-pipeline[data-tone="changed"]::before, .fig-type[data-tone="changed"]::before, .fig-fn[data-tone="changed"]::before, .fig-var[data-tone="changed"]::before, .fig-node[data-tone="changed"] > summary > .fig-mark, .fig-glyph[data-tone="changed"] > .fig-mark { background-color: var(--fig-changed-bg); border-color: color-mix(in srgb, var(--fig-changed) 35%, white); }
+.fig-user[data-tone="focus"]::before, .fig-users[data-tone="focus"]::before, .fig-server[data-tone="focus"]::before, .fig-db[data-tone="focus"]::before, .fig-box[data-tone="focus"]::before, .fig-file[data-tone="focus"]::before, .fig-folder[data-tone="focus"]::before, .fig-cloud[data-tone="focus"]::before, .fig-cache[data-tone="focus"]::before, .fig-queue[data-tone="focus"]::before, .fig-api[data-tone="focus"]::before, .fig-browser[data-tone="focus"]::before, .fig-worker[data-tone="focus"]::before, .fig-lock[data-tone="focus"]::before, .fig-key[data-tone="focus"]::before, .fig-flag[data-tone="focus"]::before, .fig-test[data-tone="focus"]::before, .fig-event[data-tone="focus"]::before, .fig-token[data-tone="focus"]::before, .fig-mobile[data-tone="focus"]::before, .fig-globe[data-tone="focus"]::before, .fig-clock[data-tone="focus"]::before, .fig-filter[data-tone="focus"]::before, .fig-branch[data-tone="focus"]::before, .fig-bucket[data-tone="focus"]::before, .fig-transform[data-tone="focus"]::before, .fig-babel[data-tone="focus"]::before, .fig-oxc[data-tone="focus"]::before, .fig-swc[data-tone="focus"]::before, .fig-rust[data-tone="focus"]::before, .fig-compiler[data-tone="focus"]::before, .fig-parser[data-tone="focus"]::before, .fig-ast[data-tone="focus"]::before, .fig-ir[data-tone="focus"]::before, .fig-hir[data-tone="focus"]::before, .fig-plugin[data-tone="focus"]::before, .fig-env[data-tone="focus"]::before, .fig-scan[data-tone="focus"]::before, .fig-crate[data-tone="focus"]::before, .fig-wasm[data-tone="focus"]::before, .fig-hook[data-tone="focus"]::before, .fig-runtime[data-tone="focus"]::before, .fig-doc[data-tone="focus"]::before, .fig-term[data-tone="focus"]::before, .fig-fallback[data-tone="focus"]::before, .fig-route[data-tone="focus"]::before, .fig-module[data-tone="focus"]::before, .fig-graph[data-tone="focus"]::before, .fig-css[data-tone="focus"]::before, .fig-js[data-tone="focus"]::before, .fig-snippet[data-tone="focus"]::before, .fig-html[data-tone="focus"]::before, .fig-stream[data-tone="focus"]::before, .fig-arena[data-tone="focus"]::before, .fig-bundler[data-tone="focus"]::before, .fig-adapter[data-tone="focus"]::before, .fig-snapshot[data-tone="focus"]::before, .fig-tree[data-tone="focus"]::before, .fig-config[data-tone="focus"]::before, .fig-log[data-tone="focus"]::before, .fig-error[data-tone="focus"]::before, .fig-request[data-tone="focus"]::before, .fig-response[data-tone="focus"]::before, .fig-client[data-tone="focus"]::before, .fig-package[data-tone="focus"]::before, .fig-build[data-tone="focus"]::before, .fig-pipeline[data-tone="focus"]::before, .fig-type[data-tone="focus"]::before, .fig-fn[data-tone="focus"]::before, .fig-var[data-tone="focus"]::before, .fig-node[data-tone="focus"] > summary > .fig-mark, .fig-glyph[data-tone="focus"] > .fig-mark { background-color: var(--fig-focus-bg); border-color: color-mix(in srgb, var(--fig-focus) 35%, white); }
+.fig-user[data-tone="ghost"]::before, .fig-users[data-tone="ghost"]::before, .fig-server[data-tone="ghost"]::before, .fig-db[data-tone="ghost"]::before, .fig-box[data-tone="ghost"]::before, .fig-file[data-tone="ghost"]::before, .fig-folder[data-tone="ghost"]::before, .fig-cloud[data-tone="ghost"]::before, .fig-cache[data-tone="ghost"]::before, .fig-queue[data-tone="ghost"]::before, .fig-api[data-tone="ghost"]::before, .fig-browser[data-tone="ghost"]::before, .fig-worker[data-tone="ghost"]::before, .fig-lock[data-tone="ghost"]::before, .fig-key[data-tone="ghost"]::before, .fig-flag[data-tone="ghost"]::before, .fig-test[data-tone="ghost"]::before, .fig-event[data-tone="ghost"]::before, .fig-token[data-tone="ghost"]::before, .fig-mobile[data-tone="ghost"]::before, .fig-globe[data-tone="ghost"]::before, .fig-clock[data-tone="ghost"]::before, .fig-filter[data-tone="ghost"]::before, .fig-branch[data-tone="ghost"]::before, .fig-bucket[data-tone="ghost"]::before, .fig-transform[data-tone="ghost"]::before, .fig-babel[data-tone="ghost"]::before, .fig-oxc[data-tone="ghost"]::before, .fig-swc[data-tone="ghost"]::before, .fig-rust[data-tone="ghost"]::before, .fig-compiler[data-tone="ghost"]::before, .fig-parser[data-tone="ghost"]::before, .fig-ast[data-tone="ghost"]::before, .fig-ir[data-tone="ghost"]::before, .fig-hir[data-tone="ghost"]::before, .fig-plugin[data-tone="ghost"]::before, .fig-env[data-tone="ghost"]::before, .fig-scan[data-tone="ghost"]::before, .fig-crate[data-tone="ghost"]::before, .fig-wasm[data-tone="ghost"]::before, .fig-hook[data-tone="ghost"]::before, .fig-runtime[data-tone="ghost"]::before, .fig-doc[data-tone="ghost"]::before, .fig-term[data-tone="ghost"]::before, .fig-fallback[data-tone="ghost"]::before, .fig-route[data-tone="ghost"]::before, .fig-module[data-tone="ghost"]::before, .fig-graph[data-tone="ghost"]::before, .fig-css[data-tone="ghost"]::before, .fig-js[data-tone="ghost"]::before, .fig-snippet[data-tone="ghost"]::before, .fig-html[data-tone="ghost"]::before, .fig-stream[data-tone="ghost"]::before, .fig-arena[data-tone="ghost"]::before, .fig-bundler[data-tone="ghost"]::before, .fig-adapter[data-tone="ghost"]::before, .fig-snapshot[data-tone="ghost"]::before, .fig-tree[data-tone="ghost"]::before, .fig-config[data-tone="ghost"]::before, .fig-log[data-tone="ghost"]::before, .fig-error[data-tone="ghost"]::before, .fig-request[data-tone="ghost"]::before, .fig-response[data-tone="ghost"]::before, .fig-client[data-tone="ghost"]::before, .fig-package[data-tone="ghost"]::before, .fig-build[data-tone="ghost"]::before, .fig-pipeline[data-tone="ghost"]::before, .fig-type[data-tone="ghost"]::before, .fig-fn[data-tone="ghost"]::before, .fig-var[data-tone="ghost"]::before, .fig-node[data-tone="ghost"] > summary > .fig-mark, .fig-glyph[data-tone="ghost"] > .fig-mark { background-color: transparent; border-style: dashed; }
 .fig-layer[data-tone="added"], .fig-phase[data-tone="added"] { background: var(--fig-added-bg); }
 .fig-layer[data-tone="removed"], .fig-phase[data-tone="removed"] { background: var(--fig-removed-bg); }
 .fig-layer[data-tone="changed"], .fig-phase[data-tone="changed"] { background: var(--fig-changed-bg); }
@@ -851,6 +928,7 @@ label.fig-btn { cursor: pointer; }
   align-items: stretch;
   width: 248px;
   max-width: 100%;
+  min-width: 0;
   background: #fffaf2;
   border: 1px solid var(--fig-rule);
   border-radius: 16px;
@@ -859,18 +937,19 @@ label.fig-btn { cursor: pointer; }
   opacity: 1;
   position: relative;
   text-align: left;
+  box-sizing: border-box;
 }
-.fig-node.tight { width: 168px; }
+.fig-node.tight { width: min(100%, 220px); flex-shrink: 0; }
 .fig-node.wide {
   width: min(100%, 720px);
   flex: 1 1 100%;
 }
 .fig-node > summary {
   display: grid;
-  grid-template-columns: 48px 1fr auto;
+  grid-template-columns: 48px minmax(0, 1fr);
   gap: 10px;
   align-items: center;
-  padding: 12px 12px 12px 12px;
+  padding: 12px;
   cursor: pointer;
   list-style: none;
   border-radius: 16px;
@@ -909,30 +988,20 @@ label.fig-btn { cursor: pointer; }
   font-weight: 600;
   letter-spacing: -0.03em;
   color: var(--fig-ink);
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 .fig-node-text span {
   font-size: 12px;
   line-height: 1.35;
   color: var(--fig-muted);
+  overflow-wrap: break-word;
 }
 .fig-node.tight .fig-node-text em,
 .fig-node.tight .fig-node-text span { display: none; }
-.fig-node.tight > summary { grid-template-columns: 40px 1fr auto; padding: 10px; }
+.fig-node.tight > summary { grid-template-columns: 40px minmax(0, 1fr); padding: 10px; }
 .fig-node.tight .fig-mark { width: 40px; height: 40px; flex-basis: 40px; border-radius: 12px; }
-.fig-node-go {
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fig-muted);
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  align-self: stretch;
-  display: grid;
-  place-items: center;
-}
-.fig-node-go::before { content: "Ask"; }
-.fig-node[open] > summary .fig-node-go::before { content: "Close"; }
+.fig-node-go { display: none; }
 .fig-node-panel {
   padding: 12px 14px 14px;
   font-size: 13.5px;

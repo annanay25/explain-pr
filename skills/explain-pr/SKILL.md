@@ -7,7 +7,7 @@ description: Use when asked to explain a PR, summarize code changes, show data f
 
 Produce **one short HTML walk** of the PR. Not three parallel views. The author should understand the change in a few Next clicks.
 
-Copy `figure.css` and `figure.js` next to the page (or link them). Fonts and icons live in the CSS. `figure.js` only builds the **ask prompt** when a reviewer opens a component. Next is CSS (hidden radios + labels). No npm, no build, **no local server**. Open the `.html` file from disk (`file://`). Do not start Python, `npx serve`, or anything else to preview it.
+Copy `figure.css` and `figure.js` next to the page (or link them). Fonts and icons live in the CSS. `figure.js` only builds the **follow-up prompt** when someone opens a component. Next is CSS (hidden radios + labels). No npm, no build, **no local server**. Open the `.html` file from disk (`file://`). Do not start Python, `npx serve`, or anything else to preview it.
 
 Do not write a prose essay. **3 scenes. 5 is the hard max.** One claim per scene.
 
@@ -21,7 +21,7 @@ The reader is a teammate who has not opened the diff. Headlines, the sentence un
 
 - Scene titles and captions: spoken English. A query param, function, or HTTP header does not belong in that sentence unless you immediately say what it does in plain words.
 - Card **strong** may be the real name (`BlocksHandler`, `bucket index`). The **span** under it is still a plain sentence, not a stack of jargon.
-- Panels may quote identifiers. That is what **Ask** is for — extra depth after the picture is clear.
+- Panels may quote identifiers. Extra depth lives there after the picture is clear.
 
 **Forbidden texture**
 
@@ -46,7 +46,7 @@ The old three-view walk was too long. Compress.
 
 ## Output skeleton
 
-No view tabs. Radios `#s1`–`s5` on the deck. Put **Back / dots / Next above the graphic** (nav is a sibling of `.fig-stage`; CSS puts it between the title and the canvas).
+No view tabs. Radios `#s1`–`s5` on the deck. Put **Back / dots / Next above the scene title** (first child inside `.fig-stage`; CSS `order: -1` keeps it there even if the HTML is later in the file).
 
 ```html
 <link rel="stylesheet" href="figure.css" />
@@ -65,6 +65,15 @@ No view tabs. Radios `#s1`–`s5` on the deck. Put **Back / dots / Next above th
     <div class="fig-scenes">
       <section class="fig-scene">
         <div class="fig-stage">
+          <nav class="fig-nav">
+            <span class="fig-btn is-disabled">Back</span>
+            <div class="fig-dots-nav">
+              <label class="fig-dot is-current" for="s1"></label>
+              <label class="fig-dot" for="s2"></label>
+              <label class="fig-dot" for="s3"></label>
+            </div>
+            <label class="fig-btn fig-next" for="s2">Next</label>
+          </nav>
           <div class="fig-scene-head">
             <div class="fig-index">01</div>
             <div>
@@ -74,15 +83,6 @@ No view tabs. Radios `#s1`–`s5` on the deck. Put **Back / dots / Next above th
           </div>
           <div class="fig-canvas">…components from the catalog…</div>
         </div>
-        <nav class="fig-nav">
-          <span class="fig-btn is-disabled">Back</span>
-          <div class="fig-dots-nav">
-            <label class="fig-dot is-current" for="s1"></label>
-            <label class="fig-dot" for="s2"></label>
-            <label class="fig-dot" for="s3"></label>
-          </div>
-          <label class="fig-btn fig-next" for="s2">Next</label>
-        </nav>
       </section>
       <!-- more scenes -->
     </div>
@@ -98,16 +98,16 @@ Put a `.fig-repo` link and the PR title in `.fig-mast h1` — the prompt compose
 1. Read the PR title, body, and the shape of the diff (not every line).
 2. Name the system. Cut to **three claims** an author can hold. Drop the rest into panels.
 3. Draw. Open `catalog.html` and pick marks that match roles. Distinct `data-kind` for distinct components.
-4. If the diff changes types or functions, draw that layout on the “how” scene: a `.fig-cluster` per type, `fn` cards inside, arrows labeled `calls`. Function names label cards; they must not be the claim.
+4. If the diff changes types or functions, draw that layout on the “how” scene: wrap methods in `.fig-enclose` whose header is a clickable `data-kind="type"` card. Functions stay visible inside the type. Function names label cards; they must not be the claim.
 5. If a public API, prod store, or caller can break, put `.fig-risk` tiles (`hot|watch|safe`) on the last scene and a “Do not merge if…” node. If blast is none, one `safe` tile is enough — do not add a view for it.
 
-## Inspect + ask prompt
+## Inspect + follow-up prompt
 
 Every named component is `<details class="fig-node" data-kind="…">` with kind, name, role, and a short panel of facts.
 
 `figure.js` appends, on every node: **Your questions**, a **Prompt for your coding agent**, **Copy prompt**.
 
-Do not omit panel facts — they become `data-known` in the prompt.
+The prompt is a **follow-up to the agent that wrote the PR and this walk**, not a cold review. Do not omit panel facts — they become `data-known` in the prompt.
 
 Modifiers: `.tight`, `.wide`, `open` to start expanded (use once per scene for the main object).
 
@@ -143,27 +143,43 @@ Arrow: `<div class="fig-edge" data-label="GET"></div>`. Add `down` or `strike`.
 
 ## Layout
 
-`.fig-row`, `.fig-col`, `.fig-cluster`, `.fig-compare` + `.fig-pane`, `.fig-stack` + `.fig-layer`, `.fig-pipe` + `.fig-phase`, `.fig-timeline` + `.fig-step`, `.fig-code` + `.fig-line.added|.removed`, `.fig-metric`, `.fig-callout`, `.fig-datapoints`, `.fig-risk`.
+`.fig-row`, `.fig-col`, `.fig-cluster`, `.fig-enclose` + `.fig-enclose-body`, `.fig-compare` + `.fig-pane`, `.fig-stack` + `.fig-layer`, `.fig-pipe` + `.fig-phase`, `.fig-timeline` + `.fig-step`, `.fig-code` + `.fig-line.added|.removed`, `.fig-metric`, `.fig-callout`, `.fig-datapoints`, `.fig-risk`.
 
-To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. For code layout, put functions in a `.fig-cluster` labeled with the type name; `calls` arrows go between `fn` cards.
-
-Example node:
+To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. For code layout, the type **encloses** its functions:
 
 ```html
-<details class="fig-node" data-kind="oxc" data-tone="added">
-  <summary>
-    <i class="fig-mark"></i>
-    <span class="fig-node-text">
-      <em>parser host</em>
-      <strong>OXC</strong>
-      <span>Rust parser. Thin adapter crate in this repo.</span>
-    </span>
-    <b class="fig-node-go"></b>
-  </summary>
-  <div class="fig-node-panel">
-    <p>What this component actually does in this PR, including HOW it processes data.</p>
+<div class="fig-enclose" data-tone="changed">
+  <details class="fig-node" data-kind="type" data-tone="changed">
+    <summary>
+      <i class="fig-mark"></i>
+      <span class="fig-node-text">
+        <em>type</em>
+        <strong>StoreGateway</strong>
+        <span>Owns the blocks page handler.</span>
+      </span>
+    </summary>
+    <div class="fig-node-panel">
+      <p>Methods live on this struct. Ask here about the type as a whole.</p>
+    </div>
+  </details>
+  <div class="fig-enclose-body">
+    <div class="fig-col">
+      <details class="fig-node" data-kind="fn" data-tone="changed">
+        <summary>
+          <i class="fig-mark"></i>
+          <span class="fig-node-text">
+            <em>function</em>
+            <strong>BlocksHandler</strong>
+            <span>Entry point. Now chooses catalog or full listing.</span>
+          </span>
+        </summary>
+        <div class="fig-node-panel">
+          <p>After this PR it parses page options, then calls loadBlocksPageData.</p>
+        </div>
+      </details>
+    </div>
   </div>
-</details>
+</div>
 ```
 
 ## Rules

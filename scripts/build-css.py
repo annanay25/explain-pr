@@ -79,6 +79,9 @@ ICONS = {
     "package": '<path d="M12 22 32 12 52 22v24L32 56 12 46z"/><path d="M12 22h40M32 12v44"/>',
     "build": '<rect x="10" y="40" width="14" height="12" rx="1"/><rect x="26" y="40" width="14" height="12" rx="1"/><rect x="42" y="40" width="12" height="12" rx="1"/><rect x="18" y="26" width="14" height="12" rx="1"/><rect x="34" y="26" width="14" height="12" rx="1"/><rect x="26" y="12" width="14" height="12" rx="1"/>',
     "pipeline": '<rect x="6" y="24" width="14" height="16" rx="2"/><rect x="25" y="24" width="14" height="16" rx="2"/><rect x="44" y="24" width="14" height="16" rx="2"/><path d="M20 32h5M39 32h5"/>',
+    "type": '<rect x="12" y="10" width="40" height="44" rx="4"/><path d="M12 24h40"/><path d="M20 34h24M20 42h16"/>',
+    "fn": '<path d="M22 12c-10 4-12 16-12 20s2 16 12 20"/><path d="M42 12c10 4 12 16 12 20s-2 16-12 20"/><path d="M26 32h12"/>',
+    "var": '<rect x="12" y="18" width="18" height="28" rx="3"/><path d="M36 28h16M36 36h16"/>',
 }
 
 
@@ -316,7 +319,7 @@ body.fig-page {{ min-height: 100vh; }}
 
 .fig-stage {{
   flex: 1;
-  padding: 24px 28px 10px;
+  padding: 0 28px 10px;
   display: flex;
   flex-direction: column;
 }}
@@ -325,7 +328,7 @@ body.fig-page {{ min-height: 100vh; }}
   grid-template-columns: auto 1fr;
   gap: 14px;
   align-items: start;
-  margin-bottom: 12px;
+  padding: 18px 0 12px;
 }}
 .fig-index {{
   font-family: "IBM Plex Mono", ui-monospace, monospace;
@@ -361,13 +364,13 @@ body.fig-page {{ min-height: 100vh; }}
   padding: 12px 0 12px;
 }}
 .fig-nav {{
+  order: -1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin: 0 -28px 4px;
+  margin: 0 -28px;
   padding: 10px 28px 12px;
-  border-top: 1px solid var(--fig-rule);
   border-bottom: 1px solid var(--fig-rule);
   background: #faf6ee;
   flex-shrink: 0;
@@ -421,7 +424,8 @@ label.fig-btn {{ cursor: pointer; }}
   border-radius: 16px;
   padding: 22px 16px 14px;
   position: relative;
-  min-width: min(100%, 220px);
+  min-width: 0;
+  max-width: 100%;
   background: rgba(255,255,255,0.35);
 }}
 .fig-cluster::before {{
@@ -437,16 +441,77 @@ label.fig-btn {{ cursor: pointer; }}
   text-transform: uppercase;
   color: var(--fig-muted);
 }}
+.fig-cluster:has(> .fig-node[data-kind="type"]) {{
+  padding-top: 14px;
+}}
+.fig-cluster:has(> .fig-node[data-kind="type"])::before {{
+  content: none;
+}}
+.fig-cluster > .fig-node {{
+  width: 100%;
+}}
+.fig-cluster .fig-col > .fig-node {{
+  width: 100%;
+}}
+.fig-enclose {{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  background: #fffaf2;
+  border: 1px solid var(--fig-rule);
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(26, 23, 20, 0.05);
+  overflow: hidden;
+}}
+.fig-enclose[data-tone="added"] {{ border-color: color-mix(in srgb, var(--fig-added) 35%, var(--fig-rule)); }}
+.fig-enclose[data-tone="removed"] {{ border-color: color-mix(in srgb, var(--fig-removed) 35%, var(--fig-rule)); }}
+.fig-enclose[data-tone="changed"] {{ border-color: color-mix(in srgb, var(--fig-changed) 35%, var(--fig-rule)); }}
+.fig-enclose[data-tone="focus"] {{ border-color: color-mix(in srgb, var(--fig-focus) 35%, var(--fig-rule)); }}
+.fig-enclose > .fig-node[data-kind="type"] {{
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}}
+.fig-enclose > .fig-node[data-kind="type"][open] > summary {{
+  border-radius: 0;
+}}
+.fig-enclose-body {{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px 12px 14px;
+  background: color-mix(in srgb, #fff 78%, var(--fig-paper-2, #f3eee6));
+  border-top: 1px dashed var(--fig-rule);
+}}
+.fig-enclose-body > .fig-col {{
+  width: 100%;
+  align-items: stretch;
+}}
+.fig-enclose-body .fig-node {{
+  width: 100%;
+  background: #fff;
+}}
 .fig-compare {{ gap: 18px; align-items: stretch; justify-content: center; flex-wrap: wrap; }}
 .fig-pane {{
   display: flex;
   flex-direction: column;
   gap: 14px;
   flex: 1 1 280px;
+  min-width: 0;
   border: 1px solid var(--fig-rule);
   border-radius: 14px;
   padding: 16px 14px 14px;
   background: #fff;
+}}
+.fig-pane > .fig-node,
+.fig-pane > .fig-enclose {{
+  width: 100%;
 }}
 .fig-pane::before {{
   content: attr(data-label);
@@ -594,6 +659,7 @@ ICON_RULES_HERE
   align-items: stretch;
   width: 248px;
   max-width: 100%;
+  min-width: 0;
   background: #fffaf2;
   border: 1px solid var(--fig-rule);
   border-radius: 16px;
@@ -602,18 +668,19 @@ ICON_RULES_HERE
   opacity: 1;
   position: relative;
   text-align: left;
+  box-sizing: border-box;
 }}
-.fig-node.tight {{ width: 168px; }}
+.fig-node.tight {{ width: min(100%, 220px); flex-shrink: 0; }}
 .fig-node.wide {{
   width: min(100%, 720px);
   flex: 1 1 100%;
 }}
 .fig-node > summary {{
   display: grid;
-  grid-template-columns: 48px 1fr auto;
+  grid-template-columns: 48px minmax(0, 1fr);
   gap: 10px;
   align-items: center;
-  padding: 12px 12px 12px 12px;
+  padding: 12px;
   cursor: pointer;
   list-style: none;
   border-radius: 16px;
@@ -652,30 +719,20 @@ ICON_RULES_HERE
   font-weight: 600;
   letter-spacing: -0.03em;
   color: var(--fig-ink);
+  overflow-wrap: break-word;
+  word-break: normal;
 }}
 .fig-node-text span {{
   font-size: 12px;
   line-height: 1.35;
   color: var(--fig-muted);
+  overflow-wrap: break-word;
 }}
 .fig-node.tight .fig-node-text em,
 .fig-node.tight .fig-node-text span {{ display: none; }}
-.fig-node.tight > summary {{ grid-template-columns: 40px 1fr auto; padding: 10px; }}
+.fig-node.tight > summary {{ grid-template-columns: 40px minmax(0, 1fr); padding: 10px; }}
 .fig-node.tight .fig-mark {{ width: 40px; height: 40px; flex-basis: 40px; border-radius: 12px; }}
-.fig-node-go {{
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fig-muted);
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  align-self: stretch;
-  display: grid;
-  place-items: center;
-}}
-.fig-node-go::before {{ content: "Ask"; }}
-.fig-node[open] > summary .fig-node-go::before {{ content: "Close"; }}
+.fig-node-go {{ display: none; }}
 .fig-node-panel {{
   padding: 12px 14px 14px;
   font-size: 13.5px;

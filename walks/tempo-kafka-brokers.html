@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>grafana/tempo #7876 — Kafka bootstrap brokers</title>
+    <link rel="stylesheet" href="../figure.css" />
+  </head>
+  <body class="fig-page">
+    <div class="site" style="padding-bottom: 0">
+      <a class="back" href="../index.html">← Gallery</a>
+    </div>
+    <article class="fig-deck">
+      <div class="fig-shell">
+        <header class="fig-mast">
+          <div>
+            <p class="fig-kicker">Figure · PR walk</p>
+            <h1>More than one Kafka starting address</h1>
+            <div class="fig-repo"><a href="https://github.com/grafana/tempo/pull/7876">grafana/tempo #7876</a></div>
+          </div>
+          <div class="fig-mast-side">
+            <span class="fig-stat added">+206</span>
+            <span class="fig-stat removed">−38</span>
+            <span class="fig-stat">18 files</span>
+          </div>
+        </header>
+        <input type="radio" name="walk" id="s1" checked>
+        <input type="radio" name="walk" id="s2">
+        <input type="radio" name="walk" id="s3">
+        <div class="fig-scenes">
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <nav class="fig-nav">
+                <span class="fig-btn is-disabled">Back</span>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot is-current" for="s1"></label>
+                  <label class="fig-dot" for="s2"></label>
+                  <label class="fig-dot" for="s3"></label>
+                </div>
+                <label class="fig-btn fig-next" for="s2">Next</label>
+              </nav>
+              <div class="fig-scene-head">
+                <div class="fig-index">01</div>
+                <div>
+                  <h2>Kafka ingest used to take one starting address. It now takes a list.</h2>
+                  <p>Many Kafka setups give you several broker hostnames and no single failover name. You can pass all of them. After Tempo connects, Kafka still tells it the rest of the cluster.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-compare">
+                  <div class="fig-pane" data-label="Before" data-tone="removed">
+                    <div class="fig-col">
+                      <details class="fig-node" data-kind="config" data-tone="removed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>setting</em>
+                            <strong>ingest.kafka.address</strong>
+                            <span>One host and port. A list was not allowed.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>This is the shared Kafka setting for Tempo ingest. It used to be a plain string, default <code>localhost:9092</code>. Issue <a href="https://github.com/grafana/tempo/issues/7880">#7880</a> is that many Kafka clusters publish several broker addresses instead of one highly available hostname.</p>
+                        </div>
+                      </details>
+                      <div class="fig-edge down" data-label="only this host"></div>
+                      <details class="fig-node" data-kind="queue" data-tone="focus">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>Kafka</em>
+                            <strong>One broker</strong>
+                            <span>If that one host is down at startup, Tempo cannot connect.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Kafka clients only need a starting address to learn the rest of the cluster from metadata. One host is enough when it is always reachable. It is not enough when operators hand you <code>kafka-1</code>, <code>kafka-2</code>, and <code>kafka-3</code> with no load-balancer name.</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                  <div class="fig-pane" data-label="After" data-tone="added">
+                    <div class="fig-col">
+                      <details class="fig-node" data-kind="config" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>setting</em>
+                            <strong>ingest.kafka.address</strong>
+                            <span>One host, a comma-separated string, or a YAML list.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Existing <code>address: kafka:9092</code> configs keep working. Flags take commas. YAML also accepts a list of hosts. Docs and the changelog say all three forms are valid. After connecting, Tempo still discovers remaining brokers from Kafka metadata.</p>
+                        </div>
+                      </details>
+                      <div class="fig-edge down" data-label="several starting hosts"></div>
+                      <details class="fig-node" data-kind="queue" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>Kafka</em>
+                            <strong>Broker list</strong>
+                            <span>Any one of these can get Tempo into the cluster.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>These are bootstrap seeds, not the full membership list. The Kafka client tries them, then uses cluster metadata for the topic’s brokers. This matches how Grafana Mimir already documents comma-separated Kafka addresses.</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <nav class="fig-nav">
+                <label class="fig-btn" for="s1">Back</label>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot" for="s1"></label>
+                  <label class="fig-dot is-current" for="s2"></label>
+                  <label class="fig-dot" for="s3"></label>
+                </div>
+                <label class="fig-btn fig-next" for="s3">Next</label>
+              </nav>
+              <div class="fig-scene-head">
+                <div class="fig-index">02</div>
+                <div>
+                  <h2>One new type accepts three ways of writing the same list.</h2>
+                  <p>A YAML string, a comma-separated string, or a YAML list all become the same list of hosts. Flags use commas and replace the default. The Kafka client then starts with every host in that list.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-compare">
+                  <div class="fig-pane" data-label="How the list is read">
+                    <div class="fig-enclose" data-tone="added">
+                      <details class="fig-node" data-kind="type" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>type</em>
+                            <strong>KafkaAddresses</strong>
+                            <span>A list of host:port pairs, not a single string.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>New in <code>pkg/ingest/config.go</code>. It implements flag parsing and YAML so <code>KafkaConfig.Address</code> can stay one field. Docs still describe the flag as a string, on purpose, via <code>FlagType</code>.</p>
+                        </div>
+                      </details>
+                      <div class="fig-enclose-body">
+                        <div class="fig-col">
+                          <details class="fig-node" data-kind="fn" data-tone="added">
+                            <summary>
+                              <i class="fig-mark"></i>
+                              <span class="fig-node-text">
+                                <em>function</em>
+                                <strong>Set</strong>
+                                <span>A flag value replaces the default. It does not append.</span>
+                              </span>
+                            </summary>
+                            <div class="fig-node-panel">
+                              <p>Needed because <code>RegisterFlags</code> first sets <code>localhost:9092</code>. If Set appended, passing <code>-ingest.kafka.address=kafka-1:9092</code> would keep localhost in the list. Tests pin that a comma-separated flag becomes exactly those two hosts.</p>
+                            </div>
+                          </details>
+                          <div class="fig-edge down" data-label="or YAML"></div>
+                          <details class="fig-node" data-kind="fn" data-tone="added">
+                            <summary>
+                              <i class="fig-mark"></i>
+                              <span class="fig-node-text">
+                                <em>function</em>
+                                <strong>UnmarshalYAML</strong>
+                                <span>Tries a string first, then a list of strings.</span>
+                              </span>
+                            </summary>
+                            <div class="fig-node-panel">
+                              <p>A single string can still contain commas. A YAML list of hosts is also accepted. Writing YAML back always uses the comma-separated string form, not a list.</p>
+                            </div>
+                          </details>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="fig-edge down" data-label="calls"></div>
+                    <details class="fig-node" data-kind="fn" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>function</em>
+                          <strong>parseKafkaAddresses</strong>
+                          <span>Splits on commas, trims spaces, drops empty pieces.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Package helper in <code>pkg/ingest/config.go</code>, not a method on the type. Both Set and UnmarshalYAML call it. An empty list after this step fails validation with the same missing-address error as before.</p>
+                      </div>
+                    </details>
+                  </div>
+                  <div class="fig-pane" data-label="Then handed to Kafka">
+                    <div class="fig-enclose" data-tone="changed">
+                      <details class="fig-node" data-kind="type" data-tone="changed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>type</em>
+                            <strong>KafkaConfig</strong>
+                            <span>Same Kafka settings as before. Address is now a list.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Used by the components that produce and consume ingest Kafka. Validate now checks that the list is not empty, instead of comparing the string to <code>""</code>.</p>
+                        </div>
+                      </details>
+                      <div class="fig-enclose-body">
+                        <details class="fig-node" data-kind="var" data-tone="changed">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>field</em>
+                              <strong>Address</strong>
+                              <span>Typed as KafkaAddresses instead of string.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>Tests across distributor, live store, block builder, and ingest helpers wrap a single host as <code>KafkaAddresses{host}</code>. The test Kafka helper now takes a slice of addresses too.</p>
+                          </div>
+                        </details>
+                      </div>
+                    </div>
+                    <div class="fig-edge down" data-label="spread into"></div>
+                    <details class="fig-node" data-kind="fn" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>function</em>
+                          <strong>commonKafkaClientOptions</strong>
+                          <span>Passes every address into the Kafka client as a starting broker.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>In <code>pkg/ingest/writer_client.go</code>. The call is now <code>kgo.SeedBrokers(cfg.Address...)</code>. A test builds a two-broker fake cluster and checks a client can be created from that full address list.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <nav class="fig-nav">
+                <label class="fig-btn" for="s2">Back</label>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot" for="s1"></label>
+                  <label class="fig-dot" for="s2"></label>
+                  <label class="fig-dot is-current" for="s3"></label>
+                </div>
+                <span class="fig-btn fig-next is-disabled">Done</span>
+              </nav>
+              <div class="fig-scene-head">
+                <div class="fig-index">03</div>
+                <div>
+                  <h2>Every Kafka client shares this field. Old single-address configs still work.</h2>
+                  <p>Distributor, live store, and block builder all read the same setting. Hold the PR if one host and port stops working, or if a YAML list of brokers is ignored.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-row">
+                  <div class="fig-risk" data-level="hot"><em>startup</em><strong>Kafka connect</strong><span>If the list is parsed wrong, Tempo cannot reach Kafka at all.</span></div>
+                  <div class="fig-risk" data-level="watch"><em>shared field</em><strong>All ingest clients</strong><span>Distributor, live store, and block builder all construct Kafka clients from this one address list.</span></div>
+                  <div class="fig-risk" data-level="watch"><em>YAML write-back</em><strong>Lists become a string</strong><span>Saving config writes commas, not a YAML list, even if you loaded a list.</span></div>
+                  <div class="fig-risk" data-level="safe"><em>existing configs</em><strong>One host:port</strong><span>A single string still unmarshals. The default is still localhost:9092.</span></div>
+                </div>
+                <details class="fig-node wide" data-kind="lock" data-tone="changed" open>
+                  <summary>
+                    <i class="fig-mark"></i>
+                    <span class="fig-node-text">
+                      <em>gate</em>
+                      <strong>Do not merge if…</strong>
+                      <span>A YAML list keeps only the first host, a flag appends to localhost, or an empty list passes validation.</span>
+                    </span>
+                  </summary>
+                  <div class="fig-node-panel">
+                    <p>Tests already pin flag replace, YAML string / commas / list, empty-list validation, and a two-broker fake cluster. Also bounce if <code>kgo.SeedBrokers</code> still receives one joined string instead of separate hosts — that would treat the commas as part of a hostname. This does not change SASL, TLS, topics, or consumer groups.</p>
+                  </div>
+                </details>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </article>
+    <script src="../figure.js"></script>
+  </body>
+</html>

@@ -125,44 +125,57 @@
         <div class="catalog-item"><div class="fig-box" data-label="box"></div><code>box</code></div>
       </div>
       <h2>Source code</h2>
-      <p style="color:var(--fig-muted);max-width:62ch;line-height:1.5">Use these in the Data view. A type is a labeled cluster. Functions sit inside it. Arrows mean calls. Draw a variable only when the PR actually changes it.</p>
+      <p style="color:var(--fig-muted);max-width:62ch;line-height:1.5">A type is a clickable card that <strong>encloses</strong> its functions. Click the type to ask about the class; click a function inside for that method. Arrows mean calls. Draw a variable only when the PR actually changes it.</p>
       <div class="catalog-grid">
         <div class="catalog-item"><div class="fig-type" data-label="type"></div><code>type</code></div>
         <div class="catalog-item"><div class="fig-fn" data-label="fn"></div><code>fn</code></div>
         <div class="catalog-item"><div class="fig-var" data-label="var"></div><code>var</code></div>
       </div>
       <div style="height: 24px"></div>
-      <div class="fig-cluster" data-label="StoreGateway">
-        <div class="fig-col">
-          <details class="fig-node" data-kind="fn" data-tone="changed">
-            <summary>
-              <i class="fig-mark"></i>
-              <span class="fig-node-text">
-                <em>function</em>
-                <strong>BlocksHandler</strong>
-                <span>Entry point. Now chooses catalog or full listing.</span>
-              </span>
-              <b class="fig-node-go"></b>
-            </summary>
-            <div class="fig-node-panel">
-              <p>The HTTP handler. After this PR it parses page options, then calls <code>loadBlocksPageData</code> instead of listing storage itself.</p>
-            </div>
-          </details>
-          <div class="fig-edge down" data-label="calls"></div>
-          <details class="fig-node" data-kind="fn" data-tone="added">
-            <summary>
-              <i class="fig-mark"></i>
-              <span class="fig-node-text">
-                <em>function</em>
-                <strong>loadBlocksPageData</strong>
-                <span>Picks catalog first, full listing if that fails.</span>
-              </span>
-              <b class="fig-node-go"></b>
-            </summary>
-            <div class="fig-node-panel">
-              <p>New. Calls <code>loadBlocksFromBucketIndex</code>, or <code>scanBlocksFromBucket</code> when the catalog is missing.</p>
-            </div>
-          </details>
+      <div class="fig-enclose" data-tone="changed">
+        <details class="fig-node" data-kind="type" data-tone="changed">
+          <summary>
+            <i class="fig-mark"></i>
+            <span class="fig-node-text">
+              <em>type</em>
+              <strong>StoreGateway</strong>
+              <span>The service that owns the blocks page.</span>
+            </span>
+          </summary>
+          <div class="fig-node-panel">
+            <p>Click the type to ask about the struct itself, not just one method.</p>
+          </div>
+        </details>
+        <div class="fig-enclose-body">
+          <div class="fig-col">
+            <details class="fig-node" data-kind="fn" data-tone="changed">
+              <summary>
+                <i class="fig-mark"></i>
+                <span class="fig-node-text">
+                  <em>function</em>
+                  <strong>BlocksHandler</strong>
+                  <span>Entry point. Now chooses catalog or full listing.</span>
+                </span>
+              </summary>
+              <div class="fig-node-panel">
+                <p>The HTTP handler. After this PR it parses page options, then calls <code>loadBlocksPageData</code> instead of listing storage itself.</p>
+              </div>
+            </details>
+            <div class="fig-edge down" data-label="calls"></div>
+            <details class="fig-node" data-kind="fn" data-tone="added">
+              <summary>
+                <i class="fig-mark"></i>
+                <span class="fig-node-text">
+                  <em>function</em>
+                  <strong>loadBlocksPageData</strong>
+                  <span>Picks catalog first, full listing if that fails.</span>
+                </span>
+              </summary>
+              <div class="fig-node-panel">
+                <p>New. Calls <code>loadBlocksFromBucketIndex</code>, or <code>scanBlocksFromBucket</code> when the catalog is missing.</p>
+              </div>
+            </details>
+          </div>
         </div>
       </div>
 

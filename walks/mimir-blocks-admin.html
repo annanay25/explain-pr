@@ -17,7 +17,6 @@
             <p class="fig-kicker">Figure · PR walk</p>
             <h1>A faster blocks page for big tenants</h1>
             <div class="fig-repo"><a href="https://github.com/grafana/mimir/pull/16549">grafana/mimir #16549</a></div>
-            <p class="fig-inspect-hint">Three scenes. Click a component, type a question, copy the prompt into your coding agent.</p>
           </div>
           <div class="fig-mast-side">
             <span class="fig-stat added">+1187</span>
@@ -157,41 +156,52 @@
               <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-compare">
-                  <div class="fig-pane" data-label="StoreGateway">
-                    <div class="fig-cluster" data-label="StoreGateway">
-                      <div class="fig-col">
-                        <details class="fig-node" data-kind="fn" data-tone="changed">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>function</em>
-                              <strong>BlocksHandler</strong>
-                              <span>Entry point. Parses the form, then asks for a block list.</span>
-                            </span>
-                            <b class="fig-node-go"></b>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>Used to call LoadMetaFilesAndMarkers itself. Now it calls loadBlocksPageData, then filter and page, then extra metadata only if needed.</p>
-                          </div>
-                        </details>
-                        <div class="fig-edge down" data-label="calls"></div>
-                        <details class="fig-node" data-kind="fn" data-tone="added">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>function</em>
-                              <strong>loadBlocksPageData</strong>
-                              <span>Tries the catalog. Falls back to a full listing.</span>
-                            </span>
-                            <b class="fig-node-go"></b>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>New. Calls loadBlocksFromBucketIndex, or scanBlocksFromBucket when the catalog is missing or broken.</p>
-                          </div>
-                        </details>
-                        <div class="fig-edge down" data-label="calls"></div>
-                        <div class="fig-row">
-                          <details class="fig-node tight" data-kind="fn" data-tone="added">
+                  <div class="fig-pane">
+                    <div class="fig-enclose" data-tone="changed">
+                      <details class="fig-node" data-kind="type" data-tone="changed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>type</em>
+                            <strong>StoreGateway</strong>
+                            <span>The service that owns this admin page.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Methods live on this struct. Before this PR, BlocksHandler listed storage itself. Now the new loaders sit on the same type.</p>
+                        </div>
+                      </details>
+                      <div class="fig-enclose-body">
+                        <div class="fig-col">
+                          <details class="fig-node" data-kind="fn" data-tone="changed">
+                            <summary>
+                              <i class="fig-mark"></i>
+                              <span class="fig-node-text">
+                                <em>function</em>
+                                <strong>BlocksHandler</strong>
+                                <span>Entry point. Parses the form, then asks for a block list.</span>
+                              </span>
+                            </summary>
+                            <div class="fig-node-panel">
+                              <p>Used to call LoadMetaFilesAndMarkers itself. Now it calls loadBlocksPageData, then filter and page, then extra metadata only if needed.</p>
+                            </div>
+                          </details>
+                          <div class="fig-edge down" data-label="calls"></div>
+                          <details class="fig-node" data-kind="fn" data-tone="added">
+                            <summary>
+                              <i class="fig-mark"></i>
+                              <span class="fig-node-text">
+                                <em>function</em>
+                                <strong>loadBlocksPageData</strong>
+                                <span>Tries the catalog. Falls back to a full listing.</span>
+                              </span>
+                            </summary>
+                            <div class="fig-node-panel">
+                              <p>New. Calls loadBlocksFromBucketIndex, or scanBlocksFromBucket when the catalog is missing or broken.</p>
+                            </div>
+                          </details>
+                          <div class="fig-edge down" data-label="calls"></div>
+                          <details class="fig-node" data-kind="fn" data-tone="added">
                             <summary>
                               <i class="fig-mark"></i>
                               <span class="fig-node-text">
@@ -199,13 +209,13 @@
                                 <strong>loadBlocksFromBucketIndex</strong>
                                 <span>One catalog file. Short records.</span>
                               </span>
-                              <b class="fig-node-go"></b>
                             </summary>
                             <div class="fig-node-panel">
                               <p>New. Turns catalog rows into block records. Size, samples, and parent lists are missing until you ask for them.</p>
                             </div>
                           </details>
-                          <details class="fig-node tight" data-kind="fn" data-tone="changed">
+                          <div class="fig-edge down" data-label="or"></div>
+                          <details class="fig-node" data-kind="fn" data-tone="changed">
                             <summary>
                               <i class="fig-mark"></i>
                               <span class="fig-node-text">
@@ -213,7 +223,6 @@
                                 <strong>scanBlocksFromBucket</strong>
                                 <span>The old listing, wrapped.</span>
                               </span>
-                              <b class="fig-node-go"></b>
                             </summary>
                             <div class="fig-node-panel">
                               <p>Still calls LoadMetaFilesAndMarkers. Scan bucket, JSON, and catalog fallback all land here.</p>
@@ -224,69 +233,95 @@
                     </div>
                   </div>
                   <div class="fig-pane" data-label="Then, in memory">
-                    <div class="fig-cluster" data-label="blocksPageOptions">
-                      <div class="fig-col">
-                        <details class="fig-node" data-kind="fn" data-tone="added">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>function</em>
-                              <strong>filterBlocks</strong>
-                              <span>Keeps matching blocks. No storage reads.</span>
-                            </span>
-                            <b class="fig-node-go"></b>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>Method on the options struct. Block ID (exact, case-insensitive), created time, sample time range, compaction level, deletion marks. All filters are AND.</p>
-                          </div>
-                        </details>
-                        <div class="fig-edge down" data-label="then"></div>
-                        <details class="fig-node" data-kind="fn" data-tone="added">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>function</em>
-                              <strong>pageBlocks</strong>
-                              <span>Takes one page of the matches.</span>
-                            </span>
-                            <b class="fig-node-go"></b>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>Default page size 100 in a browser. Zero means all. A page past the end shows the last page.</p>
-                          </div>
-                        </details>
-                        <div class="fig-edge down" data-label="only if extra columns are on"></div>
-                        <details class="fig-node" data-kind="fn" data-tone="added">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>function</em>
-                              <strong>LoadMetaFilesForBlocks</strong>
-                              <span>Full metadata for the rows you can see, not the whole tenant.</span>
-                            </span>
-                            <b class="fig-node-go"></b>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>New helper in listblocks. Fetches known paths; it does not list folders. If you asked for all rows plus extra columns, page size is forced to 1000 so this cannot become a full listing again.</p>
-                          </div>
-                        </details>
-                      </div>
-                    </div>
-                    <div class="fig-cluster" data-label="blocksPageData">
-                      <details class="fig-node" data-kind="var" data-tone="added">
+                    <div class="fig-enclose" data-tone="added">
+                      <details class="fig-node" data-kind="type" data-tone="added">
                         <summary>
                           <i class="fig-mark"></i>
                           <span class="fig-node-text">
-                            <em>field</em>
-                            <strong>metasAreComplete</strong>
-                            <span>False after a catalog read. True after a full listing.</span>
+                            <em>type</em>
+                            <strong>blocksPageOptions</strong>
+                            <span>Filters and page size from the form.</span>
                           </span>
-                          <b class="fig-node-go"></b>
                         </summary>
                         <div class="fig-node-panel">
-                          <p>If this is false and you asked for extra columns, the handler downloads metadata only for the current page.</p>
+                          <p>New struct. Holds the filter fields and page size. filterBlocks and pageBlocks are methods on it, so the handler does not inline that logic.</p>
                         </div>
                       </details>
+                      <div class="fig-enclose-body">
+                        <div class="fig-col">
+                          <details class="fig-node" data-kind="fn" data-tone="added">
+                            <summary>
+                              <i class="fig-mark"></i>
+                              <span class="fig-node-text">
+                                <em>function</em>
+                                <strong>filterBlocks</strong>
+                                <span>Keeps matching blocks. No storage reads.</span>
+                              </span>
+                            </summary>
+                            <div class="fig-node-panel">
+                              <p>Method on the options struct. Block ID (exact, case-insensitive), created time, sample time range, compaction level, deletion marks. All filters are AND.</p>
+                            </div>
+                          </details>
+                          <div class="fig-edge down" data-label="then"></div>
+                          <details class="fig-node" data-kind="fn" data-tone="added">
+                            <summary>
+                              <i class="fig-mark"></i>
+                              <span class="fig-node-text">
+                                <em>function</em>
+                                <strong>pageBlocks</strong>
+                                <span>Takes one page of the matches.</span>
+                              </span>
+                            </summary>
+                            <div class="fig-node-panel">
+                              <p>Default page size 100 in a browser. Zero means all. A page past the end shows the last page.</p>
+                            </div>
+                          </details>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="fig-edge down" data-label="only if extra columns are on"></div>
+                    <details class="fig-node" data-kind="fn" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>function</em>
+                          <strong>LoadMetaFilesForBlocks</strong>
+                          <span>Full metadata for the rows you can see, not the whole tenant.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Package helper in listblocks, not a method on the options struct. Fetches known paths; it does not list folders. If you asked for all rows plus extra columns, page size is forced to 1000 so this cannot become a full listing again.</p>
+                      </div>
+                    </details>
+                    <div class="fig-enclose" data-tone="added">
+                      <details class="fig-node" data-kind="type" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>type</em>
+                            <strong>blocksPageData</strong>
+                            <span>What the handler returns for one page.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>New. The list of blocks for this page, plus whether those records already have full metadata.</p>
+                        </div>
+                      </details>
+                      <div class="fig-enclose-body">
+                        <details class="fig-node" data-kind="var" data-tone="added">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>field</em>
+                              <strong>metasAreComplete</strong>
+                              <span>False after a catalog read. True after a full listing.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>If this is false and you asked for extra columns, the handler downloads metadata only for the current page.</p>
+                          </div>
+                        </details>
+                      </div>
                     </div>
                   </div>
                 </div>

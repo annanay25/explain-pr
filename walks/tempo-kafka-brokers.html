@@ -260,30 +260,86 @@
               <div class="fig-scene-head">
                 <div class="fig-index">03</div>
                 <div>
-                  <h2>Every Kafka client shares this field. Old single-address configs still work.</h2>
-                  <p>Distributor, live store, and block builder all read the same setting. Hold the PR if one host and port stops working, or if a YAML list of brokers is ignored.</p>
+                  <h2>Public APIs and databases are not in this change. Finding Kafka is.</h2>
+                  <p>Trace queries and storage stay as they were. The blast is the one address every ingest process uses at startup.</p>
                 </div>
               </div>
               <div class="fig-canvas">
-                <div class="fig-row">
-                  <div class="fig-risk" data-level="hot"><em>startup</em><strong>Kafka connect</strong><span>If the list is parsed wrong, Tempo cannot reach Kafka at all.</span></div>
-                  <div class="fig-risk" data-level="watch"><em>shared field</em><strong>All ingest clients</strong><span>Distributor, live store, and block builder all construct Kafka clients from this one address list.</span></div>
-                  <div class="fig-risk" data-level="watch"><em>YAML write-back</em><strong>Lists become a string</strong><span>Saving config writes commas, not a YAML list, even if you loaded a list.</span></div>
-                  <div class="fig-risk" data-level="safe"><em>existing configs</em><strong>One host:port</strong><span>A single string still unmarshals. The default is still localhost:9092.</span></div>
-                </div>
-                <details class="fig-node wide" data-kind="lock" data-tone="changed" open>
-                  <summary>
-                    <i class="fig-mark"></i>
-                    <span class="fig-node-text">
-                      <em>gate</em>
-                      <strong>Do not merge if…</strong>
-                      <span>A YAML list keeps only the first host, a flag appends to localhost, or an empty list passes validation.</span>
-                    </span>
-                  </summary>
-                  <div class="fig-node-panel">
-                    <p>Tests already pin flag replace, YAML string / commas / list, empty-list validation, and a two-broker fake cluster. Also bounce if <code>kgo.SeedBrokers</code> still receives one joined string instead of separate hosts — that would treat the commas as part of a hostname. This does not change SASL, TLS, topics, or consumer groups.</p>
+                <div class="fig-compare">
+                  <div class="fig-pane" data-label="Not in the blast" data-tone="added">
+                    <div class="fig-col">
+                      <details class="fig-node" data-kind="api" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>public API</em>
+                            <strong>Not hit</strong>
+                            <span>Trace queries and OTLP still take the same requests.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>No new HTTP or gRPC shape. Pushing spans, searching traces, and the query-frontend are unchanged. This PR only changes how Tempo finds Kafka, not what callers send it.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="db" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>databases</em>
+                            <strong>Not hit</strong>
+                            <span>Blocks and object storage are not rewritten.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Nothing in this diff migrates tenant data or changes how traces are stored after Kafka. A bad parse fails at connect time; it does not corrupt blocks.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="lock" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>auth</em>
+                            <strong>Not hit</strong>
+                            <span>Login, encryption, the topic name, and consumer groups stay as they were.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Those fields are still on <code>KafkaConfig</code>. This PR only changes the type of <code>Address</code>.</p>
+                        </div>
+                      </details>
+                    </div>
                   </div>
-                </details>
+                  <div class="fig-pane" data-label="In the blast" data-tone="changed">
+                    <div class="fig-col">
+                      <details class="fig-node" data-kind="config" data-tone="changed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>operator config</em>
+                            <strong>Hit</strong>
+                            <span>Same setting name. It now accepts a list of hosts.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p><code>ingest.kafka.address</code> is the contract operators already use. A single host still works. A YAML list or comma-separated string is new. Writing config back always saves commas, not a YAML list.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="queue" data-tone="focus">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>Kafka at startup</em>
+                            <strong>Hit</strong>
+                            <span>Distributor, live store, and block builder all connect from that list.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>If the list is parsed wrong, those processes cannot reach Kafka and ingest stops. Hold the PR if a YAML list keeps only the first host, a flag appends to localhost, or an empty list passes validation. Tests already pin those cases, plus a two-broker fake cluster.</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

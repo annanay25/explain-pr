@@ -11,9 +11,31 @@ Produce a **single HTML page with three views** of the same PR:
 2. **Data** — what payload moved, which component processed it, **how** it did that before vs after.
 3. **Blast radius** — public APIs, prod stores / DBs, callers who feel a mistake.
 
-Copy `figure.css` and `figure.js` next to the page (or link them). Fonts and icons live in the CSS. `figure.js` only builds the **ask prompt** when a reviewer opens a component. Views and Next are CSS (hidden radios + labels). No npm, no build.
+Copy `figure.css` and `figure.js` next to the page (or link them). Fonts and icons live in the CSS. `figure.js` only builds the **ask prompt** when a reviewer opens a component. Views and Next are CSS (hidden radios + labels). No npm, no build, **no local server**. Open the `.html` file from disk (`file://`). Do not start Python, `npx serve`, or anything else to preview it.
 
 Do not write a prose essay. Each view is 3–5 scenes (8 max). The reader switches views with tabs, advances with **Next**.
+
+## Language
+
+The reader is a teammate who has not opened the diff. Headlines, the sentence under them, and the line under each card name must make sense **out loud**.
+
+**Visible text is English. Code names are labels.**
+
+- Scene titles and captions: spoken English. A query param, function, or HTTP header does not belong in that sentence unless you immediately say what it does in plain words.
+- Card **strong** may be the real name (`BlocksHandler`, `bucket index`). The **span** under it is still a plain sentence, not a stack of jargon.
+- Panels may quote identifiers. That is what **Ask** is for — extra depth after the picture is clear.
+
+**Forbidden texture**
+
+- Metaphors that do not explain: “the old door”, “rooms”, “payload out”.
+- Telegraphic stacks: “ReadIndex. Incomplete metas. Fast.”
+- Assuming the reader already knows `scan_bucket=on`, `Accept: application/json`, `hydrate`, `thin Meta`.
+
+**Check:** read the scene title and first sentence to someone who has not opened the diff. If they have to ask what a word is, rewrite it.
+
+Bad: “The page reads that one object instead of walking the prefix. `scan_bucket=on` is the old door.”
+
+Good: “The page reads that catalog instead of listing every file in storage. A Scan bucket checkbox still does the old, slower listing when you need brand-new blocks.”
 
 ## Output skeleton
 
@@ -55,8 +77,8 @@ If this repo is not on disk, copy `figure.css` and `figure.js` verbatim.
 1. Read the PR title, body, and the shape of the diff (not every line).
 2. Name the system. Then split work into the three views — do not dump everything into Story.
 3. One claim per scene.
-4. Story: before → after → mechanism → consequence.
-5. Data: name the **payload**, the **processor**, and the **HOW** (parse, copy, cache, serialize, walk twice, …). Draw before and after. Highlight the component whose HOW changed.
+4. Story: before → after → mechanism → consequence. Say those in English first (“it listed every file”, not “it walked the prefix”).
+5. Data: name the **payload**, the **processor**, and the **HOW** (parse, copy, cache, serialize, walk twice, …) in the same spoken English. Draw before and after. Highlight the component whose HOW changed. Function names can label a card; they must not be the claim.
 6. Blast: public API / plugin contract / prod DB or cache / who callers are. Use `.fig-risk` with `data-level="hot|watch|safe"`. End with a “do not merge if…” gate.
 7. Extra depth is a node the reviewer can open and **ask**, not extra slides.
 
@@ -72,7 +94,7 @@ Typical cards:
 
 Edge labels are the operation (`parse`, `serialize`, `walk #2`, `store`).
 
-Do **not** make Data a copy of Story with different titles. If Story said “three front doors,” Data says “Babel tree serializes into Rust; OXC maps in-process; HIR lives as indices.”
+Do **not** make Data a copy of Story with different titles. If Story said “the page used to list every file,” Data says “it downloaded one catalog, copied a short summary per block, then fetched full metadata only for the page you asked for.” Still specific — just not a pile of identifiers.
 
 ## Blast radius (required)
 
@@ -162,7 +184,8 @@ To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows.
 
 - Abstract shapes only. No logos.
 - No CSS animations, no autoplay. `figure.js` is only the prompt composer.
-- Real names from the PR. Do not invent subsystems.
+- Real names from the PR. Do not invent subsystems. Put those names on cards; keep claims in English.
 - Always emit all three views. If blast is “none,” say so with `.fig-risk` `safe` tiles — do not skip the view.
 - Distinct `data-kind` for distinct components.
-- Open the HTML file in a browser. Nothing to install.
+- Open the HTML file in a browser (File → Open, or double-click). Nothing to install. Do not start a server.
+- Re-read every visible sentence against the Language section before you stop.

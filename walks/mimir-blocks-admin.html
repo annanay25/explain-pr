@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>grafana/mimir #16549 — Blocks store admin page</title>
+    <link rel="stylesheet" href="../figure.css" />
+  </head>
+  <body class="fig-page">
+    <div class="site" style="padding-bottom: 0">
+      <a class="back" href="../index.html">← Gallery</a>
+    </div>
+    <article class="fig-deck">
+      <div class="fig-shell">
+        <header class="fig-mast">
+          <div>
+            <p class="fig-kicker">Figure · PR walk</p>
+            <h1>A faster blocks page for big tenants</h1>
+            <div class="fig-repo"><a href="https://github.com/grafana/mimir/pull/16549">grafana/mimir #16549</a></div>
+            <p class="fig-inspect-hint">Three views of the same PR. Click a component, type a question, copy the prompt into your coding agent.</p>
+          </div>
+          <div class="fig-mast-side">
+            <span class="fig-stat added">+1187</span>
+            <span class="fig-stat removed">−86</span>
+            <span class="fig-stat">6 files</span>
+          </div>
+        </header>
+        <nav class="fig-view-tabs">
+          <label class="fig-view-tab" for="view-story">Story<small>what changed</small></label>
+          <label class="fig-view-tab" for="view-data">Data<small>who processed what, how</small></label>
+          <label class="fig-view-tab" for="view-blast">Blast radius<small>APIs, stores, callers</small></label>
+        </nav>
+        <input type="radio" name="view" id="view-story" checked>
+        <input type="radio" name="view" id="view-data">
+        <input type="radio" name="view" id="view-blast">
+
+        <div class="fig-view" data-view="story">
+          <input type="radio" name="walk" id="s1" checked>
+          <input type="radio" name="walk" id="s2">
+          <input type="radio" name="walk" id="s3">
+          <input type="radio" name="walk" id="s4">
+          <input type="radio" name="walk" id="s5">
+          <div class="fig-scenes">
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">01</div>
+                  <div>
+                    <h2>Before: opening the blocks page listed every file in storage</h2>
+                    <p>An operator opened one tenant’s blocks page. The server listed every folder for that tenant and downloaded a metadata file for each block — thousands of storage reads in one request.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-col">
+                    <details class="fig-node" data-kind="user">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>who</em>
+                          <strong>Operator</strong>
+                          <span>Opens the blocks page for one tenant.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>This is an admin page on store-gateway, not the path that serves queries. Someone on call wants to see which TSDB blocks a tenant has.</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge down" data-label="opens page"></div>
+                    <details class="fig-node" data-kind="server" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>builds the table</em>
+                          <strong>Store-gateway</strong>
+                          <span>Loaded every block before showing anything.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>The handler is <code>BlocksHandler</code> in <code>gateway_blocks_http.go</code>. Before this PR it always listed storage. The only options were checkboxes for deleted blocks, sources, and parents.</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge down" data-label="list every file"></div>
+                    <details class="fig-node" data-kind="bucket" data-tone="focus">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>where blocks live</em>
+                          <strong>Object storage</strong>
+                          <span>One metadata file per block, fetched on every visit.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Each block is a folder with a <code>meta.json</code>. For a tenant with thousands of blocks, that is thousands of downloads every time someone opens the page.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">02</div>
+                  <div>
+                    <h2>With lots of blocks, the page was too slow to use</h2>
+                    <p>Big tenants waited so long the request often failed. The table dumped every row onto one screen, with no filters and no pages.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <div class="fig-metric" data-value="1000s" data-tone="removed">storage reads per visit</div>
+                    <div class="fig-metric" data-value="all rows" data-tone="changed">on one screen, no pages</div>
+                    <div class="fig-metric" data-value="timeout" data-tone="focus">before anyone could read it</div>
+                  </div>
+                  <details class="fig-node wide" data-kind="html" data-tone="changed">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>the old page</em>
+                        <strong>One giant table</strong>
+                        <span>Show deleted, sources, parents. Reload. That was it.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Size, sample count, and chunk count were always columns, because every metadata file had already been downloaded. Template: <code>blocks.gohtml</code>.</p>
+                    </div>
+                  </details>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">03</div>
+                  <div>
+                    <h2>Now the page reads a catalog the compactor already keeps</h2>
+                    <p>The compactor already writes a short catalog of each tenant’s blocks. The page reads that one file instead of listing every folder. A Scan bucket checkbox still does the old, slower listing when you need brand-new blocks.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-compare">
+                    <div class="fig-pane" data-label="What the browser does now" data-tone="added">
+                      <div class="fig-col">
+                        <details class="fig-node" data-kind="file" data-tone="added" open>
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>new default</em>
+                              <strong>Bucket catalog</strong>
+                              <span>One file. Fast. May be a few minutes behind.</span>
+                            </span>
+                            <b class="fig-node-go"></b>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>Written periodically by the compactor (the bucket index). A block uploaded after the last update will not show until the next catalog write. The page says how old the catalog is.</p>
+                          </div>
+                        </details>
+                        <div class="fig-edge down" data-label="if the catalog is missing"></div>
+                        <details class="fig-node" data-kind="bucket" data-tone="ghost">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>backup</em>
+                              <strong>List every file anyway</strong>
+                              <span>If the catalog is missing or broken, it falls back to the old listing.</span>
+                            </span>
+                            <b class="fig-node-go"></b>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>Only “index not found” and “index corrupted” fall back. Other catalog errors still fail the request. The server logs a warning when it falls back.</p>
+                          </div>
+                        </details>
+                      </div>
+                    </div>
+                    <div class="fig-pane" data-label="When you need every block" data-tone="changed">
+                      <details class="fig-node" data-kind="flag" data-tone="changed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>checkbox</em>
+                            <strong>Scan bucket</strong>
+                            <span>The old full listing. Slower, but includes the newest blocks.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Use this for buckets that have no catalog, or to find blocks the catalog has not picked up yet. It also fills in size, samples, and chunks. The query param is <code>scan_bucket=on</code>.</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s4">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">04</div>
+                  <div>
+                    <h2>You can now filter the list and page through it</h2>
+                    <p>Once the list is loaded, you can narrow it by block ID, when it was created, the time range it covers, or compaction level. The table shows 100 blocks at a time unless you ask for more.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="filter" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>new controls</em>
+                          <strong>Filters</strong>
+                          <span>Block ID, created after/before, time span, compaction level, deleted.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>A block has to match every filter you set. Times can be a timestamp, the word <code>now</code>, or something like <code>now-24h</code>.</p>
+                        <details class="fig-fold">
+                          <summary>What “created” means</summary>
+                          <p>Created after/before use the time baked into the block ID, not the sample time range. Span filters use the block’s min and max sample time.</p>
+                        </details>
+                      </div>
+                    </details>
+                    <div class="fig-edge" data-label="then"></div>
+                    <details class="fig-node" data-kind="html" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>new table</em>
+                          <strong>Pages</strong>
+                          <span>25, 50, 100, 250, 1000, or all. Header stays put as you scroll.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>The page says “Blocks 1–100 of 430” and how many deleted blocks are hidden. Next/previous keep the filters you already set. Apply and Reset replace the old Reload button.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot is-current" for="s4"></label><label class="fig-dot" for="s5"></label></div><label class="fig-btn fig-next" for="s5">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">05</div>
+                  <div>
+                    <h2>Extra columns still hit storage. JSON tools still get everything.</h2>
+                    <p>The catalog does not include size, sample count, or parent blocks. Checking those boxes downloads extra files — only for the page you are on, and never more than 1000. Scripts that ask for JSON still get the old full listing, so they do not break.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="flag" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>optional</em>
+                          <strong>Extra columns</strong>
+                          <span>Size, samples, sources, parents. Each one means extra storage reads.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Those fields are not in the catalog. The server downloads full metadata only for the blocks on the current page. If you ask for “all” plus extra columns, it caps at 1000 so it cannot become a full scan again.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="api" data-tone="focus">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>for scripts</em>
+                          <strong>JSON requests</strong>
+                          <span>Still list every block and return all of them, like before.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>If the request says it wants JSON (<code>Accept: application/json</code>), the server keeps the old behavior on purpose: scan storage, no pagination. A script can still opt into the catalog with <code>scan_bucket=off</code>.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="s4">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label><label class="fig-dot" for="s4"></label><label class="fig-dot is-current" for="s5"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+            </section>
+          </div>
+        </div>
+
+        <div class="fig-view" data-view="data">
+          <input type="radio" name="data" id="d1" checked>
+          <input type="radio" name="data" id="d2">
+          <input type="radio" name="data" id="d3">
+          <input type="radio" name="data" id="d4">
+          <div class="fig-scenes">
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D1</div>
+                  <div>
+                    <h2>Before: every visit downloaded every metadata file</h2>
+                    <p>The server listed the tenant’s folders, then fetched each block’s metadata (up to 32 at a time). It built the whole table from those files. Nothing was left out, and nothing was paged.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-pipe">
+                    <div class="fig-phase">
+                      <details class="fig-node tight" data-kind="request">
+                        <summary><i class="fig-mark"></i><span class="fig-node-text"><strong>Open the page</strong></span><b class="fig-node-go"></b></summary>
+                        <div class="fig-node-panel"><p>Browser or JSON. Same load path. No page size.</p></div>
+                      </details>
+                    </div>
+                    <div class="fig-edge" data-label="list folders"></div>
+                    <div class="fig-phase">
+                      <details class="fig-node" data-kind="scan" data-tone="changed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>how</em>
+                            <strong>Download every file</strong>
+                            <span>Markers first, then each block’s metadata.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>The helper is <code>LoadMetaFilesAndMarkers</code>. It can skip old block IDs without reading them; the admin page never used that skip, so it always read everything.</p>
+                        </div>
+                      </details>
+                    </div>
+                    <div class="fig-edge" data-label="sort"></div>
+                    <div class="fig-phase">
+                      <details class="fig-node" data-kind="ast" data-tone="focus">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>what you got</em>
+                            <strong>Full block records</strong>
+                            <span>Size, samples, chunks, sources, parents — all filled in.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Then every record became an HTML row, or a JSON list. Deleted blocks were dropped unless you asked to see them. There was no “page 2”.</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d2">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D2</div>
+                  <div>
+                    <h2>Now it starts from one catalog file</h2>
+                    <p>It downloads the catalog, then copies a short summary per block: id, time range, compaction level, series count. Size, samples, and parent lists are missing until you ask for them.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="file" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>what comes in</em>
+                          <strong>The catalog</strong>
+                          <span>One download. Block list, deletion marks, last-updated time.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p><code>bucketindex.ReadIndex</code>. It does not list the tenant’s folders. “Do not compact” marks are not in the catalog; those are fetched only if you check that column.</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge" data-label="copy summaries"></div>
+                    <details class="fig-node" data-kind="snapshot" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>what comes out</em>
+                          <strong>Short block records</strong>
+                          <span>Enough to list and filter. Not enough to show size or parents.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Each catalog row is turned into a <code>block.Meta</code> via <code>ThanosMeta()</code>. Series count is there. File sizes, sample counts, chunks, sources, and parents are empty until a later download.</p>
+                      </div>
+                    </details>
+                    <div class="fig-edge" data-label="sort"></div>
+                    <details class="fig-node tight" data-kind="module">
+                      <summary><i class="fig-mark"></i><span class="fig-node-text"><strong>Same order as before</strong></span><b class="fig-node-go"></b></summary>
+                      <div class="fig-node-panel"><p>Same sort as the full listing. Paging later assumes this order, so page 1 is the same blocks you’d have seen at the top of the old table.</p></div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="d1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot is-current" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d3">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D3</div>
+                  <div>
+                    <h2>Filter in memory, then fetch extras only for this page</h2>
+                    <p>It walks the list it already has, keeps the matches, takes one page, then — only if you asked for extra columns — downloads those blocks’ full metadata. Never more than 1000 extra files.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-col">
+                    <div class="fig-row">
+                      <details class="fig-node" data-kind="filter" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>how</em>
+                            <strong>Keep matching blocks</strong>
+                            <span>In memory. No extra storage reads.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Compares block ID (exact, not a prefix), created time, sample time range, compaction level, and deletion marks. All filters are AND. Block ID match ignores case.</p>
+                        </div>
+                      </details>
+                      <div class="fig-edge" data-label="take a page"></div>
+                      <details class="fig-node" data-kind="module" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>how</em>
+                            <strong>Show one page</strong>
+                            <span>Default 100. Asking for page 99 when there are 2 pages shows page 2.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Page size 0 means “all”. A page past the end is clamped to the last page, which is why tests send page 99 and still get the last rows.</p>
+                        </div>
+                      </details>
+                    </div>
+                    <div class="fig-edge down" data-label="only if extra columns are on"></div>
+                    <div class="fig-row">
+                      <details class="fig-node" data-kind="bucket" data-tone="changed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>how now</em>
+                            <strong>Download this page’s files</strong>
+                            <span>Full metadata for the blocks you can see, not the whole tenant.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>New helper <code>LoadMetaFilesForBlocks</code>. It does not list folders; it fetches known paths. If you asked for all rows plus extra columns, page size is forced to 1000 so this cannot become a full scan.</p>
+                        </div>
+                      </details>
+                      <div class="fig-edge" data-label="fill in"></div>
+                      <details class="fig-node" data-kind="snapshot" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>what you see</em>
+                            <strong>Complete rows</strong>
+                            <span>Size, samples, and chunks appear for this page only.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>The short record is swapped for the downloaded one. JSON reports how many extra files were read — that count is the extra downloads, not the catalog read.</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="d2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot is-current" for="d3"></label><label class="fig-dot" for="d4"></label></div><label class="fig-btn fig-next" for="d4">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">D4</div>
+                  <div>
+                    <h2>A browser and a JSON script take different paths</h2>
+                    <p>Same URL. In a browser: catalog, then filters, then one page of 100. If the request says it wants JSON: list every file and return all blocks, like before, so existing scripts keep working.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-compare">
+                    <div class="fig-pane" data-label="Browser" data-tone="added">
+                      <details class="fig-node" data-kind="html" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>how</em>
+                            <strong>Catalog → filter → page</strong>
+                            <span>Short rows in the HTML table, until you ask for extra columns.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Treated as a browser request unless the Accept header contains <code>application/json</code>. HTML never fills the JSON <code>metas</code> list.</p>
+                        </div>
+                      </details>
+                    </div>
+                    <div class="fig-pane" data-label="JSON tools" data-tone="focus">
+                      <details class="fig-node" data-kind="js" data-tone="focus">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>how</em>
+                            <strong>List every file → return all</strong>
+                            <span>Full records, no paging, same as the old page.</span>
+                          </span>
+                          <b class="fig-node-go"></b>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>A script can still pass <code>scan_bucket=off</code> to use the catalog. The default stays the old scan so existing scrapers do not silently lose blocks or details.</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="d3">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="d1"></label><label class="fig-dot" for="d2"></label><label class="fig-dot" for="d3"></label><label class="fig-dot is-current" for="d4"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+            </section>
+          </div>
+        </div>
+
+        <div class="fig-view" data-view="blast">
+          <input type="radio" name="blast" id="b1" checked>
+          <input type="radio" name="blast" id="b2">
+          <input type="radio" name="blast" id="b3">
+          <div class="fig-scenes">
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">B1</div>
+                  <div>
+                    <h2>The admin page changed. Queries and databases did not.</h2>
+                    <p>What operators see on the tenant blocks page is the thing that moved. Object storage is read less by default, not written. Serving queries is a different URL and is untouched.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <div class="fig-risk" data-level="hot"><em>public page</em><strong>Tenant blocks page</strong><span>The browser now shows the catalog by default, not a live listing of every file.</span></div>
+                    <div class="fig-risk" data-level="watch"><em>scripts</em><strong>JSON requests</strong><span>Still list every block and return all of them. Query flags can override.</span></div>
+                    <div class="fig-risk" data-level="watch"><em>storage</em><strong>Object storage</strong><span>Fewer full listings. Extra reads only for extra columns, Scan bucket, or “do not compact”.</span></div>
+                    <div class="fig-risk" data-level="safe"><em>databases</em><strong>None</strong><span>No TSDB rewrite, no query-frontend, no ingester. Admin HTML only.</span></div>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot" for="b3"></label></div><label class="fig-btn fig-next" for="b2">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">B2</div>
+                  <div>
+                    <h2>Who notices if this is wrong</h2>
+                    <p>Someone on call can miss a block the catalog has not picked up yet. A script that scrapes the HTML will lose size columns unless it opts in. A script that asks for JSON should be fine.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <div class="fig-row">
+                    <details class="fig-node" data-kind="user" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>who</em>
+                          <strong>People on call</strong>
+                          <span>The page they already bookmark. Newest blocks may be missing.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>The page now says the catalog was written N seconds ago. Scan bucket is how you recover. A stale catalog is the main human-visible bug.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="client" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>who</em>
+                          <strong>JSON scripts</strong>
+                          <span>Safe if they ask for JSON. Not if they scrape the HTML table.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>HTML scrapers that expected Size / Samples / Chunks will see those columns gone unless extra columns are checked. That is an intended default, not a silent JSON break.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="pipeline" data-tone="ghost">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>writes the catalog</em>
+                          <strong>Compactor</strong>
+                          <span>This PR does not change how the catalog is written.</span>
+                        </span>
+                        <b class="fig-node-go"></b>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Only the read side moved. If the compactor is late, the page is late. Asking store-gateway for series data is a different HTTP surface and is untouched.</p>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="b1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot is-current" for="b2"></label><label class="fig-dot" for="b3"></label></div><label class="fig-btn fig-next" for="b3">Next</label></nav>
+            </section>
+            <section class="fig-scene">
+              <div class="fig-stage">
+                <div class="fig-scene-head">
+                  <div class="fig-index">B3</div>
+                  <div>
+                    <h2>Do not merge if the fast path can become a full listing again</h2>
+                    <p>The point is that a browser visit no longer downloads thousands of metadata files. Hold the PR if extra columns, JSON, or a missing catalog do not behave as promised.</p>
+                  </div>
+                </div>
+                <div class="fig-canvas">
+                  <details class="fig-node wide" data-kind="lock" data-tone="changed" open>
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>gate</em>
+                        <strong>Do not merge if…</strong>
+                        <span>JSON tools lost the full listing, extra columns can download every file, or a missing catalog fails instead of falling back.</span>
+                      </span>
+                      <b class="fig-node-go"></b>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Tests already pin those three: JSON still lists everything; extra columns with “all rows” cap at 1000 files; no catalog falls back to a live listing. Also bounce if filters on the catalog disagree with filters on a full listing for the same tenant.</p>
+                    </div>
+                  </details>
+                </div>
+              </div>
+              <nav class="fig-nav"><label class="fig-btn" for="b2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="b1"></label><label class="fig-dot" for="b2"></label><label class="fig-dot is-current" for="b3"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
+            </section>
+          </div>
+        </div>
+      </div>
+    </article>
+    <script src="../figure.js"></script>
+  </body>
+</html>

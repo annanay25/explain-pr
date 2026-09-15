@@ -107,7 +107,7 @@ Every named component is `<details class="fig-node" data-kind="…">` with kind,
 
 `figure.js` appends, on every node: **Your questions**, a **Prompt for your coding agent**, **Copy prompt**.
 
-The prompt is a **follow-up to the agent that wrote the PR and this walk**, not a cold review. Do not omit panel facts — they become `data-known` in the prompt.
+The prompt is a short briefing about **the selected card**, written like a follow-up in a working session: name the piece, name the PR, say where you are in the walk, paste the card’s facts, then the reviewer’s questions. Plain English. No “you wrote this PR.” Do not omit panel facts — they become `data-known` in the prompt.
 
 Modifiers: `.tight`, `.wide`, `open` to start expanded (use once per scene for the main object).
 

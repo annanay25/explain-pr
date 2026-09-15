@@ -18,24 +18,36 @@
   }
 
   function buildPrompt(ask, questions) {
-    const q = (questions || "").trim() || "(write your questions here)";
-    const known = ask.dataset.known || "";
-    return [
-      "You wrote this PR and you generated the walk I'm looking at so I could understand the change. This is a follow-up about one piece of that picture — not a first look.",
-      "",
-      "PR: " + (ask.dataset.pr || "") + (ask.dataset.title ? " — " + ask.dataset.title : ""),
-      "Component: " + (ask.dataset.component || "") + (ask.dataset.kind ? " (" + ask.dataset.kind + ")" : ""),
-      "Scene: " + (ask.dataset.claim || ""),
-      "",
-      "What you already put on this card:",
-      known || "(nothing extra on the card — go to the diff and the real files)",
-      "",
-      "Go deeper on this component. Quote file paths. If the walk oversimplified or is wrong, correct it.",
-      "",
-      "My questions:",
-      q,
-      "",
-    ].join("\n");
+    const q = (questions || "").trim();
+    const pr = (ask.dataset.pr || "").trim();
+    const title = (ask.dataset.title || "").trim();
+    const name = (ask.dataset.component || "this").trim();
+    const kind = (ask.dataset.kind || "").trim();
+    const scene = (ask.dataset.claim || "").trim();
+    const caption = (ask.dataset.caption || "").trim();
+    const known = (ask.dataset.known || "").trim();
+
+    const who =
+      kind && kind.toLowerCase() !== name.toLowerCase() ? name + " (" + kind + ")" : name;
+    const from = pr && title ? pr + " — " + title : pr || title;
+
+    const lines = [];
+    lines.push(from ? "Look at " + who + " in " + from + "." : "Look at " + who + ".");
+    if (scene || caption) {
+      lines.push("");
+      if (scene) lines.push(scene);
+      if (caption && caption !== scene) lines.push(caption);
+    }
+    if (known) {
+      lines.push("");
+      lines.push(known);
+    }
+    if (q) {
+      lines.push("");
+      lines.push(q);
+    }
+    lines.push("");
+    return lines.join("\n");
   }
 
   function bind(ask) {
@@ -87,6 +99,9 @@
     ask.dataset.component = text(node, "strong") || node.getAttribute("data-kind") || "component";
     ask.dataset.kind = text(node, "em") || node.getAttribute("data-kind") || "";
     ask.dataset.claim = (scene?.querySelector("h2")?.textContent || "").trim();
+    ask.dataset.caption = (scene?.querySelector(".fig-scene-head p")?.textContent || "")
+      .replace(/\s+/g, " ")
+      .trim();
     const role = text(node, ".fig-node-text span");
     const known = [role, knownText(node)].filter(Boolean).join("\n");
     ask.dataset.known = known;

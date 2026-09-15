@@ -1,4 +1,6 @@
-# Figure
+# explain-pr
+
+The shape of this skill follows [Blake Smith](https://blakesmith.me/)'s [code review hierarchy of needs](https://blakesmith.me/2015/02/09/code-review-essentials-for-software-teams.html): the most important job of a review is to keep the team's mental model of the system aligned as it changes. Catching bugs and debating design sit below that. Style is last. A walk is for that first job — what changed, how it works now, and what is in the blast.
 
 A visual language for explaining pull requests. **One CSS file, one small JS file for the ask-prompt box. No npm, no build.**
 

@@ -3,7 +3,7 @@ name: explain-pr
 description: Use when asked to explain a PR, summarize code changes, show data flow, assess blast radius, or generate an HTML visualization of what a diff does.
 ---
 
-# Explain a PR with Figure
+# Explain a PR
 
 Produce **one short HTML walk** of the PR. Not three parallel views. The author should understand the change in a few Next clicks.
 
@@ -54,7 +54,7 @@ No view tabs. Radios `#s1`–`s5` on the deck. Put **Back / dots / Next above th
   <div class="fig-shell">
     <header class="fig-mast">
       <div>
-        <p class="fig-kicker">Figure · PR walk</p>
+        <p class="fig-kicker">explain-pr · walk</p>
         <h1>Plain-English title</h1>
         <div class="fig-repo"><a href="PR_URL">org/repo #123</a></div>
       </div>

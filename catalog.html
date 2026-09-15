@@ -125,7 +125,7 @@
         <div class="catalog-item"><div class="fig-box" data-label="box"></div><code>box</code></div>
       </div>
       <h2>Source code</h2>
-      <p style="color:var(--fig-muted);max-width:62ch;line-height:1.5">A type is a clickable card that <strong>encloses</strong> its functions. Click the type to ask about the class; click a function inside for that method. Arrows mean calls. Draw a variable only when the PR actually changes it.</p>
+      <p style="color:var(--fig-muted);max-width:62ch;line-height:1.5">A type is a clickable card that <strong>encloses</strong> its functions. Click the type to ask about the class; click a function inside for that method. Arrows mean calls. Draw a variable only when the PR actually changes it. Origin pills are automatic from <code>data-tone</code>: omit or <code>ghost</code> = existed, <code>changed</code> = changed, <code>added</code> = new, <code>removed</code> = deleted.</p>
       <div class="catalog-grid">
         <div class="catalog-item"><div class="fig-type" data-label="type"></div><code>type</code></div>
         <div class="catalog-item"><div class="fig-fn" data-label="fn"></div><code>fn</code></div>
@@ -159,6 +159,20 @@
               </summary>
               <div class="fig-node-panel">
                 <p>The HTTP handler. After this PR it parses page options, then calls <code>loadBlocksPageData</code> instead of listing storage itself.</p>
+              </div>
+            </details>
+            <div class="fig-edge down" data-label="calls"></div>
+            <details class="fig-node" data-kind="fn" data-tone="ghost">
+              <summary>
+                <i class="fig-mark"></i>
+                <span class="fig-node-text">
+                  <em>function</em>
+                  <strong>filterBlocks</strong>
+                  <span>Already on the type. Not edited.</span>
+                </span>
+              </summary>
+              <div class="fig-node-panel">
+                <p>Drawn so the call chain is readable. Ghost means it pre-existed and this PR did not change it.</p>
               </div>
             </details>
             <div class="fig-edge down" data-label="calls"></div>
@@ -205,6 +219,21 @@
             <div class="fig-cache" data-label="Edge" data-tone="added"></div>
             <div class="fig-edge"></div>
             <div class="fig-server" data-label="Origin"></div>
+          </div>
+        </div>
+      </div>
+      <p style="color:var(--fig-muted);max-width:62ch;line-height:1.5;margin-top:28px">Last scene of a walk: hit / not-hit, not Before / After.</p>
+      <div class="fig-compare">
+        <div class="fig-pane" data-label="Not in the blast" data-tone="added">
+          <div class="fig-col">
+            <div class="fig-api" data-label="Public API" data-tone="added"></div>
+            <div class="fig-db" data-label="Databases" data-tone="added"></div>
+          </div>
+        </div>
+        <div class="fig-pane" data-label="In the blast" data-tone="changed">
+          <div class="fig-col">
+            <div class="fig-config" data-label="Changed config" data-tone="changed"></div>
+            <div class="fig-queue" data-label="Startup path" data-tone="focus"></div>
           </div>
         </div>
       </div>

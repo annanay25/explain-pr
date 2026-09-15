@@ -1001,6 +1001,81 @@ label.fig-btn { cursor: pointer; }
 .fig-node.tight .fig-node-text span { display: none; }
 .fig-node.tight > summary { grid-template-columns: 40px minmax(0, 1fr); padding: 10px; }
 .fig-node.tight .fig-mark { width: 40px; height: 40px; flex-basis: 40px; border-radius: 12px; }
+.fig-node[data-kind="type"] > summary,
+.fig-node[data-kind="fn"] > summary,
+.fig-node[data-kind="var"] > summary {
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+}
+.fig-node.tight[data-kind="type"] > summary,
+.fig-node.tight[data-kind="fn"] > summary,
+.fig-node.tight[data-kind="var"] > summary {
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+}
+.fig-node[data-kind="type"] > summary::after,
+.fig-node[data-kind="fn"] > summary::after,
+.fig-node[data-kind="var"] > summary::after {
+  content: "existed";
+  align-self: start;
+  margin-top: 2px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--fig-rule);
+  color: var(--fig-muted);
+  background: #fff;
+  white-space: nowrap;
+}
+.fig-node[data-kind="type"][data-tone="added"] > summary::after,
+.fig-node[data-kind="fn"][data-tone="added"] > summary::after,
+.fig-node[data-kind="var"][data-tone="added"] > summary::after {
+  content: "new";
+  color: var(--fig-added);
+  border-color: color-mix(in srgb, var(--fig-added) 40%, white);
+  background: var(--fig-added-bg);
+}
+.fig-node[data-kind="type"][data-tone="changed"] > summary::after,
+.fig-node[data-kind="fn"][data-tone="changed"] > summary::after,
+.fig-node[data-kind="var"][data-tone="changed"] > summary::after,
+.fig-node[data-kind="type"][data-tone="focus"] > summary::after,
+.fig-node[data-kind="fn"][data-tone="focus"] > summary::after,
+.fig-node[data-kind="var"][data-tone="focus"] > summary::after {
+  content: "changed";
+  color: var(--fig-changed);
+  border-color: color-mix(in srgb, var(--fig-changed) 40%, white);
+  background: var(--fig-changed-bg);
+}
+.fig-node[data-kind="type"][data-tone="removed"] > summary::after,
+.fig-node[data-kind="fn"][data-tone="removed"] > summary::after,
+.fig-node[data-kind="var"][data-tone="removed"] > summary::after {
+  content: "removed";
+  color: var(--fig-removed);
+  border-color: color-mix(in srgb, var(--fig-removed) 40%, white);
+  background: var(--fig-removed-bg);
+}
+.fig-node[data-kind="type"][data-tone="ghost"] > summary::after,
+.fig-node[data-kind="fn"][data-tone="ghost"] > summary::after,
+.fig-node[data-kind="var"][data-tone="ghost"] > summary::after {
+  content: "existed";
+}
+.fig-node[data-kind="type"][data-tone="added"],
+.fig-node[data-kind="fn"][data-tone="added"],
+.fig-node[data-kind="var"][data-tone="added"] {
+  background: color-mix(in srgb, var(--fig-added-bg) 45%, #fffaf2);
+}
+.fig-node[data-kind="type"][data-tone="changed"],
+.fig-node[data-kind="fn"][data-tone="changed"],
+.fig-node[data-kind="var"][data-tone="changed"] {
+  background: color-mix(in srgb, var(--fig-changed-bg) 40%, #fffaf2);
+}
+.fig-node[data-kind="type"][data-tone="removed"],
+.fig-node[data-kind="fn"][data-tone="removed"],
+.fig-node[data-kind="var"][data-tone="removed"] {
+  background: color-mix(in srgb, var(--fig-removed-bg) 40%, #fffaf2);
+}
 .fig-node-go { display: none; }
 .fig-node-panel {
   padding: 12px 14px 14px;

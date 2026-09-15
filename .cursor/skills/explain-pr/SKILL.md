@@ -42,7 +42,7 @@ The old three-view walk was too long. Compress.
 - Merge before and after onto **one** compare (or one flow with a strike). Do not spend a scene on “it was slow” and another on “here is the new file.”
 - Extra facts go in **panels**, not extra slides.
 - If two sentences would retell the same claim, delete a scene.
-- Typical shape (not a template): (1) what changed, (2) how it works now, (3) what still hurts / do not merge if. Skip a beat that this PR does not have.
+- Typical shape (not a template): (1) what changed, (2) how it works now, (3) blast as **hit vs not-hit**. Skip a beat that this PR does not have.
 
 ## Output skeleton
 
@@ -98,8 +98,8 @@ Put a `.fig-repo` link and the PR title in `.fig-mast h1` — the prompt compose
 1. Read the PR title, body, and the shape of the diff (not every line).
 2. Name the system. Cut to **three claims** an author can hold. Drop the rest into panels.
 3. Draw. Open `catalog.html` and pick marks that match roles. Distinct `data-kind` for distinct components.
-4. If the diff changes types or functions, draw that layout on the “how” scene: wrap methods in `.fig-enclose` whose header is a clickable `data-kind="type"` card. Functions stay visible inside the type. Function names label cards; they must not be the claim.
-5. If a public API, prod store, or caller can break, put `.fig-risk` tiles (`hot|watch|safe`) on the last scene and a “Do not merge if…” node. If blast is none, one `safe` tile is enough — do not add a view for it.
+4. If the diff changes types or functions, draw that layout on the “how” scene: wrap methods in `.fig-enclose` whose header is a clickable `data-kind="type"` card. Functions stay visible inside the type. Function names label cards; they must not be the claim. **Every type, function, and field must show origin.** `added` = new in this PR, `changed` = existed and this PR edited it, `ghost` (or omit) = pre-existed, drawn only for context, `removed` = deleted. CSS paints an existed / new / changed / removed pill from that tone — do not hand-write chips. A type can be `changed` while a method inside is `ghost`. Do not mark an old helper `added`.
+5. Last scene **is** the blast picture, not a pile of leftover facts. Use `.fig-compare` with two panes labeled exactly `Not in the blast` (`data-tone="added"`) and `In the blast` (`data-tone="changed"`). Every card goes in one pane. Untouched APIs, stores, and callers go in Not-hit. What this PR can break, plus the “Do not merge if…” node, go in Hit. `.fig-risk` tiles (`hot|watch|safe`) may sit **inside** those panes; they must not replace the two-pane layout. Do not emit a collage of unrelated cards (scope, validation, pipeline, filter, test) with no hit/not-hit split. If blast is none, keep both panes anyway — Not-hit holds the `safe` tiles, Hit holds one residual watch or the merge gate. Do not add a Blast tab.
 
 ## Inspect + follow-up prompt
 
@@ -113,7 +113,7 @@ Modifiers: `.tight`, `.wide`, `open` to start expanded (use once per scene for t
 
 Anonymous extras may stay `<div class="fig-user" data-label="Visitor A"></div>`.
 
-Tones: `added`, `removed`, `changed`, `focus`, `ghost`.
+Tones: `added`, `removed`, `changed`, `focus`, `ghost`. On `type` / `fn` / `var`, those become **new / removed / changed / existed** pills. Use `ghost` (not `focus`) for an unchanged helper you only drew for context.
 
 ## Kinds
 
@@ -144,6 +144,19 @@ Arrow: `<div class="fig-edge" data-label="GET"></div>`. Add `down` or `strike`.
 ## Layout
 
 `.fig-row`, `.fig-col`, `.fig-cluster`, `.fig-enclose` + `.fig-enclose-body`, `.fig-compare` + `.fig-pane`, `.fig-stack` + `.fig-layer`, `.fig-pipe` + `.fig-phase`, `.fig-timeline` + `.fig-step`, `.fig-code` + `.fig-line.added|.removed`, `.fig-metric`, `.fig-callout`, `.fig-datapoints`, `.fig-risk`.
+
+Last scene uses compare as **hit / not-hit**, not Before / After (Before / After belongs on the “what changed” scene):
+
+```html
+<div class="fig-compare">
+  <div class="fig-pane" data-label="Not in the blast" data-tone="added">
+    <!-- untouched APIs, stores, callers; safe risk tiles -->
+  </div>
+  <div class="fig-pane" data-label="In the blast" data-tone="changed">
+    <!-- what this PR can break; hot/watch tiles; Do not merge if… -->
+  </div>
+</div>
+```
 
 To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. For code layout, the type **encloses** its functions:
 
@@ -177,6 +190,32 @@ To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. 
           <p>After this PR it parses page options, then calls loadBlocksPageData.</p>
         </div>
       </details>
+      <details class="fig-node" data-kind="fn" data-tone="ghost">
+        <summary>
+          <i class="fig-mark"></i>
+          <span class="fig-node-text">
+            <em>function</em>
+            <strong>filterBlocks</strong>
+            <span>Already on the type. Not edited.</span>
+          </span>
+        </summary>
+        <div class="fig-node-panel">
+          <p>Drawn so the call chain is readable. Ghost means it pre-existed and this PR did not change it.</p>
+        </div>
+      </details>
+      <details class="fig-node" data-kind="fn" data-tone="added">
+        <summary>
+          <i class="fig-mark"></i>
+          <span class="fig-node-text">
+            <em>function</em>
+            <strong>loadBlocksPageData</strong>
+            <span>New. Picks catalog first.</span>
+          </span>
+        </summary>
+        <div class="fig-node-panel">
+          <p>Added in this PR.</p>
+        </div>
+      </details>
     </div>
   </div>
 </div>
@@ -188,6 +227,8 @@ To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. 
 - No CSS animations, no autoplay. `figure.js` is only the prompt composer.
 - Real names from the PR. Do not invent subsystems. Put those names on cards; keep claims in English.
 - **One walk. No Story / Data / Blast tabs.** Extra depth is a node the reviewer can open, not another view.
+- Last scene is two panes: **Not in the blast** / **In the blast**. No leftover-card collage.
+- Type / function / field cards always show origin (existed / new / changed / removed). Use `ghost` for unchanged helpers.
 - Distinct `data-kind` for distinct components.
 - Open the HTML file in a browser (File → Open, or double-click). Nothing to install. Do not start a server.
 - Re-read every visible sentence against the Language section before you stop.

@@ -42,10 +42,9 @@
       lines.push("");
       lines.push(known);
     }
-    if (q) {
-      lines.push("");
-      lines.push(q);
-    }
+    lines.push("");
+    lines.push("Here is my clarifying question:");
+    if (q) lines.push(q);
     lines.push("");
     return lines.join("\n");
   }

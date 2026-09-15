@@ -125,7 +125,7 @@
         <div class="catalog-item"><div class="fig-box" data-label="box"></div><code>box</code></div>
       </div>
       <h2>Source code</h2>
-      <p style="color:var(--fig-muted);max-width:62ch;line-height:1.5">A type is a clickable card that <strong>encloses</strong> its functions. Click the type to ask about the class; click a function inside for that method. Arrows mean calls. Draw a variable only when the PR actually changes it. Origin pills are automatic from <code>data-tone</code>: omit or <code>ghost</code> = existed, <code>changed</code> = changed, <code>added</code> = new, <code>removed</code> = deleted.</p>
+      <p style="color:var(--fig-muted);max-width:62ch;line-height:1.5">A type is a clickable card that <strong>encloses</strong> its functions. Click the type to ask about the class; click a function inside for that method. Arrows mean calls — this body is a call tree, not a list of methods. The entry point has no incoming edge; every other function does. Draw a variable only when the PR actually changes it. Origin pills are automatic from <code>data-tone</code>: omit or <code>ghost</code> = existed, <code>changed</code> = changed, <code>added</code> = new, <code>removed</code> = deleted.</p>
       <div class="catalog-grid">
         <div class="catalog-item"><div class="fig-type" data-label="type"></div><code>type</code></div>
         <div class="catalog-item"><div class="fig-fn" data-label="fn"></div><code>fn</code></div>
@@ -162,20 +162,6 @@
               </div>
             </details>
             <div class="fig-edge down" data-label="calls"></div>
-            <details class="fig-node" data-kind="fn" data-tone="ghost">
-              <summary>
-                <i class="fig-mark"></i>
-                <span class="fig-node-text">
-                  <em>function</em>
-                  <strong>filterBlocks</strong>
-                  <span>Already on the type. Not edited.</span>
-                </span>
-              </summary>
-              <div class="fig-node-panel">
-                <p>Drawn so the call chain is readable. Ghost means it pre-existed and this PR did not change it.</p>
-              </div>
-            </details>
-            <div class="fig-edge down" data-label="calls"></div>
             <details class="fig-node" data-kind="fn" data-tone="added">
               <summary>
                 <i class="fig-mark"></i>
@@ -186,7 +172,21 @@
                 </span>
               </summary>
               <div class="fig-node-panel">
-                <p>New. Calls <code>loadBlocksFromBucketIndex</code>, or <code>scanBlocksFromBucket</code> when the catalog is missing.</p>
+                <p>New. Called by BlocksHandler. Calls <code>loadBlocksFromBucketIndex</code>, or <code>scanBlocksFromBucket</code> when the catalog is missing.</p>
+              </div>
+            </details>
+            <div class="fig-edge down" data-label="then"></div>
+            <details class="fig-node" data-kind="fn" data-tone="ghost">
+              <summary>
+                <i class="fig-mark"></i>
+                <span class="fig-node-text">
+                  <em>function</em>
+                  <strong>filterBlocks</strong>
+                  <span>Already on the type. Not edited.</span>
+                </span>
+              </summary>
+              <div class="fig-node-panel">
+                <p>Called after the load. Ghost means it pre-existed and this PR did not change it.</p>
               </div>
             </details>
           </div>

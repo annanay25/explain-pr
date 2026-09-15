@@ -98,7 +98,7 @@ Put a `.fig-repo` link and the PR title in `.fig-mast h1` — the prompt compose
 1. Read the PR title, body, and the shape of the diff (not every line).
 2. Name the system. Cut to **three claims** an author can hold. Drop the rest into panels.
 3. Draw. Open `catalog.html` and pick marks that match roles. Distinct `data-kind` for distinct components.
-4. If the diff changes types or functions, draw that layout on the “how” scene: wrap methods in `.fig-enclose` whose header is a clickable `data-kind="type"` card. Functions stay visible inside the type. Function names label cards; they must not be the claim. **Every type, function, and field must show origin.** `added` = new in this PR, `changed` = existed and this PR edited it, `ghost` (or omit) = pre-existed, drawn only for context, `removed` = deleted. CSS paints an existed / new / changed / removed pill from that tone — do not hand-write chips. A type can be `changed` while a method inside is `ghost`. Do not mark an old helper `added`.
+4. If the diff changes types or functions, the how scene (the old data walk) is **one call tree**, not a bag of functions. Wrap methods in `.fig-enclose` whose header is a clickable `data-kind="type"` card. Function names label cards; they must not be the claim. **Every type, function, and field must show origin.** `added` = new in this PR, `changed` = existed and this PR edited it, `ghost` (or omit) = pre-existed, drawn only for context, `removed` = deleted. CSS paints an existed / new / changed / removed pill from that tone — do not hand-write chips. A type can be `changed` while a method inside is `ghost`. Do not mark an old helper `added`. **No orphan `fn`.** The entry point is the only function with no incoming edge. Every other function sits under the thing that calls it, with `.fig-edge down` between them. Package helpers belong in that same tree under their caller — not as a sibling of the enclose, the pane, or the canvas. If two callers share a helper, draw it once under the first and mention the other in the panel. Alternatives are a `.fig-row` of callees under one caller, not a vertical stack labeled `or` (that reads as A calls B). If you cannot name who calls it, do not draw the card; put the fact in a panel.
 5. Last scene **is** the blast picture, not a pile of leftover facts. Use `.fig-compare` with two panes labeled exactly `Not in the blast` (`data-tone="added"`) and `In the blast` (`data-tone="changed"`). Every card goes in one pane. Untouched APIs, stores, and callers go in Not-hit. What this PR can break, plus the “Do not merge if…” node, go in Hit. `.fig-risk` tiles (`hot|watch|safe`) may sit **inside** those panes; they must not replace the two-pane layout. Do not emit a collage of unrelated cards (scope, validation, pipeline, filter, test) with no hit/not-hit split. If blast is none, keep both panes anyway — Not-hit holds the `safe` tiles, Hit holds one residual watch or the merge gate. Do not add a Blast tab.
 
 ## Inspect + follow-up prompt
@@ -158,7 +158,7 @@ Last scene uses compare as **hit / not-hit**, not Before / After (Before / After
 </div>
 ```
 
-To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. For code layout, the type **encloses** its functions:
+To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. For code layout, the type **encloses** its functions. That body is a call tree: entry point first, then callee, then the next callee. Do not list methods as unconnected peers.
 
 ```html
 <div class="fig-enclose" data-tone="changed">
@@ -190,19 +190,7 @@ To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. 
           <p>After this PR it parses page options, then calls loadBlocksPageData.</p>
         </div>
       </details>
-      <details class="fig-node" data-kind="fn" data-tone="ghost">
-        <summary>
-          <i class="fig-mark"></i>
-          <span class="fig-node-text">
-            <em>function</em>
-            <strong>filterBlocks</strong>
-            <span>Already on the type. Not edited.</span>
-          </span>
-        </summary>
-        <div class="fig-node-panel">
-          <p>Drawn so the call chain is readable. Ghost means it pre-existed and this PR did not change it.</p>
-        </div>
-      </details>
+      <div class="fig-edge down" data-label="calls"></div>
       <details class="fig-node" data-kind="fn" data-tone="added">
         <summary>
           <i class="fig-mark"></i>
@@ -213,7 +201,21 @@ To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. 
           </span>
         </summary>
         <div class="fig-node-panel">
-          <p>Added in this PR.</p>
+          <p>Added in this PR. Called by BlocksHandler.</p>
+        </div>
+      </details>
+      <div class="fig-edge down" data-label="then"></div>
+      <details class="fig-node" data-kind="fn" data-tone="ghost">
+        <summary>
+          <i class="fig-mark"></i>
+          <span class="fig-node-text">
+            <em>function</em>
+            <strong>filterBlocks</strong>
+            <span>Already on the type. Not edited.</span>
+          </span>
+        </summary>
+        <div class="fig-node-panel">
+          <p>Called after the load. Ghost means it pre-existed and this PR did not change it.</p>
         </div>
       </details>
     </div>
@@ -229,6 +231,7 @@ To stack flows: `.fig-col` with `<div class="fig-edge down">` **between** rows. 
 - **One walk. No Story / Data / Blast tabs.** Extra depth is a node the reviewer can open, not another view.
 - Last scene is two panes: **Not in the blast** / **In the blast**. No leftover-card collage.
 - Type / function / field cards always show origin (existed / new / changed / removed). Use `ghost` for unchanged helpers.
+- How scene is a call tree. No orphan `fn` cards. Entry point excepted; every other function has an incoming `.fig-edge down` from its caller.
 - Distinct `data-kind` for distinct components.
 - Open the HTML file in a browser (File → Open, or double-click). Nothing to install. Do not start a server.
 - Re-read every visible sentence against the Language section before you stop.

@@ -48,69 +48,127 @@
               </div>
               <div class="fig-canvas">
                 <div class="fig-compare">
-                  <div class="fig-pane" data-label="Before" data-tone="removed">
-                    <div class="fig-col">
-                      <details class="fig-node" data-kind="config" data-tone="removed">
-                        <summary>
-                          <i class="fig-mark"></i>
-                          <span class="fig-node-text">
-                            <em>setting</em>
-                            <strong>ingest.kafka.address</strong>
-                            <span>One host and port. A list was not allowed.</span>
-                          </span>
-                        </summary>
-                        <div class="fig-node-panel">
-                          <p>This is the shared Kafka setting for Tempo ingest. It used to be a plain string, default <code>localhost:9092</code>. Issue <a href="https://github.com/grafana/tempo/issues/7880">#7880</a> is that many Kafka clusters publish several broker addresses instead of one highly available hostname.</p>
+                    <div class="fig-pane" data-label="Before" data-tone="removed">
+                      <div class="fig-seq">
+                        <details class="fig-node" data-kind="server" data-seq="Tempo ingest">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>process</em>
+                              <strong>Tempo ingest</strong>
+                              <span>Reads one address, then asks that broker for the rest of the cluster.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>Before this PR, ingest Kafka started from a single host:port. If that host was down, Tempo never got cluster metadata.</p>
+                          </div>
+                        </details>
+                        <details class="fig-node" data-kind="config" data-tone="removed" data-seq="ingest.kafka.address">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>setting</em>
+                              <strong>ingest.kafka.address</strong>
+                              <span>One host and port. A list was not allowed.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>This is the shared Kafka setting for Tempo ingest. It used to be a plain string, default <code>localhost:9092</code>. Issue <a href="https://github.com/grafana/tempo/issues/7880">#7880</a> is that many Kafka clusters publish several broker addresses instead of one highly available hostname.</p>
+                          </div>
+                        </details>
+                        <details class="fig-node" data-kind="queue" data-tone="focus" data-seq="One broker">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>Kafka</em>
+                              <strong>One broker</strong>
+                              <span>If that one host is down at startup, Tempo cannot connect.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>Kafka clients only need a starting address to learn the rest of the cluster from metadata. One host is enough when it is always reachable. It is not enough when operators hand you <code>kafka-1</code>, <code>kafka-2</code>, and <code>kafka-3</code> with no load-balancer name.</p>
+                          </div>
+                        </details>
+                        <div class="fig-mermaid-wrap" data-label="Request / response">
+                          <pre class="fig-mermaid">sequenceDiagram
+    autonumber
+    participant Tempo as Tempo ingest
+    participant Addr as ingest.kafka.address
+    participant Kafka as One broker
+    Tempo->>Addr: Read the setting
+    Addr-->>Tempo: One host and port
+    Tempo->>Kafka: Bootstrap that single address
+    alt That host is down at startup
+        Kafka--x Tempo: Cannot connect
+    else Host is reachable
+        Kafka-->>Tempo: Cluster metadata
+    end
+                          </pre>
                         </div>
-                      </details>
-                      <div class="fig-edge down" data-label="only this host"></div>
-                      <details class="fig-node" data-kind="queue" data-tone="focus">
-                        <summary>
-                          <i class="fig-mark"></i>
-                          <span class="fig-node-text">
-                            <em>Kafka</em>
-                            <strong>One broker</strong>
-                            <span>If that one host is down at startup, Tempo cannot connect.</span>
-                          </span>
-                        </summary>
-                        <div class="fig-node-panel">
-                          <p>Kafka clients only need a starting address to learn the rest of the cluster from metadata. One host is enough when it is always reachable. It is not enough when operators hand you <code>kafka-1</code>, <code>kafka-2</code>, and <code>kafka-3</code> with no load-balancer name.</p>
+                        <div class="fig-seq-inspect">
+                          <p class="fig-seq-hint">Click a participant or message to inspect it. Click again to close.</p>
                         </div>
-                      </details>
+                      </div>
+                    </div>
+                    <div class="fig-pane" data-label="After" data-tone="added">
+                      <div class="fig-seq">
+                        <details class="fig-node" data-kind="server" data-seq="Tempo ingest">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>process</em>
+                              <strong>Tempo ingest</strong>
+                              <span>Seeds every starting address, then learns the rest from Kafka.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>After this PR, ingest Kafka can start from one host, a comma-separated string, or a YAML list. Any reachable seed is enough to get cluster metadata.</p>
+                          </div>
+                        </details>
+                        <details class="fig-node" data-kind="config" data-tone="added" data-seq="ingest.kafka.address">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>setting</em>
+                              <strong>ingest.kafka.address</strong>
+                              <span>One host, a comma-separated string, or a YAML list.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>Existing <code>address: kafka:9092</code> configs keep working. Flags take commas. YAML also accepts a list of hosts. Docs and the changelog say all three forms are valid. After connecting, Tempo still discovers remaining brokers from Kafka metadata.</p>
+                          </div>
+                        </details>
+                        <details class="fig-node" data-kind="queue" data-tone="added" data-seq="Broker list">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>Kafka</em>
+                              <strong>Broker list</strong>
+                              <span>Any one of these can get Tempo into the cluster.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>These are bootstrap seeds, not the full membership list. The Kafka client tries them, then uses cluster metadata for the topic’s brokers. This matches how Grafana Mimir already documents comma-separated Kafka addresses.</p>
+                          </div>
+                        </details>
+                        <div class="fig-mermaid-wrap" data-label="Request / response">
+                          <pre class="fig-mermaid">sequenceDiagram
+    autonumber
+    participant Tempo as Tempo ingest
+    participant Addr as ingest.kafka.address
+    participant Kafka as Broker list
+    Tempo->>Addr: Read the setting
+    Addr-->>Tempo: Host, commas, or YAML list
+    Tempo->>Kafka: Seed every starting address
+    Kafka-->>Tempo: Metadata from any reachable seed
+                          </pre>
+                        </div>
+                        <div class="fig-seq-inspect">
+                          <p class="fig-seq-hint">Click a participant or message to inspect it. Click again to close.</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div class="fig-pane" data-label="After" data-tone="added">
-                    <div class="fig-col">
-                      <details class="fig-node" data-kind="config" data-tone="added">
-                        <summary>
-                          <i class="fig-mark"></i>
-                          <span class="fig-node-text">
-                            <em>setting</em>
-                            <strong>ingest.kafka.address</strong>
-                            <span>One host, a comma-separated string, or a YAML list.</span>
-                          </span>
-                        </summary>
-                        <div class="fig-node-panel">
-                          <p>Existing <code>address: kafka:9092</code> configs keep working. Flags take commas. YAML also accepts a list of hosts. Docs and the changelog say all three forms are valid. After connecting, Tempo still discovers remaining brokers from Kafka metadata.</p>
-                        </div>
-                      </details>
-                      <div class="fig-edge down" data-label="several starting hosts"></div>
-                      <details class="fig-node" data-kind="queue" data-tone="added">
-                        <summary>
-                          <i class="fig-mark"></i>
-                          <span class="fig-node-text">
-                            <em>Kafka</em>
-                            <strong>Broker list</strong>
-                            <span>Any one of these can get Tempo into the cluster.</span>
-                          </span>
-                        </summary>
-                        <div class="fig-node-panel">
-                          <p>These are bootstrap seeds, not the full membership list. The Kafka client tries them, then uses cluster metadata for the topic’s brokers. This matches how Grafana Mimir already documents comma-separated Kafka addresses.</p>
-                        </div>
-                      </details>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </section>

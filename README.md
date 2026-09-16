@@ -2,11 +2,11 @@
 
 The shape of this skill follows [Blake Smith](https://blakesmith.me/)'s [code review hierarchy of needs](https://blakesmith.me/2015/02/09/code-review-essentials-for-software-teams.html): the most important job of a review is to keep the team's mental model of the system aligned as it changes. Catching bugs and debating design sit below that. Style is last. A walk is for that first job — what changed, how it works now, and what is in the blast.
 
-A visual language for explaining pull requests. **One CSS file, one small JS file for the ask-prompt box. No npm, no build.**
+A visual language for explaining pull requests. **One CSS file, one small JS file. No npm, no build.**
 
 A coding agent emits a **short walk** of the PR (a few scenes, one claim each). Click a component, type a question, copy a preconstructed prompt back into the agent.
 
-`figure.css` inlines Fraunces, IBM Plex, and the glyph icons. `figure.js` only fills the question box and copy button.
+`figure.css` inlines Fraunces, IBM Plex, and the glyph icons. `figure.js` fills the question box and copy button, and lazy-loads [mermaid.js](https://mermaid.js.org/) for before/after sequence diagrams (from `mermaid.min.js` next to `figure.js`, otherwise jsDelivr).
 
 ## A walk
 
@@ -14,7 +14,7 @@ Three scenes from [grafana/tempo #7876](walks/tempo-kafka-brokers.html). Typical
 
 **01 · What changed**
 
-![Before and after: Kafka ingest used to take one starting address and now takes a list](docs/scene-01-what-changed.png)
+![Before and after sequence: one Kafka seed versus a list of brokers](docs/scene-01-what-changed.png)
 
 **02 · How it works**
 

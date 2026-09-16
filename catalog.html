@@ -192,6 +192,114 @@
           </div>
         </div>
       </div>
+      <div style="height: 24px"></div>
+      <p style="color:var(--fig-muted);max-width:62ch;line-height:1.5">When a before/after scene is a request/response path, draw it as a mermaid sequence diagram — lifelines and numbered messages, not a function flowchart. Hidden <code>.fig-node</code> cards with <code>data-seq</code> matching participant titles make clicks inspectable. Click again to close.</p>
+      <div class="fig-compare">
+          <div class="fig-pane" data-label="Before" data-tone="removed">
+            <div class="fig-seq">
+              <details class="fig-node" data-kind="client" data-seq="Client">
+                <summary>
+                  <i class="fig-mark"></i>
+                  <span class="fig-node-text">
+                    <em>client</em>
+                    <strong>Client</strong>
+                    <span>Asks the origin for the page.</span>
+                  </span>
+                </summary>
+                <div class="fig-node-panel">
+                  <p>Before, every request went to origin.</p>
+                </div>
+              </details>
+              <details class="fig-node" data-kind="server" data-seq="Origin">
+                <summary>
+                  <i class="fig-mark"></i>
+                  <span class="fig-node-text">
+                    <em>origin</em>
+                    <strong>Origin</strong>
+                    <span>Answers every time.</span>
+                  </span>
+                </summary>
+                <div class="fig-node-panel">
+                  <p>No cache in front.</p>
+                </div>
+              </details>
+              <div class="fig-mermaid-wrap" data-label="Request / response">
+                <pre class="fig-mermaid">sequenceDiagram
+    autonumber
+    participant Client
+    participant Origin
+    Client->>Origin: GET /index
+    Origin-->>Client: full page
+                </pre>
+              </div>
+              <div class="fig-seq-inspect">
+                <p class="fig-seq-hint">Click a participant or message to inspect it. Click again to close.</p>
+              </div>
+            </div>
+          </div>
+          <div class="fig-pane" data-label="After" data-tone="added">
+            <div class="fig-seq">
+              <details class="fig-node" data-kind="client" data-seq="Client">
+                <summary>
+                  <i class="fig-mark"></i>
+                  <span class="fig-node-text">
+                    <em>client</em>
+                    <strong>Client</strong>
+                    <span>Asks the edge first.</span>
+                  </span>
+                </summary>
+                <div class="fig-node-panel">
+                  <p>After, the edge can answer from cache.</p>
+                </div>
+              </details>
+              <details class="fig-node" data-kind="cache" data-tone="added" data-seq="Edge">
+                <summary>
+                  <i class="fig-mark"></i>
+                  <span class="fig-node-text">
+                    <em>edge</em>
+                    <strong>Edge</strong>
+                    <span>New. Serves a cached page when it can.</span>
+                  </span>
+                </summary>
+                <div class="fig-node-panel">
+                  <p>On miss it still asks origin.</p>
+                </div>
+              </details>
+              <details class="fig-node" data-kind="server" data-seq="Origin">
+                <summary>
+                  <i class="fig-mark"></i>
+                  <span class="fig-node-text">
+                    <em>origin</em>
+                    <strong>Origin</strong>
+                    <span>Only on a cache miss.</span>
+                  </span>
+                </summary>
+                <div class="fig-node-panel">
+                  <p>Origin still answers when the edge does not have the page.</p>
+                </div>
+              </details>
+              <div class="fig-mermaid-wrap" data-label="Request / response">
+                <pre class="fig-mermaid">sequenceDiagram
+    autonumber
+    participant Client
+    participant Edge
+    participant Origin
+    Client->>Edge: GET /index
+    alt Cached
+        Edge-->>Client: cached page
+    else Miss
+        Edge->>Origin: GET /index
+        Origin-->>Edge: full page
+        Edge-->>Client: full page
+    end
+                </pre>
+              </div>
+              <div class="fig-seq-inspect">
+                <p class="fig-seq-hint">Click a participant or message to inspect it. Click again to close.</p>
+              </div>
+            </div>
+          </div>
+      </div>
 
       <h2>Tones</h2>
       <div class="fig-row">

@@ -497,6 +497,82 @@ label.fig-btn {{ cursor: pointer; }}
   width: 100%;
   background: #fff;
 }}
+.fig-mermaid-wrap {{
+  width: 100%;
+  min-width: 0;
+  position: relative;
+  border: 1px solid var(--fig-rule);
+  border-radius: 16px;
+  padding: 26px 14px 12px;
+  background: #fffaf2;
+  box-shadow: 0 8px 22px rgba(26, 23, 20, 0.05);
+}}
+.fig-mermaid-wrap::before {{
+  content: attr(data-label);
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fig-muted);
+}}
+.fig-mermaid {{
+  margin: 0;
+  padding: 4px;
+  overflow: auto;
+  text-align: left;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--fig-muted);
+  background: transparent;
+  white-space: pre;
+}}
+.fig-mermaid-wrap.is-ready .fig-mermaid {{
+  font-size: 0;
+  line-height: 0;
+  color: transparent;
+  white-space: normal;
+}}
+.fig-mermaid svg {{
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--fig-ink);
+}}
+.fig-mermaid svg .edge-animation-slow,
+.fig-mermaid svg .edge-animation-fast {{
+  animation: none;
+}}
+.fig-seq {{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}}
+.fig-seq-inspect {{
+  width: 100%;
+}}
+.fig-seq-hint {{
+  margin: 0;
+  color: var(--fig-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}}
+.fig-seq-inspect:has(.fig-node) .fig-seq-hint {{ display: none; }}
+.fig-seq > .fig-node {{
+  display: none !important;
+}}
+.fig-seq-inspect > .fig-node {{
+  display: inline-flex !important;
+  width: 100%;
+}}
 .fig-compare {{ gap: 18px; align-items: stretch; justify-content: center; flex-wrap: wrap; }}
 .fig-pane {{
   display: flex;

@@ -42,7 +42,7 @@
               <div class="fig-scene-head">
                 <div class="fig-index">01</div>
                 <div>
-                  <h2>Kafka ingest used to take one starting address. It now takes a list.</h2>
+                  <h2>Tempo used to start Kafka from one address. It can now try several.</h2>
                   <p>Many Kafka setups give you several broker hostnames and no single failover name. You can pass all of them. After Tempo connects, Kafka still tells it the rest of the cluster.</p>
                 </div>
               </div>
@@ -186,120 +186,103 @@
               <div class="fig-scene-head">
                 <div class="fig-index">02</div>
                 <div>
-                  <h2>One new type accepts three ways of writing the same list.</h2>
-                  <p>A YAML string, a comma-separated string, or a YAML list all become the same list of hosts. Flags use commas and replace the default. The Kafka client then starts with every host in that list.</p>
+                  <h2>One list accepts every supported configuration style.</h2>
+                  <p>A single address, comma-separated addresses, and a YAML list all become the same broker list. Flags replace the default instead of adding to it.</p>
                 </div>
               </div>
               <div class="fig-canvas">
-                <div class="fig-compare">
-                  <div class="fig-pane" data-label="How the list is read">
-                    <div class="fig-enclose" data-tone="added">
-                      <details class="fig-node" data-kind="type" data-tone="added">
-                        <summary>
-                          <i class="fig-mark"></i>
-                          <span class="fig-node-text">
-                            <em>type</em>
-                            <strong>KafkaAddresses</strong>
-                            <span>A list of host:port pairs, not a single string.</span>
-                          </span>
-                        </summary>
-                        <div class="fig-node-panel">
-                          <p>New in <code>pkg/ingest/config.go</code>. It implements flag parsing and YAML so <code>KafkaConfig.Address</code> can stay one field. Docs still describe the flag as a string, on purpose, via <code>FlagType</code>.</p>
-                        </div>
-                      </details>
-                      <div class="fig-enclose-body">
-                        <div class="fig-col">
-                          <details class="fig-node" data-kind="fn" data-tone="added">
-                            <summary>
-                              <i class="fig-mark"></i>
-                              <span class="fig-node-text">
-                                <em>function</em>
-                                <strong>Set</strong>
-                                <span>A flag value replaces the default. It does not append.</span>
-                              </span>
-                            </summary>
-                            <div class="fig-node-panel">
-                              <p>Needed because <code>RegisterFlags</code> first sets <code>localhost:9092</code>. If Set appended, passing <code>-ingest.kafka.address=kafka-1:9092</code> would keep localhost in the list. Tests pin that a comma-separated flag becomes exactly those two hosts.</p>
-                            </div>
-                          </details>
-                          <div class="fig-edge down" data-label="or YAML"></div>
-                          <details class="fig-node" data-kind="fn" data-tone="added">
-                            <summary>
-                              <i class="fig-mark"></i>
-                              <span class="fig-node-text">
-                                <em>function</em>
-                                <strong>UnmarshalYAML</strong>
-                                <span>Tries a string first, then a list of strings.</span>
-                              </span>
-                            </summary>
-                            <div class="fig-node-panel">
-                              <p>A single string can still contain commas. A YAML list of hosts is also accepted. Writing YAML back always uses the comma-separated string form, not a list.</p>
-                            </div>
-                          </details>
-                        </div>
-                      </div>
+                <div class="fig-enclose" data-tone="added">
+                  <details class="fig-node" data-kind="type" data-tone="added" open>
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>type</em>
+                        <strong>KafkaAddresses</strong>
+                        <span>Turns every supported input into one list of bootstrap brokers.</span>
+                      </span>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>New in <code>pkg/ingest/config.go</code>. It replaces the string stored in <code>KafkaConfig.Address</code>. Validation still rejects an empty value, and <code>commonKafkaClientOptions</code> now passes the whole list to <code>kgo.SeedBrokers(cfg.Address...)</code>.</p>
                     </div>
-                    <div class="fig-edge down" data-label="calls"></div>
-                    <details class="fig-node" data-kind="fn" data-tone="added">
-                      <summary>
-                        <i class="fig-mark"></i>
-                        <span class="fig-node-text">
-                          <em>function</em>
-                          <strong>parseKafkaAddresses</strong>
-                          <span>Splits on commas, trims spaces, drops empty pieces.</span>
-                        </span>
-                      </summary>
-                      <div class="fig-node-panel">
-                        <p>Package helper in <code>pkg/ingest/config.go</code>, not a method on the type. Both Set and UnmarshalYAML call it. An empty list after this step fails validation with the same missing-address error as before.</p>
-                      </div>
-                    </details>
-                  </div>
-                  <div class="fig-pane" data-label="Then handed to Kafka">
-                    <div class="fig-enclose" data-tone="changed">
-                      <details class="fig-node" data-kind="type" data-tone="changed">
-                        <summary>
-                          <i class="fig-mark"></i>
-                          <span class="fig-node-text">
-                            <em>type</em>
-                            <strong>KafkaConfig</strong>
-                            <span>Same Kafka settings as before. Address is now a list.</span>
-                          </span>
-                        </summary>
-                        <div class="fig-node-panel">
-                          <p>Used by the components that produce and consume ingest Kafka. Validate now checks that the list is not empty, instead of comparing the string to <code>""</code>.</p>
-                        </div>
-                      </details>
-                      <div class="fig-enclose-body">
-                        <details class="fig-node" data-kind="var" data-tone="changed">
+                  </details>
+                  <div class="fig-enclose-body">
+                    <div class="fig-row">
+                      <div class="fig-col">
+                        <details class="fig-node" data-kind="flag" data-tone="ghost">
                           <summary>
                             <i class="fig-mark"></i>
                             <span class="fig-node-text">
-                              <em>field</em>
-                              <strong>Address</strong>
-                              <span>Typed as KafkaAddresses instead of string.</span>
+                              <em>input</em>
+                              <strong>Flag parser</strong>
+                              <span>Supplies one comma-separated value.</span>
                             </span>
                           </summary>
                           <div class="fig-node-panel">
-                            <p>Tests across distributor, live store, block builder, and ingest helpers wrap a single host as <code>KafkaAddresses{host}</code>. The test Kafka helper now takes a slice of addresses too.</p>
+                            <p>The existing flag machinery calls <code>Set</code> through <code>flag.Value</code>. It is shown for context and was not changed by this PR.</p>
+                          </div>
+                        </details>
+                        <div class="fig-edge down" data-label="calls"></div>
+                        <details class="fig-node" data-kind="fn" data-tone="added">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>function</em>
+                              <strong>Set</strong>
+                              <span>Replaces the default with the addresses from the flag.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p><code>RegisterFlagsWithPrefix</code> starts with <code>localhost:9092</code>. Set must replace that default; appending would leave localhost beside the operator’s brokers.</p>
+                          </div>
+                        </details>
+                        <div class="fig-edge down" data-label="calls"></div>
+                        <details class="fig-node" data-kind="fn" data-tone="added">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>function</em>
+                              <strong>parseKafkaAddresses</strong>
+                              <span>Splits commas, trims spaces, and removes empty entries.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>This new package helper produces the final <code>KafkaAddresses</code> value. <code>UnmarshalYAML</code> also calls it after reading either a string or a list.</p>
                           </div>
                         </details>
                       </div>
-                    </div>
-                    <div class="fig-edge down" data-label="spread into"></div>
-                    <details class="fig-node" data-kind="fn" data-tone="changed">
-                      <summary>
-                        <i class="fig-mark"></i>
-                        <span class="fig-node-text">
-                          <em>function</em>
-                          <strong>commonKafkaClientOptions</strong>
-                          <span>Passes every address into the Kafka client as a starting broker.</span>
-                        </span>
-                      </summary>
-                      <div class="fig-node-panel">
-                        <p>In <code>pkg/ingest/writer_client.go</code>. The call is now <code>kgo.SeedBrokers(cfg.Address...)</code>. A test builds a two-broker fake cluster and checks a client can be created from that full address list.</p>
+                      <div class="fig-col">
+                        <details class="fig-node" data-kind="config" data-tone="ghost">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>input</em>
+                              <strong>YAML decoder</strong>
+                              <span>Supplies either a string or a list.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>The existing YAML decoder invokes the custom unmarshaler. It is shown for context and was not changed by this PR.</p>
+                          </div>
+                        </details>
+                        <div class="fig-edge down" data-label="calls"></div>
+                        <details class="fig-node" data-kind="fn" data-tone="added">
+                          <summary>
+                            <i class="fig-mark"></i>
+                            <span class="fig-node-text">
+                              <em>function</em>
+                              <strong>UnmarshalYAML</strong>
+                              <span>Accepts a single string or a YAML list.</span>
+                            </span>
+                          </summary>
+                          <div class="fig-node-panel">
+                            <p>It tries a string first, then a list of strings, and sends either form through <code>parseKafkaAddresses</code>. Writing the value back uses one comma-separated string.</p>
+                          </div>
+                        </details>
+                        <div class="fig-callout">
+                          Both branches produce one broker list, and existing single-address configuration remains valid.
+                        </div>
                       </div>
-                    </details>
-                  </div>
+                    </div>
                 </div>
               </div>
             </div>
@@ -318,8 +301,8 @@
               <div class="fig-scene-head">
                 <div class="fig-index">03</div>
                 <div>
-                  <h2>Public APIs and databases are not in this change. Finding Kafka is.</h2>
-                  <p>Trace queries and storage stay as they were. The blast is the one address every ingest process uses at startup.</p>
+                  <h2>Public APIs and stored traces stay unchanged. Kafka startup is the risk.</h2>
+                  <p>Trace queries and storage work as before. The affected path is how every ingest process reads addresses and connects to Kafka.</p>
                 </div>
               </div>
               <div class="fig-canvas">

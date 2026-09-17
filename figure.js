@@ -349,4 +349,95 @@
   document.querySelectorAll(".fig-node").forEach((node) => {
     bind(enhance(node));
   });
+
+  function termDock(scene) {
+    var dock = scene.querySelector(".fig-gloss-dock");
+    if (dock) return dock;
+    var host = scene.querySelector(".fig-scene-head > div:last-child") || scene.querySelector(".fig-scene-head");
+    dock = document.createElement("div");
+    dock.className = "fig-gloss-dock";
+    host.appendChild(dock);
+    return dock;
+  }
+
+  function clearTermDock(dock) {
+    dock.innerHTML = "";
+    delete dock.dataset.termKey;
+    delete dock.dataset.term;
+    dock.classList.remove("is-full");
+  }
+
+  function showTermPeek(dock, btn, node) {
+    var label = (btn.textContent || "").replace(/\s+/g, " ").trim();
+    var role = text(node, ".fig-node-text span");
+    dock.innerHTML = "";
+    dock.classList.remove("is-full");
+    var wrap = document.createElement("div");
+    wrap.className = "fig-gloss-peek";
+    var p = document.createElement("p");
+    var strong = document.createElement("strong");
+    strong.textContent = label.replace(/\.$/, "") + ".";
+    p.appendChild(strong);
+    if (role) p.appendChild(document.createTextNode(" " + role));
+    wrap.appendChild(p);
+    var more = document.createElement("button");
+    more.type = "button";
+    more.className = "fig-btn fig-gloss-more";
+    more.textContent = "Show the full note";
+    wrap.appendChild(more);
+    dock.appendChild(wrap);
+    dock.dataset.termKey = nodeKey(node);
+    dock.dataset.term = btn.getAttribute("data-term") || label;
+  }
+
+  function showTermFull(dock, node) {
+    dock.querySelectorAll(".fig-gloss-peek").forEach(function (n) {
+      n.remove();
+    });
+    dock.querySelectorAll(".fig-node").forEach(function (n) {
+      n.remove();
+    });
+    bind(enhance(node));
+    var clone = node.cloneNode(true);
+    clone.hidden = false;
+    clone.open = true;
+    clone.removeAttribute("hidden");
+    dock.appendChild(clone);
+    dock.classList.add("is-full");
+    dock.dataset.termKey = nodeKey(node);
+    var ask = clone.querySelector(".fig-ask");
+    if (ask) bind(ask);
+  }
+
+  document.addEventListener("click", function (ev) {
+    var more = ev.target.closest(".fig-gloss-more");
+    var btn = ev.target.closest(".fig-gloss");
+    if (!more && !btn) return;
+    var scene = (more || btn).closest(".fig-scene");
+    if (!scene) return;
+    ev.preventDefault();
+    var dock = termDock(scene);
+    if (more) {
+      var node = findSeqNode(scene, dock.dataset.term);
+      if (node) showTermFull(dock, node);
+      return;
+    }
+    var term = btn.getAttribute("data-term") || btn.textContent;
+    var node = findSeqNode(scene, term);
+    if (!node) return;
+    scene.querySelectorAll(".fig-gloss").forEach(function (el) {
+      el.setAttribute("aria-expanded", el === btn ? "true" : "false");
+    });
+    var key = nodeKey(node);
+    if (dock.dataset.termKey === key && !dock.classList.contains("is-full")) {
+      showTermFull(dock, node);
+      return;
+    }
+    if (dock.dataset.termKey === key && dock.classList.contains("is-full")) {
+      clearTermDock(dock);
+      btn.setAttribute("aria-expanded", "false");
+      return;
+    }
+    showTermPeek(dock, btn, node);
+  });
 })();

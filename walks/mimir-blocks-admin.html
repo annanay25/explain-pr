@@ -15,7 +15,7 @@
         <header class="fig-mast">
           <div>
             <p class="fig-kicker">explain-pr · walk</p>
-            <h1>A faster blocks page for big tenants</h1>
+            <h1>A faster blocks page for large tenants</h1>
             <div class="fig-repo"><a href="https://github.com/grafana/mimir/pull/16549">grafana/mimir #16549</a></div>
           </div>
           <div class="fig-mast-side">
@@ -24,341 +24,634 @@
             <span class="fig-stat">6 files</span>
           </div>
         </header>
+
         <input type="radio" name="walk" id="s1" checked>
         <input type="radio" name="walk" id="s2">
         <input type="radio" name="walk" id="s3">
+        <input type="radio" name="walk" id="s4">
+
         <div class="fig-scenes">
           <section class="fig-scene">
             <div class="fig-stage">
+              <nav class="fig-nav">
+                <span class="fig-btn is-disabled">Back</span>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot is-current" for="s1"></label>
+                  <label class="fig-dot" for="s2"></label>
+                  <label class="fig-dot" for="s3"></label>
+                  <label class="fig-dot" for="s4"></label>
+                </div>
+                <label class="fig-btn fig-next" for="s2">Next</label>
+              </nav>
               <div class="fig-scene-head">
                 <div class="fig-index">01</div>
                 <div>
-                  <h2>The page used to download every metadata file. Now it reads a catalog.</h2>
-                  <p>Opening one tenant’s blocks page listed every folder and fetched a file per block — often enough to time out. It now reads the catalog the compactor already writes, then lets you filter and page. A Scan bucket checkbox still does the old listing when you need brand-new blocks.</p>
+                  <h2>The page reads one index file instead of thousands of metadata files.</h2>
+                  <p>The usual browser request now starts from an <button type="button" class="fig-gloss" data-term="Bucket catalog" aria-expanded="false">index file</button> the <button type="button" class="fig-gloss" data-term="Compactor" aria-expanded="false">compacting job</button> already writes. It keeps matching rows, trims one page, and fetches extra detail only when size, sample, chunk, source, or parent columns need it.</p>
+                  <div class="fig-gloss-dock"></div>
                 </div>
               </div>
-              <nav class="fig-nav"><span class="fig-btn is-disabled">Back</span><div class="fig-dots-nav"><label class="fig-dot is-current" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot" for="s3"></label></div><label class="fig-btn fig-next" for="s2">Next</label></nav>
               <div class="fig-canvas">
                 <div class="fig-compare">
                   <div class="fig-pane" data-label="Before" data-tone="removed">
-                    <div class="fig-col">
-                      <details class="fig-node" data-kind="user">
+                    <div class="fig-seq">
+                      <details class="fig-node" data-kind="user" data-seq="Operator">
                         <summary>
                           <i class="fig-mark"></i>
                           <span class="fig-node-text">
-                            <em>who</em>
+                            <em>person</em>
                             <strong>Operator</strong>
-                            <span>Opens the admin blocks page for one tenant.</span>
+                            <span>Opens one tenant’s blocks page.</span>
                           </span>
-                          <b class="fig-node-go"></b>
                         </summary>
                         <div class="fig-node-panel">
-                          <p>This is an admin page on store-gateway, not the path that serves queries. Someone on call wants to see which TSDB blocks a tenant has.</p>
+                          <p>An operator uses this admin page to inspect the TSDB blocks owned by one tenant.</p>
                         </div>
                       </details>
-                      <div class="fig-edge down" data-label="list every file"></div>
-                      <details class="fig-node" data-kind="bucket" data-tone="focus">
+                      <details class="fig-node" data-kind="browser" data-seq="Blocks page">
                         <summary>
                           <i class="fig-mark"></i>
                           <span class="fig-node-text">
-                            <em>where blocks live</em>
-                            <strong>Object storage</strong>
-                            <span>Thousands of downloads. One giant table. No filters, no pages.</span>
+                            <em>admin page</em>
+                            <strong>Blocks page</strong>
+                            <span>Built one table from every block.</span>
                           </span>
-                          <b class="fig-node-go"></b>
                         </summary>
                         <div class="fig-node-panel">
-                          <p>Each block is a folder with a <code>meta.json</code>. Size, samples, and chunks were always columns, because every file had already been downloaded.</p>
+                          <p>Before this PR, the handler called the full bucket scanner before rendering HTML.</p>
                         </div>
                       </details>
-                      <div class="fig-row">
-                        <div class="fig-metric" data-value="1000s" data-tone="removed">storage reads</div>
-                        <div class="fig-metric" data-value="timeout" data-tone="focus">before anyone could read it</div>
+                      <details class="fig-node" data-kind="bucket" data-seq="Object storage">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>storage</em>
+                            <strong>Object storage</strong>
+                            <span>Listed folders and returned every meta.json.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>A large tenant can have thousands of block folders, each with a metadata object.</p>
+                        </div>
+                      </details>
+                      <div class="fig-mermaid-wrap" data-label="Full bucket scan">
+                        <pre class="fig-mermaid">sequenceDiagram
+    autonumber
+    participant Operator
+    participant Page as Blocks page
+    participant Storage as Object storage
+    Operator->>Page: Open tenant blocks
+    Page->>Storage: List every block folder
+    loop Every block
+        Page->>Storage: Fetch meta.json
+        Storage-->>Page: Full block metadata
+    end
+    Page-->>Operator: Render one giant table
+                        </pre>
+                      </div>
+                      <div class="fig-seq-inspect">
+                        <p class="fig-seq-hint">Click a participant or message to inspect it. Click again to close.</p>
                       </div>
                     </div>
                   </div>
+
                   <div class="fig-pane" data-label="After" data-tone="added">
-                    <div class="fig-col">
-                      <details class="fig-node" data-kind="file" data-tone="added" open>
+                    <div class="fig-seq">
+                      <details class="fig-node" data-kind="user" data-seq="Operator">
                         <summary>
                           <i class="fig-mark"></i>
                           <span class="fig-node-text">
-                            <em>new default</em>
+                            <em>person</em>
+                            <strong>Operator</strong>
+                            <span>Gets one filtered page of blocks.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>The operator can filter and page without first downloading every full metadata object.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="browser" data-seq="Blocks page">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>admin page</em>
+                            <strong>Blocks page</strong>
+                            <span>Filters and trims before optional detail reads.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>The handler defaults to the catalog for HTML. JSON requests default to the old scanner, but callers can set <code>scan_bucket=off</code>.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="worker" data-seq="Compactor" data-tone="ghost">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>unchanged writer</em>
+                            <strong>Compactor</strong>
+                            <span>The background job that already writes that file. This change does not touch it.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p><code>bucketindex.ReadIndex</code> is existing code. The page now consumes the same file the compactor has been updating for queries and retention.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="file" data-seq="Bucket catalog">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>catalog</em>
                             <strong>Bucket catalog</strong>
-                            <span>One file. Fast. May be a few minutes behind.</span>
+                            <span>One existing file that already lists this tenant’s blocks.</span>
                           </span>
-                          <b class="fig-node-go"></b>
                         </summary>
                         <div class="fig-node-panel">
-                          <p>Written periodically by the compactor. A block uploaded after the last update will not show until the next catalog write. If the catalog is missing or broken, the page falls back to listing every file. The page says how old the catalog is.</p>
+                          <p>Each record has ID, time range, series count, labels, and compaction level. It omits size, samples, chunks, sources, and parents. It can lag behind newly uploaded blocks.</p>
                         </div>
                       </details>
-                      <div class="fig-edge down" data-label="then"></div>
-                      <div class="fig-row">
-                        <details class="fig-node tight" data-kind="filter" data-tone="added">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>new</em>
-                              <strong>Filters</strong>
-                              <span>ID, created time, span, compaction level.</span>
-                            </span>
-                            <b class="fig-node-go"></b>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>A block has to match every filter you set. Times can be a timestamp, the word <code>now</code>, or something like <code>now-24h</code>. Created after/before use the time baked into the block ID.</p>
-                          </div>
-                        </details>
-                        <details class="fig-node tight" data-kind="html" data-tone="added">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>new</em>
-                              <strong>Pages</strong>
-                              <span>100 rows at a time unless you ask for more.</span>
-                            </span>
-                            <b class="fig-node-go"></b>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>25, 50, 100, 250, 1000, or all. The header stays put as you scroll. Apply and Reset replace the old Reload button.</p>
-                          </div>
-                        </details>
-                      </div>
-                      <details class="fig-node" data-kind="flag" data-tone="changed">
+                      <details class="fig-node" data-kind="bucket" data-seq="Object storage">
                         <summary>
                           <i class="fig-mark"></i>
                           <span class="fig-node-text">
-                            <em>checkbox</em>
-                            <strong>Scan bucket</strong>
-                            <span>The old full listing, when you need the newest blocks.</span>
+                            <em>storage</em>
+                            <strong>Object storage</strong>
+                            <span>Returns metadata for selected rows only.</span>
                           </span>
-                          <b class="fig-node-go"></b>
                         </summary>
                         <div class="fig-node-panel">
-                          <p>Use this for buckets that have no catalog, or to find blocks the catalog has not picked up yet. The query param is <code>scan_bucket=on</code>.</p>
+                          <p>Known meta.json paths are fetched only when the selected extra columns need fields absent from the catalog.</p>
                         </div>
                       </details>
+                      <div class="fig-mermaid-wrap" data-label="Catalog-backed page">
+                          <pre class="fig-mermaid">sequenceDiagram
+    autonumber
+    participant Operator
+    participant Page as Blocks page
+    participant Compactor
+    participant Catalog as Bucket catalog
+    participant Storage as Object storage
+    Compactor-->>Catalog: Write short records (unchanged)
+    Operator->>Page: Open tenant blocks
+    Page->>Catalog: Read one catalog
+    Catalog-->>Page: Short records for indexed blocks
+    opt Extra columns need fields the catalog lacks
+        Page->>Storage: GET known meta.json paths for the current page
+        Storage-->>Page: Full metadata for selected rows
+    end
+    Page-->>Operator: Render one page
+                          </pre>
+                      </div>
+                      <div class="fig-seq-inspect">
+                        <p class="fig-seq-hint">Click a participant or message to inspect it. Click again to close.</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </section>
+
           <section class="fig-scene">
             <div class="fig-stage">
+              <nav class="fig-nav">
+                <label class="fig-btn" for="s1">Back</label>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot" for="s1"></label>
+                  <label class="fig-dot is-current" for="s2"></label>
+                  <label class="fig-dot" for="s3"></label>
+                  <label class="fig-dot" for="s4"></label>
+                </div>
+                <label class="fig-btn fig-next" for="s3">Next</label>
+              </nav>
               <div class="fig-scene-head">
                 <div class="fig-index">02</div>
                 <div>
-                  <h2>The handler no longer lists storage itself</h2>
-                  <p>A new chooser tries the catalog first. Filters and paging live on a small options struct. Extra columns download full metadata only for the page you can see, never more than 1000 files.</p>
+                  <h2>Maya’s table got cheap. Her export did not.</h2>
+                  <p>Let’s take an example: Maya looks after one tenant with 50,000 blocks. The <button type="button" class="fig-gloss" data-term="Index file" aria-expanded="false">index file</button> is already there, and 12,000 rows match her filter. Watch what happens when she asks for three different things.</p>
+                  <div class="fig-gloss-dock"></div>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="s1">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot is-current" for="s2"></label><label class="fig-dot" for="s3"></label></div><label class="fig-btn fig-next" for="s3">Next</label></nav>
+              <div class="fig-canvas">
+                <div class="fig-col">
+                  <div class="fig-callout" data-tone="added"><strong>First she opens the table.</strong> One index file is enough. She gets 100 rows. The page never goes looking for extra files. That is the win.</div>
+                  <div class="fig-callout" data-tone="added"><strong>Later she asks for sizes on All.</strong> That used to mean 12,000 extra files. A cap stops at 1,000. Still usable.</div>
+                  <div class="fig-callout" data-tone="changed"><strong>Last she runs her export.</strong> A <button type="button" class="fig-gloss" data-term="JSON request" aria-expanded="false">JSON call</button>, or ticking <button type="button" class="fig-gloss" data-term="Scan bucket" aria-expanded="false">scan the bucket</button>, still walks all 50,000. Same tenant. This change does not help.</div>
+                </div>
+                <div class="fig-seq">
+                  <details class="fig-node" data-kind="user" data-seq="Maya">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>person</em>
+                        <strong>Maya</strong>
+                        <span>Opens one tenant’s blocks page three different ways.</span>
+                      </span>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>The counts are illustrative. The three requests are the mechanism: shrink first, cap the extra files, or skip the shrink entirely.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="browser" data-seq="Page">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>admin page</em>
+                        <strong>Page</strong>
+                        <span>Builds one response from the index file, or from a full listing.</span>
+                      </span>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>HTML defaults to the index. JSON defaults to listing every block unless the caller turns that off.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="file" data-seq="Index file">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>source</em>
+                        <strong>Index file</strong>
+                        <span>One existing file that already lists this tenant’s blocks.</span>
+                      </span>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>The compacting job already writes this file. This page now reads it. If it is missing or unreadable, the old full listing runs instead.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="folder" data-seq="Extra files">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>expensive work</em>
+                        <strong>Extra files</strong>
+                        <span>Per-block metadata fetches. Cheap requests avoid these, or cap them at 1,000.</span>
+                      </span>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Zero fetches on the usual table. At most 1,000 when size, source, or parent columns need fields the index lacks. A full listing still fetches tens of thousands.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="request" data-seq="JSON request">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>API default</em>
+                        <strong>JSON request</strong>
+                        <span>The machine-readable request still lists every block unless the caller turns that off.</span>
+                      </span>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>That default is why Maya’s script can still be slow on the same tenant whose HTML page is now cheap.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="scan" data-seq="Scan bucket">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>explicit path</em>
+                        <strong>Scan bucket</strong>
+                        <span>Lists every folder on purpose, including blocks the index file has not seen yet.</span>
+                      </span>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Use this to find newly uploaded blocks. The in-memory shrink does not run.</p>
+                    </div>
+                  </details>
+                  <div class="fig-mermaid-wrap" data-label="Three things Maya asks for">
+                    <pre class="fig-mermaid">sequenceDiagram
+    autonumber
+    participant Maya
+    participant Page
+    participant Index as Index file
+    participant Files as Extra files
+    Maya->>Page: Opens the usual table
+    Page->>Index: Reads one file
+    Index-->>Page: 12k matching rows
+    Page-->>Maya: 100 rows no extra files
+    Maya->>Page: Sizes on All
+    Page->>Files: 1k extra files not 12k
+    Page-->>Maya: One bounded page
+    Maya->>Page: JSON or bucket scan
+    Page->>Files: All 50k extra files
+    Note over Maya,Files: Same tenant. This request is not cheaper.
+                    </pre>
+                  </div>
+                  <div class="fig-seq-inspect">
+                    <p class="fig-seq-hint">Click a participant or message to inspect it. Click again to close.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <nav class="fig-nav">
+                <label class="fig-btn" for="s2">Back</label>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot" for="s1"></label>
+                  <label class="fig-dot" for="s2"></label>
+                  <label class="fig-dot is-current" for="s3"></label>
+                  <label class="fig-dot" for="s4"></label>
+                </div>
+                <label class="fig-btn fig-next" for="s4">Next</label>
+              </nav>
+              <div class="fig-scene-head">
+                <div class="fig-index">03</div>
+                <div>
+                  <h2>Each step from the previous scene is a specific edit.</h2>
+                  <p>Maya’s cheap requests shrink the list, then fetch extra files only for the page. The JSON or scan request skips that path. Those beats are the edits below.</p>
+                </div>
+              </div>
               <div class="fig-canvas">
                 <div class="fig-compare">
-                  <div class="fig-pane">
-                    <div class="fig-enclose" data-tone="changed">
-                      <details class="fig-node" data-kind="type" data-tone="changed">
-                        <summary>
-                          <i class="fig-mark"></i>
-                          <span class="fig-node-text">
-                            <em>type</em>
-                            <strong>StoreGateway</strong>
-                            <span>The service that owns this admin page.</span>
-                          </span>
-                        </summary>
-                        <div class="fig-node-panel">
-                          <p>Methods live on this struct. Before this PR, BlocksHandler listed storage itself. Now the new loaders sit on the same type.</p>
-                        </div>
-                      </details>
-                      <div class="fig-enclose-body">
-                        <div class="fig-col">
-                          <details class="fig-node" data-kind="fn" data-tone="changed">
-                            <summary>
-                              <i class="fig-mark"></i>
-                              <span class="fig-node-text">
-                                <em>function</em>
-                                <strong>BlocksHandler</strong>
-                                <span>Entry point. Parses the form, then asks for a block list.</span>
-                              </span>
-                            </summary>
-                            <div class="fig-node-panel">
-                              <p>Used to call LoadMetaFilesAndMarkers itself. Now it calls loadBlocksPageData, then filter and page, then extra metadata only if needed.</p>
-                            </div>
-                          </details>
-                          <div class="fig-edge down" data-label="calls"></div>
-                          <details class="fig-node" data-kind="fn" data-tone="added">
-                            <summary>
-                              <i class="fig-mark"></i>
-                              <span class="fig-node-text">
-                                <em>function</em>
-                                <strong>loadBlocksPageData</strong>
-                                <span>Tries the catalog. Falls back to a full listing.</span>
-                              </span>
-                            </summary>
-                            <div class="fig-node-panel">
-                              <p>New. Calls loadBlocksFromBucketIndex, or scanBlocksFromBucket when the catalog is missing or broken.</p>
-                            </div>
-                          </details>
-                          <div class="fig-edge down" data-label="calls"></div>
-                          <details class="fig-node" data-kind="fn" data-tone="added">
-                            <summary>
-                              <i class="fig-mark"></i>
-                              <span class="fig-node-text">
-                                <em>function</em>
-                                <strong>loadBlocksFromBucketIndex</strong>
-                                <span>One catalog file. Short records.</span>
-                              </span>
-                            </summary>
-                            <div class="fig-node-panel">
-                              <p>New. Turns catalog rows into block records. Size, samples, and parent lists are missing until you ask for them.</p>
-                            </div>
-                          </details>
-                          <div class="fig-edge down" data-label="or"></div>
-                          <details class="fig-node" data-kind="fn" data-tone="changed">
-                            <summary>
-                              <i class="fig-mark"></i>
-                              <span class="fig-node-text">
-                                <em>function</em>
-                                <strong>scanBlocksFromBucket</strong>
-                                <span>The old listing, wrapped.</span>
-                              </span>
-                            </summary>
-                            <div class="fig-node-panel">
-                              <p>Still calls LoadMetaFilesAndMarkers. Scan bucket, JSON, and catalog fallback all land here.</p>
-                            </div>
-                          </details>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="fig-pane" data-label="Then, in memory">
-                    <div class="fig-enclose" data-tone="added">
-                      <details class="fig-node" data-kind="type" data-tone="added">
-                        <summary>
-                          <i class="fig-mark"></i>
-                          <span class="fig-node-text">
-                            <em>type</em>
-                            <strong>blocksPageOptions</strong>
-                            <span>Filters and page size from the form.</span>
-                          </span>
-                        </summary>
-                        <div class="fig-node-panel">
-                          <p>New struct. Holds the filter fields and page size. filterBlocks and pageBlocks are methods on it, so the handler does not inline that logic.</p>
-                        </div>
-                      </details>
-                      <div class="fig-enclose-body">
-                        <div class="fig-col">
-                          <details class="fig-node" data-kind="fn" data-tone="added">
-                            <summary>
-                              <i class="fig-mark"></i>
-                              <span class="fig-node-text">
-                                <em>function</em>
-                                <strong>filterBlocks</strong>
-                                <span>Keeps matching blocks. No storage reads.</span>
-                              </span>
-                            </summary>
-                            <div class="fig-node-panel">
-                              <p>Method on the options struct. Block ID (exact, case-insensitive), created time, sample time range, compaction level, deletion marks. All filters are AND.</p>
-                            </div>
-                          </details>
-                          <div class="fig-edge down" data-label="then"></div>
-                          <details class="fig-node" data-kind="fn" data-tone="added">
-                            <summary>
-                              <i class="fig-mark"></i>
-                              <span class="fig-node-text">
-                                <em>function</em>
-                                <strong>pageBlocks</strong>
-                                <span>Takes one page of the matches.</span>
-                              </span>
-                            </summary>
-                            <div class="fig-node-panel">
-                              <p>Default page size 100 in a browser. Zero means all. A page past the end shows the last page.</p>
-                            </div>
-                          </details>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="fig-edge down" data-label="only if extra columns are on"></div>
-                    <details class="fig-node" data-kind="fn" data-tone="added">
+                  <div class="fig-pane" data-label="Logical change">
+                    <div class="fig-callout">First and then: matching rows shrink in memory, and All is capped at 1,000 extra files.</div>
+                    <details class="fig-node" data-kind="snapshot">
                       <summary>
                         <i class="fig-mark"></i>
                         <span class="fig-node-text">
-                          <em>function</em>
-                          <strong>LoadMetaFilesForBlocks</strong>
-                          <span>Full metadata for the rows you can see, not the whole tenant.</span>
+                          <em>in-memory data</em>
+                          <strong>Short records</strong>
+                          <span>Cheap rows already loaded. Filters do not read storage.</span>
                         </span>
                       </summary>
                       <div class="fig-node-panel">
-                        <p>Package helper in listblocks, not a method on the options struct. Fetches known paths; it does not list folders. If you asked for all rows plus extra columns, page size is forced to 1000 so this cannot become a full listing again.</p>
+                        <p>This is the 50,000-row set from the example. Nothing below runs until these rows exist.</p>
                       </div>
                     </details>
-                    <div class="fig-enclose" data-tone="added">
-                      <details class="fig-node" data-kind="type" data-tone="added">
-                        <summary>
-                          <i class="fig-mark"></i>
-                          <span class="fig-node-text">
-                            <em>type</em>
-                            <strong>blocksPageData</strong>
-                            <span>What the handler returns for one page.</span>
-                          </span>
-                        </summary>
-                        <div class="fig-node-panel">
-                          <p>New. The list of blocks for this page, plus whether those records already have full metadata.</p>
-                        </div>
-                      </details>
-                      <div class="fig-enclose-body">
-                        <details class="fig-node" data-kind="var" data-tone="added">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>field</em>
-                              <strong>metasAreComplete</strong>
-                              <span>False after a catalog read. True after a full listing.</span>
-                            </span>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>If this is false and you asked for extra columns, the handler downloads metadata only for the current page.</p>
-                          </div>
-                        </details>
+                    <details class="fig-node" data-kind="filter">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>match control</em>
+                          <strong>Filters</strong>
+                          <span>Cut 50,000 rows to 12,000 matches without a meta.json GET.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Block ID, deletion, created/span times, and compaction levels are combined with AND before paging.</p>
                       </div>
+                    </details>
+                    <details class="fig-node" data-kind="html">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>display slice</em>
+                          <strong>Page slice</strong>
+                          <span>Selects the IDs that may request details. All becomes 1,000 when extra columns are on.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>The browser default is 100 rows. All is the case that hits the 1,000 cap.</p>
+                      </div>
+                    </details>
+                  </div>
+                  <div class="fig-pane" data-label="Important diff">
+                    <div class="fig-code" data-caption="pkg/storegateway/gateway_blocks_http.go">
+                      <span class="fig-line added">matched := opts.filterBlocks(data.metas, deleteMarkerDetails)</span>
+                      <span class="fig-line"></span>
+                      <span class="fig-line added">if !data.metasAreComplete &amp;&amp; opts.needsBlockDetails() &amp;&amp;</span>
+                      <span class="fig-line added">    (opts.PageSize &lt;= 0 || opts.PageSize &gt; 1000) {</span>
+                      <span class="fig-line added">    opts.PageSize = 1000</span>
+                      <span class="fig-line added">}</span>
+                      <span class="fig-line"></span>
+                      <span class="fig-line added">pageBlocks := opts.pageBlocks(matched, page)</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="fig-compare">
+                  <div class="fig-pane" data-label="Logical change">
+                    <div class="fig-callout">Then: only the page’s IDs become extra file fetches. The usual table skips this entirely.</div>
+                    <details class="fig-node" data-kind="file">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>expensive work</em>
+                          <strong>meta.json GETs</strong>
+                          <span>Zero reads, or at most 1,000 known paths. Tenant size no longer sets the cost.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>A new helper builds those paths from the trimmed page, then calls existing fetchMetas. Trimming first is what reduces storage work.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="html">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>display slice</em>
+                          <strong>Page slice</strong>
+                          <span>The GET uses this slice, not the original 50,000 records.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>If none of Details, Sources, or Parents is selected, this fetch is skipped entirely on the catalog path.</p>
+                      </div>
+                    </details>
+                  </div>
+                  <div class="fig-pane" data-label="Important diff">
+                    <div class="fig-code" data-caption="pkg/storegateway/gateway_blocks_http.go">
+                      <span class="fig-line added">if !data.metasAreComplete &amp;&amp; opts.needsBlockDetails() {</span>
+                      <span class="fig-line added">    details, err := listblocks.LoadMetaFilesForBlocks(</span>
+                      <span class="fig-line added">        ctx, bucket, tenantID, ids of pageBlocks)</span>
+                      <span class="fig-line added">}</span>
+                    </div>
+                    <div class="fig-code" data-caption="pkg/util/listblocks/listblocks.go">
+                      <span class="fig-line added">func LoadMetaFilesForBlocks(..., blockIDs []ulid.ULID) {</span>
+                      <span class="fig-line added">    for _, blockID := range blockIDs {</span>
+                      <span class="fig-line added">        metaPaths = append(metaPaths,</span>
+                      <span class="fig-line added">            path.Join(user, blockID, "meta.json"))</span>
+                      <span class="fig-line added">    }</span>
+                      <span class="fig-line added">    return fetchMetas(ctx, bkt, metaPaths)</span>
+                      <span class="fig-line added">}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="fig-compare">
+                  <div class="fig-pane" data-label="Logical change">
+                    <div class="fig-callout">But: a JSON call or scan the bucket never loads those short rows, so the shrink never starts.</div>
+                    <details class="fig-node" data-kind="request">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>API default</em>
+                          <strong>JSON request</strong>
+                          <span>Defaults to a full scan unless the caller turns scanning off.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>That default is why the previous scene said the same tenant can still be expensive.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="scan">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>explicit path</em>
+                          <strong>Scan bucket</strong>
+                          <span>Lists every folder on purpose.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Use this to find blocks the catalog has not indexed yet. It restores the old cost.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="fallback">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>fallback</em>
+                          <strong>Missing catalog</strong>
+                          <span>Falls back to the same listing when the index is missing or corrupt.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Other catalog errors still fail the request.</p>
+                      </div>
+                    </details>
+                  </div>
+                  <div class="fig-pane" data-label="Important diff">
+                    <div class="fig-code" data-caption="pkg/storegateway/gateway_blocks_http.go">
+                      <span class="fig-line">jsonResponse := strings.Contains(req.Header.Get("Accept"), "application/json")</span>
+                      <span class="fig-line added">defaultPageSize, defaultScanBucket := 100, false</span>
+                      <span class="fig-line added">if jsonResponse {</span>
+                      <span class="fig-line added">    defaultPageSize, defaultScanBucket = 0, true</span>
+                      <span class="fig-line added">}</span>
+                      <span class="fig-line"></span>
+                      <span class="fig-line added">if opts.ScanBucket {</span>
+                      <span class="fig-line added">    return g.scanBlocksFromBucket(...) // old full listing</span>
+                      <span class="fig-line added">}</span>
+                      <span class="fig-line added">idx, err := bucketindex.ReadIndex(...)</span>
+                      <span class="fig-line added">// fall back if missing or corrupt</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </section>
+
           <section class="fig-scene">
             <div class="fig-stage">
+              <nav class="fig-nav">
+                <label class="fig-btn" for="s3">Back</label>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot" for="s1"></label>
+                  <label class="fig-dot" for="s2"></label>
+                  <label class="fig-dot" for="s3"></label>
+                  <label class="fig-dot is-current" for="s4"></label>
+                </div>
+                <span class="fig-btn fig-next is-disabled">Done</span>
+              </nav>
               <div class="fig-scene-head">
-                <div class="fig-index">03</div>
+                <div class="fig-index">04</div>
                 <div>
-                  <h2>Queries and databases did not move. Extra columns and JSON still can.</h2>
-                  <p>The admin HTML is the thing that changed. Object storage is read less by default, not written. Scripts that ask for JSON still get the old full listing. Hold the PR if a browser visit can become a full listing again.</p>
+                  <h2>Metric queries and stored blocks stay unchanged. Admin reads can change.</h2>
+                  <p>The blast is limited to this admin page, its settings, and how much object storage it reads while building a response.</p>
                 </div>
               </div>
-              <nav class="fig-nav"><label class="fig-btn" for="s2">Back</label><div class="fig-dots-nav"><label class="fig-dot" for="s1"></label><label class="fig-dot" for="s2"></label><label class="fig-dot is-current" for="s3"></label></div><span class="fig-btn fig-next is-disabled">Done</span></nav>
               <div class="fig-canvas">
-                <div class="fig-row">
-                  <div class="fig-risk" data-level="hot"><em>public page</em><strong>Tenant blocks page</strong><span>The browser now shows the catalog by default, not a live listing of every file.</span></div>
-                  <div class="fig-risk" data-level="watch"><em>scripts</em><strong>JSON requests</strong><span>Still list every block and return all of them, so existing scrapers keep working.</span></div>
-                  <div class="fig-risk" data-level="watch"><em>storage</em><strong>Extra columns</strong><span>Size, samples, sources, parents. Extra reads for this page only, capped at 1000.</span></div>
-                  <div class="fig-risk" data-level="safe"><em>databases</em><strong>None</strong><span>No TSDB rewrite, no query-frontend, no ingester. Admin HTML only.</span></div>
-                </div>
-                <details class="fig-node wide" data-kind="lock" data-tone="changed" open>
-                  <summary>
-                    <i class="fig-mark"></i>
-                    <span class="fig-node-text">
-                      <em>gate</em>
-                      <strong>Do not merge if…</strong>
-                      <span>JSON tools lost the full listing, extra columns can download every file, or a missing catalog fails instead of falling back.</span>
-                    </span>
-                    <b class="fig-node-go"></b>
-                  </summary>
-                  <div class="fig-node-panel">
-                    <p>Tests already pin those three. Also bounce if filters on the catalog disagree with filters on a full listing for the same tenant. People on call can miss a block the catalog has not picked up yet — Scan bucket is how they recover. The page now says the catalog was written N seconds ago.</p>
+                <div class="fig-compare">
+                  <div class="fig-pane" data-label="Not in the blast" data-tone="added">
+                    <div class="fig-col">
+                      <details class="fig-node" data-kind="worker" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>catalog writer</em>
+                            <strong>Compactor</strong>
+                            <span>Still writes the same bucket catalog on its own schedule.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>This PR only starts reading that file. It does not change how often it is written or which blocks it includes.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="api" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>query path</em>
+                            <strong>Metric queries</strong>
+                            <span>Query APIs do not call this admin handler.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>No querier, query-frontend, or ingester behavior changes in this diff.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="db" data-tone="added">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>stored data</em>
+                            <strong>TSDB blocks</strong>
+                            <span>No block is rewritten, moved, or deleted.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>The page reads object storage but does not change its contents.</p>
+                        </div>
+                      </details>
+                    </div>
                   </div>
-                </details>
+
+                  <div class="fig-pane" data-label="In the blast" data-tone="changed">
+                    <div class="fig-col">
+                      <details class="fig-node" data-kind="browser" data-tone="changed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>admin HTML</em>
+                            <strong>Tenant blocks page</strong>
+                            <span>Defaults to catalog data, filters, and pagination.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>The visible rows can be a few minutes behind until the compactor updates the catalog.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="bucket" data-tone="changed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>read volume</em>
+                            <strong>Object storage</strong>
+                            <span>Catalog, detail, and fallback paths read different amounts.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>A regression in source selection or trimming can bring back the timeout behavior this PR is meant to reduce.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="response" data-tone="changed">
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>compatibility</em>
+                            <strong>Default JSON response</strong>
+                            <span>Still returns the complete filtered metadata list; gains page and source fields.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>The default JSON request still returns the complete filtered metadata list. Callers can explicitly turn scanning off, and the response now includes source, counts, page information, and blocks-read fields.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="lock" data-tone="changed" open>
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>merge gate</em>
+                            <strong>Do not merge if…</strong>
+                            <span>Filtering, paging, or fallback can silently hide blocks or restore unbounded detail reads.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Also stop if JSON no longer returns the complete list, Scan bucket cannot reveal newly uploaded blocks, or a normal catalog-backed page fetches metadata before it trims the page.</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

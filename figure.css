@@ -274,6 +274,46 @@ body.fig-page { min-height: 100vh; }
   line-height: 1.45;
   max-width: 68ch;
 }
+.fig-gloss {
+  display: inline;
+  margin: 0;
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 1.5px dotted currentColor;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--fig-changed-bg) 80%, white);
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  cursor: pointer;
+}
+.fig-gloss[aria-expanded="true"] {
+  background: var(--fig-changed-bg);
+}
+.fig-gloss-dock {
+  margin-top: 12px;
+  max-width: 68ch;
+}
+.fig-gloss-dock:empty::before {
+  content: "Marked words open a short note. Click again for the full detail.";
+  color: var(--fig-muted);
+  font-size: 13px;
+}
+.fig-gloss-peek {
+  padding: 10px 12px 12px;
+  border-left: 3px solid var(--fig-ink);
+  background: #fff;
+}
+.fig-gloss-peek p {
+  margin: 0 0 10px;
+  color: var(--fig-ink);
+  max-width: none;
+}
+.fig-gloss-dock > .fig-node {
+  display: inline-flex !important;
+  width: 100%;
+  max-width: none;
+}
 .fig-canvas {
   flex: 1;
   display: flex;
@@ -507,6 +547,21 @@ label.fig-btn { cursor: pointer; }
 .fig-pane > .fig-node,
 .fig-pane > .fig-enclose {
   width: 100%;
+}
+.fig-pane .fig-code {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+.fig-pane .fig-line {
+  white-space: pre-wrap;
+}
+.fig-pane .fig-callout {
+  max-width: none;
+  margin: 0;
+}
+.fig-compare > .fig-pane:has(.fig-code) {
+  flex: 1.55 1 360px;
 }
 .fig-pane::before {
   content: attr(data-label);

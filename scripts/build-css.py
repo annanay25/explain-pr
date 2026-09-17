@@ -958,6 +958,42 @@ ICON_RULES_HERE
   right: 28px;
 }}
 
+.fig-follow-up {{
+  position: fixed;
+  inset: auto;
+  width: min(460px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--fig-rule);
+  border-radius: 16px;
+  background: var(--fig-paper, #fffaf2);
+  color: var(--fig-ink);
+  font: inherit;
+  box-shadow: 0 24px 80px #1a171433;
+  overscroll-behavior: contain;
+}}
+.fig-follow-up::backdrop {{ background: #1a17141a; }}
+.fig-follow-up-bar {{
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  padding: 12px 16px;
+  background: var(--fig-paper, #fffaf2);
+  border-bottom: 1px solid var(--fig-rule);
+}}
+.fig-follow-up-content {{ padding: 16px; }}
+.fig-follow-up-content > .fig-node {{ width: 100%; margin: 0; opacity: 1; }}
+.fig-follow-up-content > .fig-node > summary {{ display: none; }}
+.fig-follow-up-title {{ font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }}
+.fig-follow-up-bar .fig-btn {{ flex-shrink: 0; }}
+.fig-follow-up-anchor {{ outline: 2px solid var(--fig-focus); outline-offset: 3px; }}
+
 .fig-ask {{
   margin-top: 14px;
   padding-top: 12px;

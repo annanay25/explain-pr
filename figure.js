@@ -294,41 +294,12 @@
     return null;
   }
 
-  function nodeKey(node) {
-    return normLabel(node.getAttribute("data-seq") || "") + "\n" + normLabel(text(node, "strong"));
-  }
-
-  function showSeqInspect(node, dock) {
-    if (!node || !dock) return;
-    var key = nodeKey(node);
-    if (dock.dataset.openKey === key) {
-      dock.querySelectorAll(".fig-node").forEach(function (n) {
-        n.remove();
-      });
-      delete dock.dataset.openKey;
-      return;
-    }
-    bind(enhance(node));
-    dock.querySelectorAll(".fig-node").forEach(function (n) {
-      n.remove();
-    });
-    var clone = node.cloneNode(true);
-    clone.hidden = false;
-    clone.open = true;
-    clone.removeAttribute("hidden");
-    dock.appendChild(clone);
-    dock.dataset.openKey = key;
-    var ask = clone.querySelector(".fig-ask");
-    if (ask) bind(ask);
-  }
-
   function bindMermaidClicks(el, src) {
     var svg = el.querySelector("svg");
     var pane = el.closest(".fig-pane") || el.closest(".fig-seq") || el.closest(".fig-scene") || document;
-    var dock = (el.closest(".fig-seq") || pane).querySelector(".fig-seq-inspect");
     if (!svg) return;
     var parsed = parseSequence(src);
-    function inspect(label) {
+    function inspect(label, anchor) {
       var node = findSeqNode(pane, label) || findSeqNode(document, label);
       if (!node && parsed.messages.length) {
         var hit = parsed.messages.find(function (m) {
@@ -337,7 +308,7 @@
         if (hit) node = findSeqNode(pane, hit.to) || findSeqNode(pane, hit.from);
       }
       if (!node) return;
-      showSeqInspect(node, dock);
+      showFollowUp(node, anchor, label);
     }
     var bound = [];
     svg.querySelectorAll("text").forEach(function (t) {
@@ -349,7 +320,7 @@
       target.style.cursor = "pointer";
       target.addEventListener("click", function (ev) {
         ev.stopPropagation();
-        inspect(label);
+        inspect(label, t);
       });
     });
   }
@@ -463,106 +434,108 @@
 
     ask.innerHTML =
       '<div class="fig-ask-label">Your questions</div>' +
-      '<textarea class="fig-ask-q" rows="3" placeholder="What should we go deeper on?"></textarea>' +
+      '<textarea class="fig-ask-q" aria-label="Your questions" rows="3" placeholder="What should we go deeper on?"></textarea>' +
       '<div class="fig-ask-label">Prompt for your coding agent</div>' +
-      '<textarea class="fig-ask-prompt" rows="8" readonly></textarea>' +
+      '<textarea class="fig-ask-prompt" aria-label="Prompt for your coding agent" rows="8" readonly></textarea>' +
       '<button type="button" class="fig-btn fig-copy">Copy prompt</button>';
     panel.appendChild(ask);
     return ask;
   }
 
-  document.querySelectorAll(".fig-node").forEach((node) => {
-    bind(enhance(node));
+  // One native dialog keeps notes and questions out of the scene layout.
+  const followUp = document.createElement("dialog");
+  followUp.className = "fig-follow-up";
+  followUp.innerHTML = '<form method="dialog" class="fig-follow-up-bar">' +
+    '<strong class="fig-follow-up-title"></strong><button class="fig-btn" autofocus>Close</button></form>' +
+    '<div class="fig-follow-up-content"></div>';
+  document.body.appendChild(followUp);
+  const followUpContent = followUp.querySelector(".fig-follow-up-content");
+  let followUpSource;
+  let followUpAnchor;
+
+  function positionFollowUp() {
+    if (!followUp.open || !followUpAnchor) return;
+    const r = followUpAnchor.getBoundingClientRect();
+    const gap = 12, edge = 16;
+    const vw = document.documentElement.clientWidth;
+    const vh = window.innerHeight;
+    const right = vw - r.right - gap - edge;
+    const left = r.left - gap - edge;
+    const beside = Math.max(right, left) >= 340;
+    const width = Math.min(460, beside ? Math.max(right, left) : vw - edge * 2);
+    const below = vh - r.bottom - gap - edge;
+    const above = r.top - gap - edge;
+    const under = below >= Math.min(360, above);
+    const height = beside ? vh - edge * 2 : Math.max(160, under ? below : above);
+    followUp.style.width = width + "px";
+    followUp.style.maxHeight = Math.min(height, vh - edge * 2) + "px";
+    const h = followUp.getBoundingClientRect().height;
+    const x = beside ? (right >= left ? r.right + gap : r.left - gap - width) : r.left;
+    const y = beside ? r.top : (under ? r.bottom + gap : r.top - gap - h);
+    followUp.style.left = Math.max(edge, Math.min(x, vw - width - edge)) + "px";
+    followUp.style.top = Math.max(edge, Math.min(y, vh - h - edge)) + "px";
+  }
+  window.addEventListener("resize", positionFollowUp);
+  document.addEventListener("scroll", (ev) => {
+    if (!followUp.contains(ev.target)) positionFollowUp();
+  }, true);
+  followUp.addEventListener("close", () => {
+    if (followUpSource) {
+      followUpSource.querySelector(".fig-ask-q").value =
+        followUpContent.querySelector(".fig-ask-q").value;
+    }
+    followUpContent.replaceChildren();
+    followUpSource = null;
+    followUpAnchor?.classList.remove("fig-follow-up-anchor");
+    followUpAnchor = null;
+  });
+  followUp.addEventListener("click", (ev) => {
+    const rect = followUp.getBoundingClientRect();
+    if (ev.target === followUp &&
+        (ev.clientX < rect.left || ev.clientX > rect.right ||
+         ev.clientY < rect.top || ev.clientY > rect.bottom)) followUp.close();
   });
 
-  function termDock(scene) {
-    var dock = scene.querySelector(".fig-gloss-dock");
-    if (dock) return dock;
-    var host = scene.querySelector(".fig-scene-head > div:last-child") || scene.querySelector(".fig-scene-head");
-    dock = document.createElement("div");
-    dock.className = "fig-gloss-dock";
-    host.appendChild(dock);
-    return dock;
-  }
-
-  function clearTermDock(dock) {
-    dock.innerHTML = "";
-    delete dock.dataset.termKey;
-    delete dock.dataset.term;
-    dock.classList.remove("is-full");
-  }
-
-  function showTermPeek(dock, btn, node) {
-    var label = (btn.textContent || "").replace(/\s+/g, " ").trim();
-    var role = text(node, ".fig-node-text span");
-    dock.innerHTML = "";
-    dock.classList.remove("is-full");
-    var wrap = document.createElement("div");
-    wrap.className = "fig-gloss-peek";
-    var p = document.createElement("p");
-    var strong = document.createElement("strong");
-    strong.textContent = label.replace(/\.$/, "") + ".";
-    p.appendChild(strong);
-    if (role) p.appendChild(document.createTextNode(" " + role));
-    wrap.appendChild(p);
-    var more = document.createElement("button");
-    more.type = "button";
-    more.className = "fig-btn fig-gloss-more";
-    more.textContent = "Show the full note";
-    wrap.appendChild(more);
-    dock.appendChild(wrap);
-    dock.dataset.termKey = nodeKey(node);
-    dock.dataset.term = btn.getAttribute("data-term") || label;
-  }
-
-  function showTermFull(dock, node) {
-    dock.querySelectorAll(".fig-gloss-peek").forEach(function (n) {
-      n.remove();
-    });
-    dock.querySelectorAll(".fig-node").forEach(function (n) {
-      n.remove();
-    });
-    bind(enhance(node));
-    var clone = node.cloneNode(true);
+  function showFollowUp(node, anchor, clickedLabel) {
+    enhance(node);
+    followUpSource = node;
+    followUpAnchor = anchor;
+    anchor.classList.add("fig-follow-up-anchor");
+    const title = (clickedLabel || text(node, "strong") || "component").replace(/\s+/g, " ").trim();
+    const clone = node.cloneNode(true);
     clone.hidden = false;
     clone.open = true;
-    clone.removeAttribute("hidden");
-    dock.appendChild(clone);
-    dock.classList.add("is-full");
-    dock.dataset.termKey = nodeKey(node);
-    var ask = clone.querySelector(".fig-ask");
-    if (ask) bind(ask);
+    clone.removeAttribute("id");
+    clone.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
+    followUpContent.replaceChildren(clone);
+    followUp.querySelector(".fig-follow-up-title").textContent = title;
+    followUp.setAttribute("aria-label", title);
+    const ask = clone.querySelector(".fig-ask");
+    if (title !== ask.dataset.component) {
+      ask.dataset.known = "Related component: " + ask.dataset.component + ".\n" + ask.dataset.known;
+      ask.dataset.component = title;
+      ask.dataset.kind = "";
+    }
+    bind(ask);
+    followUp.showModal();
+    positionFollowUp();
   }
 
-  document.addEventListener("click", function (ev) {
-    var more = ev.target.closest(".fig-gloss-more");
-    var btn = ev.target.closest(".fig-gloss");
-    if (!more && !btn) return;
-    var scene = (more || btn).closest(".fig-scene");
-    if (!scene) return;
-    ev.preventDefault();
-    var dock = termDock(scene);
-    if (more) {
-      var node = findSeqNode(scene, dock.dataset.term);
-      if (node) showTermFull(dock, node);
+  document.addEventListener("click", (ev) => {
+    if (ev.target.closest(".fig-follow-up")) {
+      // Keep the component heading expanded; nested fact folds still work.
+      if (ev.target.closest("summary") === followUpContent.querySelector("summary")) {
+        ev.preventDefault();
+      }
       return;
     }
-    var term = btn.getAttribute("data-term") || btn.textContent;
-    var node = findSeqNode(scene, term);
+    const btn = ev.target.closest(".fig-gloss");
+    const summary = ev.target.closest(".fig-node > summary");
+    const node = btn
+      ? findSeqNode(btn.closest(".fig-scene") || document, btn.dataset.term || btn.textContent)
+      : summary?.parentElement;
     if (!node) return;
-    scene.querySelectorAll(".fig-gloss").forEach(function (el) {
-      el.setAttribute("aria-expanded", el === btn ? "true" : "false");
-    });
-    var key = nodeKey(node);
-    if (dock.dataset.termKey === key && !dock.classList.contains("is-full")) {
-      showTermFull(dock, node);
-      return;
-    }
-    if (dock.dataset.termKey === key && dock.classList.contains("is-full")) {
-      clearTermDock(dock);
-      btn.setAttribute("aria-expanded", "false");
-      return;
-    }
-    showTermPeek(dock, btn, node);
+    ev.preventDefault();
+    showFollowUp(node, btn || summary, btn ? btn.textContent : text(node, "strong"));
   });
 })();

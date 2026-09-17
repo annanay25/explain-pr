@@ -4,7 +4,7 @@ The shape of this skill follows [Blake Smith](https://blakesmith.me/)'s [code re
 
 A visual language for explaining pull requests. **One CSS file, one small JS file. No npm, no build.**
 
-A coding agent emits a **short walk** of the PR (a few scenes, one claim each). Click a component, type a question, copy a preconstructed prompt back into the agent.
+A coding agent emits a **short walk** of the PR (a few scenes, one claim each). Click a component to open its note and follow-up prompt in an overlay anchored beside the clicked object without moving the scene. The popup title matches the clicked label. Type a question and copy the prompt back into the agent. Close with Escape, the Close button, or a click outside; your question is kept when you reopen that component.
 
 `figure.css` inlines Fraunces, IBM Plex, and the glyph icons. `figure.js` fills the question box and copy button, and lazy-loads [mermaid.js](https://mermaid.js.org/) for before/after sequence diagrams (from `mermaid.min.js` next to `figure.js`, otherwise jsDelivr).
 

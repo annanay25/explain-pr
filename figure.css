@@ -81,10 +81,9 @@ body.fig-page { min-height: 100vh; }
 
 .fig-deck {
   display: block;
-  width: 90%;
-  max-width: none;
+  max-width: 1120px;
   margin: 32px auto;
-  padding: 0 0 48px;
+  padding: 0 20px 48px;
   position: relative;
 }
 .fig-deck input[type="radio"] {
@@ -193,67 +192,6 @@ body.fig-page { min-height: 100vh; }
   margin-top: 1px;
 }
 
-.fig-walk {
-  display: grid;
-  grid-template-columns: minmax(190px, 240px) minmax(0, 1fr);
-  align-items: stretch;
-}
-.fig-walk-content { min-width: 0; }
-.fig-scene-tabs {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 20px 12px;
-  border-right: 1px solid var(--fig-rule);
-  background: #faf6ee;
-}
-.fig-scene-tabs-title {
-  margin: 0 10px 7px;
-  color: var(--fig-muted);
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.fig-scene-tab {
-  display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: 8px;
-  align-items: baseline;
-  width: 100%;
-  padding: 10px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--fig-muted);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.fig-scene-tab:hover {
-  border-color: var(--fig-rule);
-  background: #fff;
-  color: var(--fig-ink);
-}
-.fig-scene-tab.is-current,
-.fig-scene-tab[aria-current="page"] {
-  border-color: var(--fig-ink);
-  background: var(--fig-ink);
-  color: var(--fig-paper);
-}
-.fig-scene-tab-index {
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  opacity: 0.68;
-}
-.fig-scene-tab strong {
-  font-size: 13px;
-  font-weight: 550;
-  line-height: 1.25;
-}
-.fig-walk .fig-view-tabs { display: none; }
-
 .fig-scene {
   display: none;
   flex-direction: column;
@@ -336,46 +274,6 @@ body.fig-page { min-height: 100vh; }
   line-height: 1.45;
   max-width: 68ch;
 }
-.fig-gloss {
-  display: inline;
-  margin: 0;
-  padding: 0 2px;
-  border: 0;
-  border-bottom: 1.5px dotted currentColor;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--fig-changed-bg) 80%, white);
-  color: inherit;
-  font: inherit;
-  line-height: inherit;
-  cursor: pointer;
-}
-.fig-gloss[aria-expanded="true"] {
-  background: var(--fig-changed-bg);
-}
-.fig-gloss-dock {
-  margin-top: 12px;
-  max-width: 68ch;
-}
-.fig-gloss-dock:empty::before {
-  content: "Marked words open a short note. Click again for the full detail.";
-  color: var(--fig-muted);
-  font-size: 13px;
-}
-.fig-gloss-peek {
-  padding: 10px 12px 12px;
-  border-left: 3px solid var(--fig-ink);
-  background: #fff;
-}
-.fig-gloss-peek p {
-  margin: 0 0 10px;
-  color: var(--fig-ink);
-  max-width: none;
-}
-.fig-gloss-dock > .fig-node {
-  display: inline-flex !important;
-  width: 100%;
-  max-width: none;
-}
 .fig-canvas {
   flex: 1;
   display: flex;
@@ -385,7 +283,8 @@ body.fig-page { min-height: 100vh; }
   padding: 12px 0 12px;
 }
 .fig-nav {
-  display: none;
+  order: -1;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -569,27 +468,6 @@ label.fig-btn { cursor: pointer; }
 .fig-mermaid svg .edge-animation-fast {
   animation: none;
 }
-.fig-mermaid svg .messageLine0,
-.fig-mermaid svg .messageLine1 {
-  stroke: var(--fig-ink) !important;
-  stroke-width: 1.75px !important;
-}
-.fig-mermaid svg marker path {
-  fill: var(--fig-ink) !important;
-  stroke: var(--fig-ink) !important;
-}
-.fig-mermaid svg .sequenceNumber {
-  fill: #fffaf2 !important;
-  font-family: "IBM Plex Mono", ui-monospace, monospace !important;
-  font-size: 12px !important;
-  font-weight: 600;
-}
-.fig-mermaid svg marker[id$="-sequencenumber"] circle {
-  r: 7px;
-  fill: var(--fig-focus) !important;
-  stroke: #fffaf2 !important;
-  stroke-width: 1px;
-}
 .fig-seq {
   display: flex;
   flex-direction: column;
@@ -629,21 +507,6 @@ label.fig-btn { cursor: pointer; }
 .fig-pane > .fig-node,
 .fig-pane > .fig-enclose {
   width: 100%;
-}
-.fig-pane .fig-code {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-}
-.fig-pane .fig-line {
-  white-space: pre-wrap;
-}
-.fig-pane .fig-callout {
-  max-width: none;
-  margin: 0;
-}
-.fig-compare > .fig-pane:has(.fig-code) {
-  flex: 1.55 1 360px;
 }
 .fig-pane::before {
   content: attr(data-label);
@@ -1364,6 +1227,42 @@ label.fig-btn { cursor: pointer; }
   right: 28px;
 }
 
+.fig-follow-up {
+  position: fixed;
+  inset: auto;
+  width: min(460px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--fig-rule);
+  border-radius: 16px;
+  background: var(--fig-paper, #fffaf2);
+  color: var(--fig-ink);
+  font: inherit;
+  box-shadow: 0 24px 80px #1a171433;
+  overscroll-behavior: contain;
+}
+.fig-follow-up::backdrop { background: #1a17141a; }
+.fig-follow-up-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  padding: 12px 16px;
+  background: var(--fig-paper, #fffaf2);
+  border-bottom: 1px solid var(--fig-rule);
+}
+.fig-follow-up-content { padding: 16px; }
+.fig-follow-up-content > .fig-node { width: 100%; margin: 0; opacity: 1; }
+.fig-follow-up-content > .fig-node > summary { display: none; }
+.fig-follow-up-title { font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }
+.fig-follow-up-bar .fig-btn { flex-shrink: 0; }
+.fig-follow-up-anchor { outline: 2px solid var(--fig-focus); outline-offset: 3px; }
+
 .fig-ask {
   margin-top: 14px;
   padding-top: 12px;
@@ -1659,18 +1558,8 @@ label.fig-btn { cursor: pointer; }
   .fig-nav { margin-left: -16px; margin-right: -16px; }
   .fig-scene { min-height: 320px; }
   .fig-btn { min-width: 84px; }
-  .fig-deck { width: calc(100% - 24px); margin-top: 16px; }
+  .fig-deck { margin-top: 16px; }
   .fig-node { width: 100%; }
   .fig-node.tight { width: 100%; }
   .fig-view-tabs { padding-left: 16px; padding-right: 16px; }
-  .fig-walk { grid-template-columns: 1fr; }
-  .fig-scene-tabs {
-    flex-direction: row;
-    overflow-x: auto;
-    padding: 10px 12px;
-    border-right: 0;
-    border-bottom: 1px solid var(--fig-rule);
-  }
-  .fig-scene-tabs-title { display: none; }
-  .fig-scene-tab { min-width: 180px; }
 }

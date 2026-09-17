@@ -226,16 +226,14 @@
               <div class="fig-scene-head">
                 <div class="fig-index">02</div>
                 <div>
-                  <h2>The usual table gets cheaper. A full export does not.</h2>
-                  <p>Let’s take an example: User opens a tenant with 50,000 blocks. Assume the <button type="button" class="fig-gloss" data-term="Index file" aria-expanded="false">index file</button> already exists and 12,000 rows match the filter. Now follow three requests from the same page.</p>
-                  <div class="fig-gloss-dock"></div>
+                  <h2>Choose the 100 rows first. Only then fetch their details.</h2>
+                  <p>Let’s take an example: User wants to inspect 100 blocks in a chosen time range, including their sizes. The tenant has 50,000 blocks; 12,000 match that range. Assume a readable, up-to-date index and successful file reads. These counts are illustrative.</p>
                 </div>
               </div>
               <div class="fig-canvas">
                 <div class="fig-col">
-                  <div class="fig-callout" data-tone="added"><strong>First User opens the usual table.</strong> Before, the page fetched metadata for all 50,000 blocks; now one index file supplies the matches and the page returns 100 rows with no extra file reads.</div>
-                  <div class="fig-callout" data-tone="added"><strong>Next User selects sizes and All.</strong> Those sizes are not in the index, but the unchanged detail reader now receives only a capped page: at most 1,000 files instead of all 12,000 matches.</div>
-                  <div class="fig-callout" data-tone="changed"><strong>Finally User requests a full export.</strong> A <button type="button" class="fig-gloss" data-term="JSON request" aria-expanded="false">JSON call</button>, or selecting <button type="button" class="fig-gloss" data-term="Scan bucket" aria-expanded="false">scan the bucket</button>, still walks all 50,000 blocks. The change does not make that path cheaper.</div>
+                  <div class="fig-callout"><strong>What the page needs.</strong> Each block is a stored group of metrics. The existing index lists block IDs and time ranges together in one file. Sizes live separately in each block’s metadata file.</div>
+                  <div class="fig-callout" data-tone="removed"><strong>Why it used to be slow.</strong> The old page discovered blocks by listing storage and reading all 50,000 metadata files before building the table—even when User only needed to inspect 100 blocks.</div>
                 </div>
                 <div class="fig-seq">
                   <details class="fig-node" data-kind="user" data-seq="User">
@@ -244,100 +242,70 @@
                       <span class="fig-node-text">
                         <em>person</em>
                         <strong>User</strong>
-                        <span>Opens one tenant’s blocks page three different ways.</span>
+                        <span>Wants to inspect 100 matching blocks and their sizes.</span>
                       </span>
                     </summary>
-                    <div class="fig-node-panel">
-                      <p>The counts are illustrative. The three requests show the mechanism: shrink first, cap the extra files, or skip the shrink entirely.</p>
-                    </div>
+                    <div class="fig-node-panel"><p>The tenant has 50,000 indexed blocks; 12,000 match the chosen time range. These counts are illustrative. Assume all metadata reads succeed and optional no-compaction markers are off.</p></div>
                   </details>
-                  <details class="fig-node" data-kind="browser" data-seq="Page">
+                  <details class="fig-node" data-kind="browser" data-seq="Blocks page">
                     <summary>
                       <i class="fig-mark"></i>
                       <span class="fig-node-text">
-                        <em>admin page</em>
-                        <strong>Page</strong>
-                        <span>Builds one response from the index file, or from a full listing.</span>
+                        <em>request handler</em>
+                        <strong>Blocks page</strong>
+                        <span>Filters and selects a page before fetching missing details.</span>
                       </span>
                     </summary>
-                    <div class="fig-node-panel">
-                      <p>HTML defaults to the index. JSON defaults to listing every block unless the caller turns that off.</p>
-                    </div>
+                    <div class="fig-node-panel"><p>BlocksHandler calls filterBlocks, applies the detail cap, and then calls pageBlocks. Only blocksPageIDs(pageBlocks) reaches LoadMetaFilesForBlocks. The existing metadata reader therefore receives 100 IDs in this example. <a href="https://github.com/grafana/mimir/blob/7032ce295792036e901d93264e1079d3cd3bf81e/pkg/storegateway/gateway_blocks_http.go#L168-L186">Read the filtering, paging, and detail-fetch sequence.</a></p></div>
                   </details>
                   <details class="fig-node" data-kind="file" data-seq="Index file">
                     <summary>
                       <i class="fig-mark"></i>
                       <span class="fig-node-text">
-                        <em>source</em>
+                        <em>existing summary</em>
                         <strong>Index file</strong>
-                        <span>One existing file that already lists this tenant’s blocks.</span>
+                        <span>Contains IDs and time ranges for all 50,000 blocks, but not their sizes.</span>
                       </span>
                     </summary>
-                    <div class="fig-node-panel">
-                      <p>The compacting job already writes this file. This page now reads it. If it is missing or unreadable, the old full listing runs instead.</p>
-                    </div>
+                    <div class="fig-node-panel"><p>The compactor already maintains this file. The handler reads the whole index and filters its records in memory; the index does not execute the filter. A missing or corrupt index triggers a full bucket scan. Other read errors fail the request.</p></div>
                   </details>
-                  <details class="fig-node" data-kind="folder" data-seq="Extra files">
+                  <details class="fig-node" data-kind="bucket" data-seq="Block metadata">
                     <summary>
                       <i class="fig-mark"></i>
                       <span class="fig-node-text">
-                        <em>expensive work</em>
-                        <strong>Extra files</strong>
-                        <span>Per-block metadata fetches. Cheap requests avoid these, or cap them at 1,000.</span>
+                        <em>individual files</em>
+                        <strong>Block metadata</strong>
+                        <span>One meta.json per block contains the size details the index lacks.</span>
                       </span>
                     </summary>
-                    <div class="fig-node-panel">
-                      <p>Zero fetches on the usual table. At most 1,000 when size, source, or parent columns need fields the index lacks. A full listing still fetches tens of thousands.</p>
-                    </div>
+                    <div class="fig-node-panel"><p>LoadMetaFilesForBlocks constructs known metadata paths for the selected block IDs, then calls the existing metadata fetcher. It does not list every block folder. With Details, Sources, and Parents off, this step is skipped on the index path.</p></div>
                   </details>
-                  <details class="fig-node" data-kind="request" data-seq="JSON request">
-                    <summary>
-                      <i class="fig-mark"></i>
-                      <span class="fig-node-text">
-                        <em>API default</em>
-                        <strong>JSON request</strong>
-                        <span>The machine-readable request still lists every block unless the caller turns that off.</span>
-                      </span>
-                    </summary>
-                    <div class="fig-node-panel">
-                      <p>That default is why User’s script can still be slow on the same tenant whose HTML page is now cheap.</p>
-                    </div>
-                  </details>
-                  <details class="fig-node" data-kind="scan" data-seq="Scan bucket">
-                    <summary>
-                      <i class="fig-mark"></i>
-                      <span class="fig-node-text">
-                        <em>explicit path</em>
-                        <strong>Scan bucket</strong>
-                        <span>Lists every folder on purpose, including blocks the index file has not seen yet.</span>
-                      </span>
-                    </summary>
-                    <div class="fig-node-panel">
-                      <p>Use this to find newly uploaded blocks. The in-memory shrink does not run.</p>
-                    </div>
-                  </details>
-                  <div class="fig-mermaid-wrap" data-label="Three requests from User">
+                  <div class="fig-mermaid-wrap" data-label="One request · why the order matters">
                     <pre class="fig-mermaid">sequenceDiagram
     autonumber
     participant User
-    participant Page
+    participant Page as Blocks page
     participant Index as Index file
-    participant Files as Extra files
-    User->>Page: Open the usual table
-    Page->>Index: Reads one file
-    Index-->>Page: 12k matching rows
-    Page-->>User: Return 100 rows
-    User->>Page: Select sizes and All
-    Page->>Files: 1k extra files not 12k
-    Page-->>User: Return one bounded page
-    User->>Page: Request full export
-    Page->>Files: All 50k extra files
-    Note over User,Files: Same tenant. This request is not cheaper.
+    participant Files as Block metadata
+    User->>Page: Show 100 blocks in this time range with sizes
+    Page->>Index: Read the existing summary file
+    Index-->>Page: IDs and time ranges for all 50000 blocks
+    Page->>Page: Filter locally to 12000 matching records
+    Page->>Page: Select 100 IDs for the requested page
+    Note over Page,Files: Sizes are missing from the index.&lt;br/&gt;Only these 100 IDs need detail reads.
+    Page->>Files: Fetch metadata at those 100 known paths
+    Files-->>Page: Size details for the selected blocks
+    Page-->>User: Show 100 matching rows with sizes
                     </pre>
                   </div>
                   <div class="fig-seq-inspect">
                     <p class="fig-seq-hint">Click a participant or message to inspect it. Click again to close.</p>
                   </div>
+                </div>
+                <div class="fig-col">
+                  <div class="fig-callout" data-tone="added"><strong>Why this change works.</strong> One index read supplies enough information to choose the rows before fetching their details. This request reads 100 block metadata files instead of 50,000. Paginating after those reads would only shrink the table; it would not save the storage work.</div>
+                  <div class="fig-callout"><strong>What bounds the work.</strong> With extra columns off, the index supplies the table and no block metadata files are needed. With details on, choosing All is capped at 1,000 rows before fetching their files. Reading and filtering the index still involves all 50,000 records.</div>
+                  <div class="fig-callout" data-tone="changed"><strong>When the saving disappears.</strong> A default JSON export, an explicit bucket scan, or a missing or corrupt index uses the full-scan path. That can still read all 50,000 metadata files. The index can also lag behind new uploads; this change does not make it fresher.</div>
                 </div>
               </div>
             </div>
@@ -358,14 +326,14 @@
               <div class="fig-scene-head">
                 <div class="fig-index">03</div>
                 <div>
-                  <h2>Each step from the previous scene is a specific edit.</h2>
-                  <p>User’s cheap requests shrink the list, then fetch extra files only for the page. The JSON or scan request skips that path. Those beats are the edits below.</p>
+                  <h2>The page selects block IDs before passing them to the detail reader.</h2>
+                  <p>The index supplies the candidates. Filtering and paging select 100 IDs, and only those IDs reach the detail reader. The final diff shows when the handler uses a full scan instead.</p>
                 </div>
               </div>
               <div class="fig-canvas">
                 <div class="fig-compare">
                   <div class="fig-pane" data-label="Logical change">
-                    <div class="fig-callout">First and then: matching rows shrink in memory, and All is capped at 1,000 extra files.</div>
+                    <div class="fig-callout">Select the rows first: filter 50,000 records to 12,000 matches, then choose 100 IDs. The detail cap also bounds a request for All.</div>
                     <details class="fig-node" data-kind="snapshot">
                       <summary>
                         <i class="fig-mark"></i>
@@ -428,7 +396,7 @@
                         <span class="fig-node-text">
                           <em>expensive work</em>
                           <strong>meta.json GETs</strong>
-                          <span>Zero reads, or at most 1,000 known paths. Tenant size no longer sets the cost.</span>
+                          <span>100 known paths in this example. The page size bounds per-block reads; the index still grows with the tenant.</span>
                         </span>
                       </summary>
                       <div class="fig-node-panel">
@@ -493,7 +461,7 @@
                         </span>
                       </summary>
                       <div class="fig-node-panel">
-                        <p>Use this to find blocks the catalog has not indexed yet. It restores the old cost.</p>
+                        <p>Use this to find blocks the catalog has not indexed yet. It restores the full scan; filtering and paging happen after that storage work.</p>
                       </div>
                     </details>
                     <details class="fig-node" data-kind="fallback">

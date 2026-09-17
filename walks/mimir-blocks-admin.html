@@ -55,12 +55,12 @@
                 <div class="fig-compare">
                   <div class="fig-pane" data-label="Before" data-tone="removed">
                     <div class="fig-seq">
-                      <details class="fig-node" data-kind="user" data-seq="Operator">
+                      <details class="fig-node" data-kind="user" data-seq="USER">
                         <summary>
                           <i class="fig-mark"></i>
                           <span class="fig-node-text">
                             <em>person</em>
-                            <strong>Operator</strong>
+                            <strong>USER</strong>
                             <span>Opens one tenant’s blocks page.</span>
                           </span>
                         </summary>
@@ -97,16 +97,16 @@
                       <div class="fig-mermaid-wrap" data-label="Full bucket scan">
                         <pre class="fig-mermaid">sequenceDiagram
     autonumber
-    participant Operator
+    participant USER
     participant Page as Blocks page
     participant Storage as Object storage
-    Operator->>Page: Open tenant blocks
+    USER->>Page: Open tenant blocks
     Page->>Storage: List every block folder
     loop Every block
         Page->>Storage: Fetch meta.json
         Storage-->>Page: Full block metadata
     end
-    Page-->>Operator: Render one giant table
+    Page-->>USER: Render one giant table
                         </pre>
                       </div>
                       <div class="fig-seq-inspect">
@@ -117,12 +117,12 @@
 
                   <div class="fig-pane" data-label="After" data-tone="added">
                     <div class="fig-seq">
-                      <details class="fig-node" data-kind="user" data-seq="Operator">
+                      <details class="fig-node" data-kind="user" data-seq="USER">
                         <summary>
                           <i class="fig-mark"></i>
                           <span class="fig-node-text">
                             <em>person</em>
-                            <strong>Operator</strong>
+                            <strong>USER</strong>
                             <span>Gets one filtered page of blocks.</span>
                           </span>
                         </summary>
@@ -185,20 +185,20 @@
                       <div class="fig-mermaid-wrap" data-label="Catalog-backed page">
                           <pre class="fig-mermaid">sequenceDiagram
     autonumber
-    participant Operator
+    participant USER
     participant Page as Blocks page
     participant Compactor
     participant Catalog as Bucket catalog
     participant Storage as Object storage
     Compactor-->>Catalog: Write short records (unchanged)
-    Operator->>Page: Open tenant blocks
+    USER->>Page: Open tenant blocks
     Page->>Catalog: Read one catalog
     Catalog-->>Page: Short records for indexed blocks
     opt Extra columns need fields the catalog lacks
         Page->>Storage: GET known meta.json paths for the current page
         Storage-->>Page: Full metadata for selected rows
     end
-    Page-->>Operator: Render one page
+    Page-->>USER: Render one page
                           </pre>
                       </div>
                       <div class="fig-seq-inspect">
@@ -226,29 +226,29 @@
               <div class="fig-scene-head">
                 <div class="fig-index">02</div>
                 <div>
-                  <h2>Maya’s table got cheap. Her export did not.</h2>
-                  <p>Let’s take an example: Maya looks after one tenant with 50,000 blocks. The <button type="button" class="fig-gloss" data-term="Index file" aria-expanded="false">index file</button> is already there, and 12,000 rows match her filter. Watch what happens when she asks for three different things.</p>
+                  <h2>The usual table gets cheaper. A full export does not.</h2>
+                  <p>Let’s take an example: USER opens a tenant with 50,000 blocks. Assume the <button type="button" class="fig-gloss" data-term="Index file" aria-expanded="false">index file</button> already exists and 12,000 rows match the filter. Now follow three requests from the same page.</p>
                   <div class="fig-gloss-dock"></div>
                 </div>
               </div>
               <div class="fig-canvas">
                 <div class="fig-col">
-                  <div class="fig-callout" data-tone="added"><strong>First she opens the table.</strong> One index file is enough. She gets 100 rows. The page never goes looking for extra files. That is the win.</div>
-                  <div class="fig-callout" data-tone="added"><strong>Later she asks for sizes on All.</strong> That used to mean 12,000 extra files. A cap stops at 1,000. Still usable.</div>
-                  <div class="fig-callout" data-tone="changed"><strong>Last she runs her export.</strong> A <button type="button" class="fig-gloss" data-term="JSON request" aria-expanded="false">JSON call</button>, or ticking <button type="button" class="fig-gloss" data-term="Scan bucket" aria-expanded="false">scan the bucket</button>, still walks all 50,000. Same tenant. This change does not help.</div>
+                  <div class="fig-callout" data-tone="added"><strong>First USER opens the usual table.</strong> Before, the page fetched metadata for all 50,000 blocks; now one index file supplies the matches and the page returns 100 rows with no extra file reads.</div>
+                  <div class="fig-callout" data-tone="added"><strong>Next USER selects sizes and All.</strong> Those sizes are not in the index, but the unchanged detail reader now receives only a capped page: at most 1,000 files instead of all 12,000 matches.</div>
+                  <div class="fig-callout" data-tone="changed"><strong>Finally USER requests a full export.</strong> A <button type="button" class="fig-gloss" data-term="JSON request" aria-expanded="false">JSON call</button>, or selecting <button type="button" class="fig-gloss" data-term="Scan bucket" aria-expanded="false">scan the bucket</button>, still walks all 50,000 blocks. The change does not make that path cheaper.</div>
                 </div>
                 <div class="fig-seq">
-                  <details class="fig-node" data-kind="user" data-seq="Maya">
+                  <details class="fig-node" data-kind="user" data-seq="USER">
                     <summary>
                       <i class="fig-mark"></i>
                       <span class="fig-node-text">
                         <em>person</em>
-                        <strong>Maya</strong>
+                        <strong>USER</strong>
                         <span>Opens one tenant’s blocks page three different ways.</span>
                       </span>
                     </summary>
                     <div class="fig-node-panel">
-                      <p>The counts are illustrative. The three requests are the mechanism: shrink first, cap the extra files, or skip the shrink entirely.</p>
+                      <p>The counts are illustrative. The three requests show the mechanism: shrink first, cap the extra files, or skip the shrink entirely.</p>
                     </div>
                   </details>
                   <details class="fig-node" data-kind="browser" data-seq="Page">
@@ -300,7 +300,7 @@
                       </span>
                     </summary>
                     <div class="fig-node-panel">
-                      <p>That default is why Maya’s script can still be slow on the same tenant whose HTML page is now cheap.</p>
+                      <p>That default is why USER’s script can still be slow on the same tenant whose HTML page is now cheap.</p>
                     </div>
                   </details>
                   <details class="fig-node" data-kind="scan" data-seq="Scan bucket">
@@ -316,23 +316,23 @@
                       <p>Use this to find newly uploaded blocks. The in-memory shrink does not run.</p>
                     </div>
                   </details>
-                  <div class="fig-mermaid-wrap" data-label="Three things Maya asks for">
+                  <div class="fig-mermaid-wrap" data-label="Three requests from USER">
                     <pre class="fig-mermaid">sequenceDiagram
     autonumber
-    participant Maya
+    participant USER
     participant Page
     participant Index as Index file
     participant Files as Extra files
-    Maya->>Page: Opens the usual table
+    USER->>Page: Open the usual table
     Page->>Index: Reads one file
     Index-->>Page: 12k matching rows
-    Page-->>Maya: 100 rows no extra files
-    Maya->>Page: Sizes on All
+    Page-->>USER: Return 100 rows
+    USER->>Page: Select sizes and All
     Page->>Files: 1k extra files not 12k
-    Page-->>Maya: One bounded page
-    Maya->>Page: JSON or bucket scan
+    Page-->>USER: Return one bounded page
+    USER->>Page: Request full export
     Page->>Files: All 50k extra files
-    Note over Maya,Files: Same tenant. This request is not cheaper.
+    Note over USER,Files: Same tenant. This request is not cheaper.
                     </pre>
                   </div>
                   <div class="fig-seq-inspect">
@@ -359,7 +359,7 @@
                 <div class="fig-index">03</div>
                 <div>
                   <h2>Each step from the previous scene is a specific edit.</h2>
-                  <p>Maya’s cheap requests shrink the list, then fetch extra files only for the page. The JSON or scan request skips that path. Those beats are the edits below.</p>
+                  <p>USER’s cheap requests shrink the list, then fetch extra files only for the page. The JSON or scan request skips that path. Those beats are the edits below.</p>
                 </div>
               </div>
               <div class="fig-canvas">

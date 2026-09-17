@@ -28,13 +28,13 @@ Use only names and relationships supported by the PR or verified in the reposito
 A strong walk usually follows this shape:
 
 1. **What changed** — show old and new behavior together.
-2. **Why that produces the claimed result** — a named person (or named request) asking for a few concrete things, in story order, so the reader sees which asks get cheaper and which do not.
+2. **Why that produces the claimed result** — USER tries a few concrete cases in story order, so the reader sees the ordinary win, a boundary case, and what does not improve.
 3. **How it works now** — pair each logical change from the previous scene with the important git hunks that implement it.
 4. **What is in the blast** — separate affected from unaffected parts.
 
 ### Explain the causal mechanism
 
-For every claimed behavioral benefit or system outcome, show why the change produces that result, not only what changed. Identify and inspect the downstream rule or behavior that makes the change matter, even when that code is unchanged. Scene 2 is that proof: a short story of a few asks, not a second copy of the before-and-after path. Do not reuse scene 1’s actors just to relabel the same sequence. By the end, the reader should be able to repeat who asked for what, why that ask got cheaper (or did not), and what the change does not guarantee.
+For every claimed behavioral benefit or system outcome, show why the change produces that result, not only what changed. Identify and inspect the downstream rule or behavior that makes the change matter, even when that code is unchanged. Scene 2 is that proof: a short story of a few cases, not a second copy of the before-and-after path. Do not reuse scene 1’s actors just to relabel the same sequence. By the end, the reader should be able to repeat what USER tried, why the result improved (or did not), and what the change does not guarantee.
 
 If the story would stop at the changed code, put the missing causal step in that same why-scene sequence (how a consumer reads the data, how a limit is applied, how retries propagate). Do not add a second diagram to hold it. When several limits or stages interact, label what each one controls. Illustrative values are welcome; state their assumptions.
 
@@ -49,7 +49,7 @@ Do not create Story, Data, or Blast tabs. This is one walk with Back and Next co
 Write every visible sentence in plain, spoken English. Code names are labels; they are not explanations. The open sentence must make sense to someone who has not read the diff.
 
 - A scene title states the claim without requiring knowledge of the PR.
-- The sentence below it explains the consequence. On the why scene, that sentence starts with “Let’s take an example:” and names the person, the numbers, and the few things they will ask for.
+- The sentence below it explains the consequence. On the why scene, that sentence starts with “Let’s take an example:”, calls the human actor `USER`, states the illustrative numbers and assumptions, and previews the few cases USER will try.
 - Do not put function names, type names, or flag names in that open sentence.
 - Wrap the few words a newcomer would not know in a marked term:
 
@@ -84,9 +84,9 @@ If the PR changes **behavior, data flow, or request flow**, the what-changed and
 - **What-changed:** one sequence, or a Before/After pair in one `.fig-compare`. Two diagrams here are allowed only as old path vs new path.
 - **Why:** **exactly one** sequence. Never two. Never a cheap pane beside an expensive pane.
 
-Use participants for the real clients, services, stores, workers, data, limits, or request kinds the claim needs. Scene 2 may introduce people and components that did not appear in scene 1. Keep the diagram to the few actors the story needs. Prefer a chronological sequence of asks over `alt`/`opt` branches; `opt` without `end` will not render. Keep message text short and avoid commas (they break Mermaid parsing).
+Use participants for the real clients, services, stores, workers, data, limits, or request kinds the claim needs. Name the human participant `USER`; never invent or use a personal name. Scene 2 may introduce components that did not appear in scene 1. Keep the diagram to the few actors the story needs. Prefer a chronological sequence of cases over `alt`/`opt` branches; `opt` without `end` will not render. Keep message text short and avoid commas (they break Mermaid parsing).
 
-Do not reuse scene 1’s sequence with extra labels. Scene 1 answers “what path changed.” Scene 2 answers “what happens when this person asks for these things.”
+Do not reuse scene 1’s sequence with extra labels. Scene 1 answers “what path changed.” Scene 2 answers “what happens when USER tries these cases.”
 
 Skip Mermaid on the how scene, the blast scene, and when the PR does not change behavior or flow—for example, a documentation-only change, a test-only change, a rename, or a static style update.
 
@@ -114,32 +114,58 @@ Every Mermaid participant needs a hidden `.fig-node` whose `data-seq` exactly ma
 
 Place Before and After in one `.fig-compare`, or show one flow with a struck-out path. Do not spend separate scenes describing the same change. When old and new paths differ, put the Before and After sequence diagrams in separate panes of one `.fig-compare`. A single sequence diagram is enough when only the new path matters.
 
-### Scene 2: walk one example as a story
+### Scene 2: walk a few concrete cases as one story
 
-This scene is a story about a few asks, not a restatement of the mechanism and not a second architecture diagram.
+This scene is a story about a few cases, not a restatement of the mechanism and not a second architecture diagram. Use one continuous USER journey so each case builds on the previous one.
 
-1. **Title** is the punchline of the example (who got cheaper, who did not). It is not scene 1’s claim again.
-2. **Opening sentence** starts with “Let’s take an example:”, names a person or a specific request, gives the numbers, and says we will watch a few things they ask for.
-3. **Two to four `.fig-callout`s** tell those asks in story order, each one sentence a newcomer can repeat: who asked for what, how much expensive work it caused, and whether the change helped. Usual order: the everyday ask that is now cheap, then a heavier ask that still stays bounded, then an ask this change does not help.
-4. **Exactly one** Mermaid `sequenceDiagram` under those callouts. It plays the same asks in the same order as one conversation. Different actors than scene 1 are allowed and often required.
+1. **Title** is the punchline: what gets better and what does not. It is not scene 1’s claim again.
+2. **Opening sentence** starts with “Let’s take an example:”, calls the human actor `USER`, gives the illustrative numbers and assumptions, and previews the cases.
+3. **Two to four `.fig-callout`s** tell the cases in story order. Start with the common case that demonstrates the win. Follow with a boundary or larger case that exposes the downstream rule. End with a case outside the guarantee. Each callout says what USER does, what happened before, what happens now, and why.
+4. **Exactly one** Mermaid `sequenceDiagram` under those callouts. It plays the same cases in the same order as one journey. Different system actors than scene 1 are allowed and often required.
+
+Here is the level of concreteness to aim for. These values are illustrative; replace them with facts supported by the PR and repository:
 
 ```html
 <div class="fig-col">
-  <div class="fig-callout" data-tone="added"><strong>First she opens the table.</strong> …the win…</div>
-  <div class="fig-callout" data-tone="added"><strong>Later she asks for more.</strong> …still bounded…</div>
-  <div class="fig-callout" data-tone="changed"><strong>Last she runs her export.</strong> …this change does not help…</div>
+  <div class="fig-callout"><strong>Assumption.</strong> The catalog has 1,000 files and the page can return at most 100 rows.</div>
+  <div class="fig-callout" data-tone="added"><strong>First USER opens 20 recent rows.</strong> Before, the page listed 1,000 files to find them; now it reads one index and the page limit returns 20.</div>
+  <div class="fig-callout" data-tone="added"><strong>Next USER asks for 200 rows.</strong> The index still avoids the 1,000-file listing, but the unchanged page limit returns 100—not 200.</div>
+  <div class="fig-callout" data-tone="changed"><strong>Finally USER exports everything.</strong> The export still scans all 1,000 files, so this change does not make full exports cheap.</div>
 </div>
 <div class="fig-seq">
-  <!-- hidden .fig-node cards, then one .fig-mermaid-wrap -->
+  <!-- hidden .fig-node cards must match USER, Page, Index, Page limit, and Storage -->
+  <div class="fig-mermaid-wrap" data-label="Three requests after the change">
+    <pre class="fig-mermaid">sequenceDiagram
+      autonumber
+      participant U as USER
+      participant Page
+      participant Index
+      participant Limit as Page limit
+      participant Storage
+      U->>Page: Open 20 recent rows
+      Page->>Index: Read candidates
+      Page->>Limit: Apply 100 row cap
+      Limit-->>U: Return 20 rows
+      U->>Page: Ask for 200 rows
+      Page->>Index: Read candidates
+      Page->>Limit: Apply 100 row cap
+      Limit-->>U: Return 100 rows
+      U->>Page: Export everything
+      Page->>Storage: Scan all 1000 files
+      Storage-->>U: Build full export
+    </pre>
+  </div>
 </div>
 ```
+
+The example works because the cases answer three different questions in order: where is the win, which unchanged rule bounds it, and where does the guarantee stop? Do not copy its storage vocabulary into an unrelated PR; preserve that causal shape with the real behavior under review.
 
 Do not:
 
 - put two `.fig-mermaid` blocks on this scene;
 - split the scene into cheap vs expensive panes with matching sequences;
 - use `alt`/`opt` to stack those two paths inside one diagram;
-- name cases after stages or functions (Filter, Trim, `ReadIndex`) instead of after what the person asked for.
+- name cases after stages or functions (Filter, Trim, `ReadIndex`) instead of after what USER did.
 
 ### Scene 3: map each logical change to the important diffs
 
@@ -272,7 +298,7 @@ Before stopping, verify all of the following:
 - The walk has two to five scenes, usually three, and ends with the blast scene.
 - Every scene makes one distinct claim in plain English.
 - For every claimed behavioral benefit, the visible diagrams connect the changed code to the relevant downstream mechanism, including unchanged behavior when the claim depends on it.
-- The why scene is a named person’s (or named request’s) story: punchline title, “Let’s take an example:” opening, two to four callouts in story order, then exactly one chronological sequence.
+- The why scene is USER’s story: punchline title, “Let’s take an example:” opening, two to four concrete cases in story order, then exactly one chronological sequence.
 - That scene has exactly one `.fig-mermaid`. It is not a relabel of scene 1, not a cheap-vs-expensive pair, and not `alt`/`opt` stacked as two diagrams.
 - Interacting limits or stages, when present, are individually labelled.
 - Assumptions, a distinguishing edge case, and what the change does not guarantee are visible.

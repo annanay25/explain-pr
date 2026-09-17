@@ -27,6 +27,7 @@
         <input type="radio" name="walk" id="s1" checked>
         <input type="radio" name="walk" id="s2">
         <input type="radio" name="walk" id="s3">
+        <input type="radio" name="walk" id="s4">
         <div class="fig-scenes">
           <section class="fig-scene">
             <div class="fig-stage">
@@ -36,6 +37,7 @@
                   <label class="fig-dot is-current" for="s1"></label>
                   <label class="fig-dot" for="s2"></label>
                   <label class="fig-dot" for="s3"></label>
+                  <label class="fig-dot" for="s4"></label>
                 </div>
                 <label class="fig-btn fig-next" for="s2">Next</label>
               </nav>
@@ -180,109 +182,104 @@
                   <label class="fig-dot" for="s1"></label>
                   <label class="fig-dot is-current" for="s2"></label>
                   <label class="fig-dot" for="s3"></label>
+                  <label class="fig-dot" for="s4"></label>
                 </div>
                 <label class="fig-btn fig-next" for="s3">Next</label>
               </nav>
               <div class="fig-scene-head">
                 <div class="fig-index">02</div>
                 <div>
-                  <h2>One list accepts every supported configuration style.</h2>
-                  <p>A single address, comma-separated addresses, and a YAML list all become the same broker list. Flags replace the default instead of adding to it.</p>
+                  <h2>One reachable starting broker is enough. Zero still means no startup.</h2>
+                  <p>Let’s take an example: USER has three Kafka starting addresses. Assume broker A is down, broker B is reachable, and broker C is only a backup. Follow three startup cases to see exactly what the new list changes.</p>
                 </div>
               </div>
               <div class="fig-canvas">
-                <div class="fig-enclose" data-tone="added">
-                  <details class="fig-node" data-kind="type" data-tone="added" open>
+                <div class="fig-col">
+                  <div class="fig-callout" data-tone="added"><strong>First USER starts Tempo with A, B, and C.</strong> Before, the setting could hold only A and startup failed there; now the client receives all three seeds, B answers, and Tempo gets cluster metadata.</div>
+                  <div class="fig-callout" data-tone="added"><strong>Next USER keeps an old one-address config for B.</strong> The parser makes a one-item seed list, B returns metadata for the cluster, and startup works exactly as before.</div>
+                  <div class="fig-callout" data-tone="changed"><strong>Finally every configured seed is unavailable.</strong> Tempo tries the whole list but receives no metadata, so startup still fails. This change removes dependence on one chosen seed; it does not make Kafka outages survivable.</div>
+                </div>
+                <div class="fig-seq">
+                  <details class="fig-node" data-kind="user" data-seq="USER">
                     <summary>
                       <i class="fig-mark"></i>
                       <span class="fig-node-text">
-                        <em>type</em>
-                        <strong>KafkaAddresses</strong>
-                        <span>Turns every supported input into one list of bootstrap brokers.</span>
+                        <em>person</em>
+                        <strong>USER</strong>
+                        <span>Tries a multi-address config, an old single address, and a full outage.</span>
                       </span>
                     </summary>
                     <div class="fig-node-panel">
-                      <p>New in <code>pkg/ingest/config.go</code>. It replaces the string stored in <code>KafkaConfig.Address</code>. Validation still rejects an empty value, and <code>commonKafkaClientOptions</code> now passes the whole list to <code>kgo.SeedBrokers(cfg.Address...)</code>.</p>
+                      <p>The hostnames are illustrative. The important cases are one reachable seed, one legacy seed, and no reachable seed.</p>
                     </div>
                   </details>
-                  <div class="fig-enclose-body">
-                    <div class="fig-row">
-                      <div class="fig-col">
-                        <details class="fig-node" data-kind="flag" data-tone="ghost">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>input</em>
-                              <strong>Flag parser</strong>
-                              <span>Supplies one comma-separated value.</span>
-                            </span>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>The existing flag machinery calls <code>Set</code> through <code>flag.Value</code>. It is shown for context and was not changed by this PR.</p>
-                          </div>
-                        </details>
-                        <div class="fig-edge down" data-label="calls"></div>
-                        <details class="fig-node" data-kind="fn" data-tone="added">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>function</em>
-                              <strong>Set</strong>
-                              <span>Replaces the default with the addresses from the flag.</span>
-                            </span>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p><code>RegisterFlagsWithPrefix</code> starts with <code>localhost:9092</code>. Set must replace that default; appending would leave localhost beside the operator’s brokers.</p>
-                          </div>
-                        </details>
-                        <div class="fig-edge down" data-label="calls"></div>
-                        <details class="fig-node" data-kind="fn" data-tone="added">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>function</em>
-                              <strong>parseKafkaAddresses</strong>
-                              <span>Splits commas, trims spaces, and removes empty entries.</span>
-                            </span>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>This new package helper produces the final <code>KafkaAddresses</code> value. <code>UnmarshalYAML</code> also calls it after reading either a string or a list.</p>
-                          </div>
-                        </details>
-                      </div>
-                      <div class="fig-col">
-                        <details class="fig-node" data-kind="config" data-tone="ghost">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>input</em>
-                              <strong>YAML decoder</strong>
-                              <span>Supplies either a string or a list.</span>
-                            </span>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>The existing YAML decoder invokes the custom unmarshaler. It is shown for context and was not changed by this PR.</p>
-                          </div>
-                        </details>
-                        <div class="fig-edge down" data-label="calls"></div>
-                        <details class="fig-node" data-kind="fn" data-tone="added">
-                          <summary>
-                            <i class="fig-mark"></i>
-                            <span class="fig-node-text">
-                              <em>function</em>
-                              <strong>UnmarshalYAML</strong>
-                              <span>Accepts a single string or a YAML list.</span>
-                            </span>
-                          </summary>
-                          <div class="fig-node-panel">
-                            <p>It tries a string first, then a list of strings, and sends either form through <code>parseKafkaAddresses</code>. Writing the value back uses one comma-separated string.</p>
-                          </div>
-                        </details>
-                        <div class="fig-callout">
-                          Both branches produce one broker list, and existing single-address configuration remains valid.
-                        </div>
-                      </div>
+                  <details class="fig-node" data-kind="server" data-seq="Tempo ingest">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>process</em>
+                        <strong>Tempo ingest</strong>
+                        <span>Starts the Kafka client with every parsed seed.</span>
+                      </span>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>Distributor, live store, and block builder all use the shared Kafka client options changed by this PR.</p>
                     </div>
+                  </details>
+                  <details class="fig-node" data-kind="config" data-seq="Seed list">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>normalized setting</em>
+                        <strong>Seed list</strong>
+                        <span>Contains one or several starting addresses after parsing.</span>
+                      </span>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>A plain string, comma-separated string, or YAML list becomes the same <code>KafkaAddresses</code> value. These are starting points, not a complete membership list.</p>
+                    </div>
+                  </details>
+                  <details class="fig-node" data-kind="queue" data-seq="Kafka cluster">
+                    <summary>
+                      <i class="fig-mark"></i>
+                      <span class="fig-node-text">
+                        <em>downstream behavior</em>
+                        <strong>Kafka cluster</strong>
+                        <span>Any reachable seed can return metadata for the real cluster.</span>
+                      </span>
+                    </summary>
+                    <div class="fig-node-panel">
+                      <p>The unchanged Kafka client tries the supplied seeds. Once one answers, cluster metadata—not the configuration list—tells the client which brokers own the topic.</p>
+                    </div>
+                  </details>
+                  <div class="fig-mermaid-wrap" data-label="Three Kafka startup cases">
+                    <pre class="fig-mermaid">sequenceDiagram
+    autonumber
+    participant USER
+    participant Tempo as Tempo ingest
+    participant Seeds as Seed list
+    participant Kafka as Kafka cluster
+    USER->>Tempo: Start with A B and C
+    Tempo->>Seeds: Parse three addresses
+    Seeds-->>Tempo: A B and C
+    Tempo->>Kafka: Try every seed
+    Kafka-->>Tempo: B returns cluster metadata
+    Tempo-->>USER: Ingest starts
+    USER->>Tempo: Keep one old address B
+    Tempo->>Seeds: Parse one address
+    Seeds-->>Tempo: B only
+    Tempo->>Kafka: Try B
+    Kafka-->>Tempo: Return cluster metadata
+    Tempo-->>USER: Startup stays compatible
+    USER->>Tempo: Start during a full outage
+    Tempo->>Kafka: Try every configured seed
+    Kafka--x Tempo: No seed returns metadata
+    Tempo--x USER: Startup still fails
+                    </pre>
+                  </div>
+                  <div class="fig-seq-inspect">
+                    <p class="fig-seq-hint">Click a participant or message to inspect it. Click again to close.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -295,11 +292,121 @@
                   <label class="fig-dot" for="s1"></label>
                   <label class="fig-dot" for="s2"></label>
                   <label class="fig-dot is-current" for="s3"></label>
+                  <label class="fig-dot" for="s4"></label>
+                </div>
+                <label class="fig-btn fig-next" for="s4">Next</label>
+              </nav>
+              <div class="fig-scene-head">
+                <div class="fig-index">03</div>
+                <div>
+                  <h2>Two edits turn configuration into the seed list Kafka already understands.</h2>
+                  <p>The new address type normalizes every supported input. The shared client setup then passes the complete list to Kafka instead of one string.</p>
+                </div>
+              </div>
+              <div class="fig-canvas">
+                <div class="fig-compare">
+                  <div class="fig-pane" data-label="Logical change">
+                    <div class="fig-callout">First: one address, comma-separated addresses, and a YAML list all become the same seed list. A flag replaces the localhost default instead of appending to it.</div>
+                    <details class="fig-node" data-kind="type" data-tone="added" open>
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>normalized value</em>
+                          <strong>KafkaAddresses</strong>
+                          <span>Stores one or several bootstrap addresses in one form.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>New in <code>pkg/ingest/config.go</code>. <code>Set</code> handles flags, <code>UnmarshalYAML</code> accepts a string or list, and both use the same comma-splitting and trimming helper.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="config" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>existing setting</em>
+                          <strong>KafkaConfig.Address</strong>
+                          <span>Keeps its name but changes from one string to the normalized list.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>Existing <code>address: kafka:9092</code> configuration remains valid. Empty input is still rejected.</p>
+                      </div>
+                    </details>
+                  </div>
+                  <div class="fig-pane" data-label="Important diff">
+                    <div class="fig-code" data-caption="pkg/ingest/config.go">
+                      <span class="fig-line removed">Address string `yaml:"address"`</span>
+                      <span class="fig-line added">Address KafkaAddresses `yaml:"address"`</span>
+                      <span class="fig-line"></span>
+                      <span class="fig-line added">type KafkaAddresses []string</span>
+                      <span class="fig-line added">func (a *KafkaAddresses) Set(value string) error {</span>
+                      <span class="fig-line added">    *a = parseKafkaAddresses(value)</span>
+                      <span class="fig-line added">    return nil</span>
+                      <span class="fig-line added">}</span>
+                      <span class="fig-line added">// UnmarshalYAML accepts one string or a list.</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="fig-compare">
+                  <div class="fig-pane" data-label="Logical change">
+                    <div class="fig-callout">Then: every normalized address becomes a Kafka bootstrap seed. The unchanged client can get cluster metadata from whichever seed answers.</div>
+                    <details class="fig-node" data-kind="queue" data-tone="changed">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>client option</em>
+                          <strong>Bootstrap seeds</strong>
+                          <span>Receives the entire address list instead of one value.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p><code>commonKafkaClientOptions</code> is shared by the ingest processes. Variadic expansion is the line that makes the extra addresses matter at runtime.</p>
+                      </div>
+                    </details>
+                    <details class="fig-node" data-kind="test" data-tone="added">
+                      <summary>
+                        <i class="fig-mark"></i>
+                        <span class="fig-node-text">
+                          <em>behavior checks</em>
+                          <strong>Compatibility tests</strong>
+                          <span>Cover single values, lists, replacement of the default, and two brokers.</span>
+                        </span>
+                      </summary>
+                      <div class="fig-node-panel">
+                        <p>The tests guard the three claims from the example: old configs parse, multiple seeds survive one unavailable broker, and empty input cannot start ingest.</p>
+                      </div>
+                    </details>
+                  </div>
+                  <div class="fig-pane" data-label="Important diff">
+                    <div class="fig-code" data-caption="pkg/ingest/config.go">
+                      <span class="fig-line removed">kgo.SeedBrokers(cfg.Address)</span>
+                      <span class="fig-line added">kgo.SeedBrokers(cfg.Address...)</span>
+                      <span class="fig-line"></span>
+                      <span class="fig-line removed">if cfg.Address == "" {</span>
+                      <span class="fig-line added">if len(cfg.Address) == 0 {</span>
+                      <span class="fig-line">    return errors.New("address is required")</span>
+                      <span class="fig-line">}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="fig-scene">
+            <div class="fig-stage">
+              <nav class="fig-nav">
+                <label class="fig-btn" for="s3">Back</label>
+                <div class="fig-dots-nav">
+                  <label class="fig-dot" for="s1"></label>
+                  <label class="fig-dot" for="s2"></label>
+                  <label class="fig-dot" for="s3"></label>
+                  <label class="fig-dot is-current" for="s4"></label>
                 </div>
                 <span class="fig-btn fig-next is-disabled">Done</span>
               </nav>
               <div class="fig-scene-head">
-                <div class="fig-index">03</div>
+                <div class="fig-index">04</div>
                 <div>
                   <h2>Public APIs and stored traces stay unchanged. Kafka startup is the risk.</h2>
                   <p>Trace queries and storage work as before. The affected path is how every ingest process reads addresses and connects to Kafka.</p>
@@ -375,7 +482,20 @@
                           </span>
                         </summary>
                         <div class="fig-node-panel">
-                          <p>If the list is parsed wrong, those processes cannot reach Kafka and ingest stops. Hold the PR if a YAML list keeps only the first host, a flag appends to localhost, or an empty list passes validation. Tests already pin those cases, plus a two-broker fake cluster.</p>
+                          <p>If the list is parsed wrong, those processes cannot reach Kafka and ingest stops. Tests cover YAML lists, replacement of the default, empty input, and a two-broker fake cluster.</p>
+                        </div>
+                      </details>
+                      <details class="fig-node" data-kind="lock" data-tone="changed" open>
+                        <summary>
+                          <i class="fig-mark"></i>
+                          <span class="fig-node-text">
+                            <em>merge gate</em>
+                            <strong>Do not merge if…</strong>
+                            <span>A list loses addresses, a flag keeps localhost, or one unavailable seed still blocks a reachable one.</span>
+                          </span>
+                        </summary>
+                        <div class="fig-node-panel">
+                          <p>Also stop if an empty list passes validation or an existing one-address YAML file no longer starts Tempo.</p>
                         </div>
                       </details>
                     </div>

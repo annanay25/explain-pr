@@ -29,7 +29,7 @@
         <input type="radio" name="walk" id="s3">
         <input type="radio" name="walk" id="s4">
         <div class="fig-scenes">
-          <section class="fig-scene">
+          <section class="fig-scene" data-tab="What changed">
             <div class="fig-stage">
               <nav class="fig-nav">
                 <span class="fig-btn is-disabled">Back</span>
@@ -174,7 +174,7 @@
               </div>
             </div>
           </section>
-          <section class="fig-scene">
+          <section class="fig-scene" data-tab="Why it matters">
             <div class="fig-stage">
               <nav class="fig-nav">
                 <label class="fig-btn" for="s1">Back</label>
@@ -190,22 +190,22 @@
                 <div class="fig-index">02</div>
                 <div>
                   <h2>One reachable starting broker is enough. Zero still means no startup.</h2>
-                  <p>Let’s take an example: USER has three Kafka starting addresses. Assume broker A is down, broker B is reachable, and broker C is only a backup. Follow three startup cases to see exactly what the new list changes.</p>
+                  <p>Let’s take an example: User has three Kafka starting addresses. Assume broker A is down, broker B is reachable, and broker C is only a backup. Follow three startup cases to see exactly what the new list changes.</p>
                 </div>
               </div>
               <div class="fig-canvas">
                 <div class="fig-col">
-                  <div class="fig-callout" data-tone="added"><strong>First USER starts Tempo with A, B, and C.</strong> Before, the setting could hold only A and startup failed there; now the client receives all three seeds, B answers, and Tempo gets cluster metadata.</div>
-                  <div class="fig-callout" data-tone="added"><strong>Next USER keeps an old one-address config for B.</strong> The parser makes a one-item seed list, B returns metadata for the cluster, and startup works exactly as before.</div>
+                  <div class="fig-callout" data-tone="added"><strong>First User starts Tempo with A, B, and C.</strong> Before, the setting could hold only A and startup failed there; now the client receives all three seeds, B answers, and Tempo gets cluster metadata.</div>
+                  <div class="fig-callout" data-tone="added"><strong>Next User keeps an old one-address config for B.</strong> The parser makes a one-item seed list, B returns metadata for the cluster, and startup works exactly as before.</div>
                   <div class="fig-callout" data-tone="changed"><strong>Finally every configured seed is unavailable.</strong> Tempo tries the whole list but receives no metadata, so startup still fails. This change removes dependence on one chosen seed; it does not make Kafka outages survivable.</div>
                 </div>
                 <div class="fig-seq">
-                  <details class="fig-node" data-kind="user" data-seq="USER">
+                  <details class="fig-node" data-kind="user" data-seq="User">
                     <summary>
                       <i class="fig-mark"></i>
                       <span class="fig-node-text">
                         <em>person</em>
-                        <strong>USER</strong>
+                        <strong>User</strong>
                         <span>Tries a multi-address config, an old single address, and a full outage.</span>
                       </span>
                     </summary>
@@ -255,26 +255,26 @@
                   <div class="fig-mermaid-wrap" data-label="Three Kafka startup cases">
                     <pre class="fig-mermaid">sequenceDiagram
     autonumber
-    participant USER
+    participant User
     participant Tempo as Tempo ingest
     participant Seeds as Seed list
     participant Kafka as Kafka cluster
-    USER->>Tempo: Start with A B and C
+    User->>Tempo: Start with A B and C
     Tempo->>Seeds: Parse three addresses
     Seeds-->>Tempo: A B and C
     Tempo->>Kafka: Try every seed
     Kafka-->>Tempo: B returns cluster metadata
-    Tempo-->>USER: Ingest starts
-    USER->>Tempo: Keep one old address B
+    Tempo-->>User: Ingest starts
+    User->>Tempo: Keep one old address B
     Tempo->>Seeds: Parse one address
     Seeds-->>Tempo: B only
     Tempo->>Kafka: Try B
     Kafka-->>Tempo: Return cluster metadata
-    Tempo-->>USER: Startup stays compatible
-    USER->>Tempo: Start during a full outage
+    Tempo-->>User: Startup stays compatible
+    User->>Tempo: Start during a full outage
     Tempo->>Kafka: Try every configured seed
     Kafka--x Tempo: No seed returns metadata
-    Tempo--x USER: Startup still fails
+    Tempo--x User: Startup still fails
                     </pre>
                   </div>
                   <div class="fig-seq-inspect">
@@ -284,7 +284,7 @@
               </div>
             </div>
           </section>
-          <section class="fig-scene">
+          <section class="fig-scene" data-tab="How it works">
             <div class="fig-stage">
               <nav class="fig-nav">
                 <label class="fig-btn" for="s2">Back</label>
@@ -393,7 +393,7 @@
               </div>
             </div>
           </section>
-          <section class="fig-scene">
+          <section class="fig-scene" data-tab="Blast radius">
             <div class="fig-stage">
               <nav class="fig-nav">
                 <label class="fig-btn" for="s3">Back</label>

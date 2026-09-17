@@ -31,7 +31,7 @@
         <input type="radio" name="walk" id="s4">
 
         <div class="fig-scenes">
-          <section class="fig-scene">
+          <section class="fig-scene" data-tab="What changed">
             <div class="fig-stage">
               <nav class="fig-nav">
                 <span class="fig-btn is-disabled">Back</span>
@@ -55,12 +55,12 @@
                 <div class="fig-compare">
                   <div class="fig-pane" data-label="Before" data-tone="removed">
                     <div class="fig-seq">
-                      <details class="fig-node" data-kind="user" data-seq="USER">
+                      <details class="fig-node" data-kind="user" data-seq="User">
                         <summary>
                           <i class="fig-mark"></i>
                           <span class="fig-node-text">
                             <em>person</em>
-                            <strong>USER</strong>
+                            <strong>User</strong>
                             <span>Opens one tenant’s blocks page.</span>
                           </span>
                         </summary>
@@ -97,16 +97,16 @@
                       <div class="fig-mermaid-wrap" data-label="Full bucket scan">
                         <pre class="fig-mermaid">sequenceDiagram
     autonumber
-    participant USER
+    participant User
     participant Page as Blocks page
     participant Storage as Object storage
-    USER->>Page: Open tenant blocks
+    User->>Page: Open tenant blocks
     Page->>Storage: List every block folder
     loop Every block
         Page->>Storage: Fetch meta.json
         Storage-->>Page: Full block metadata
     end
-    Page-->>USER: Render one giant table
+    Page-->>User: Render one giant table
                         </pre>
                       </div>
                       <div class="fig-seq-inspect">
@@ -117,12 +117,12 @@
 
                   <div class="fig-pane" data-label="After" data-tone="added">
                     <div class="fig-seq">
-                      <details class="fig-node" data-kind="user" data-seq="USER">
+                      <details class="fig-node" data-kind="user" data-seq="User">
                         <summary>
                           <i class="fig-mark"></i>
                           <span class="fig-node-text">
                             <em>person</em>
-                            <strong>USER</strong>
+                            <strong>User</strong>
                             <span>Gets one filtered page of blocks.</span>
                           </span>
                         </summary>
@@ -185,20 +185,20 @@
                       <div class="fig-mermaid-wrap" data-label="Catalog-backed page">
                           <pre class="fig-mermaid">sequenceDiagram
     autonumber
-    participant USER
+    participant User
     participant Page as Blocks page
     participant Compactor
     participant Catalog as Bucket catalog
     participant Storage as Object storage
     Compactor-->>Catalog: Write short records (unchanged)
-    USER->>Page: Open tenant blocks
+    User->>Page: Open tenant blocks
     Page->>Catalog: Read one catalog
     Catalog-->>Page: Short records for indexed blocks
     opt Extra columns need fields the catalog lacks
         Page->>Storage: GET known meta.json paths for the current page
         Storage-->>Page: Full metadata for selected rows
     end
-    Page-->>USER: Render one page
+    Page-->>User: Render one page
                           </pre>
                       </div>
                       <div class="fig-seq-inspect">
@@ -211,7 +211,7 @@
             </div>
           </section>
 
-          <section class="fig-scene">
+          <section class="fig-scene" data-tab="Why it matters">
             <div class="fig-stage">
               <nav class="fig-nav">
                 <label class="fig-btn" for="s1">Back</label>
@@ -227,23 +227,23 @@
                 <div class="fig-index">02</div>
                 <div>
                   <h2>The usual table gets cheaper. A full export does not.</h2>
-                  <p>Let’s take an example: USER opens a tenant with 50,000 blocks. Assume the <button type="button" class="fig-gloss" data-term="Index file" aria-expanded="false">index file</button> already exists and 12,000 rows match the filter. Now follow three requests from the same page.</p>
+                  <p>Let’s take an example: User opens a tenant with 50,000 blocks. Assume the <button type="button" class="fig-gloss" data-term="Index file" aria-expanded="false">index file</button> already exists and 12,000 rows match the filter. Now follow three requests from the same page.</p>
                   <div class="fig-gloss-dock"></div>
                 </div>
               </div>
               <div class="fig-canvas">
                 <div class="fig-col">
-                  <div class="fig-callout" data-tone="added"><strong>First USER opens the usual table.</strong> Before, the page fetched metadata for all 50,000 blocks; now one index file supplies the matches and the page returns 100 rows with no extra file reads.</div>
-                  <div class="fig-callout" data-tone="added"><strong>Next USER selects sizes and All.</strong> Those sizes are not in the index, but the unchanged detail reader now receives only a capped page: at most 1,000 files instead of all 12,000 matches.</div>
-                  <div class="fig-callout" data-tone="changed"><strong>Finally USER requests a full export.</strong> A <button type="button" class="fig-gloss" data-term="JSON request" aria-expanded="false">JSON call</button>, or selecting <button type="button" class="fig-gloss" data-term="Scan bucket" aria-expanded="false">scan the bucket</button>, still walks all 50,000 blocks. The change does not make that path cheaper.</div>
+                  <div class="fig-callout" data-tone="added"><strong>First User opens the usual table.</strong> Before, the page fetched metadata for all 50,000 blocks; now one index file supplies the matches and the page returns 100 rows with no extra file reads.</div>
+                  <div class="fig-callout" data-tone="added"><strong>Next User selects sizes and All.</strong> Those sizes are not in the index, but the unchanged detail reader now receives only a capped page: at most 1,000 files instead of all 12,000 matches.</div>
+                  <div class="fig-callout" data-tone="changed"><strong>Finally User requests a full export.</strong> A <button type="button" class="fig-gloss" data-term="JSON request" aria-expanded="false">JSON call</button>, or selecting <button type="button" class="fig-gloss" data-term="Scan bucket" aria-expanded="false">scan the bucket</button>, still walks all 50,000 blocks. The change does not make that path cheaper.</div>
                 </div>
                 <div class="fig-seq">
-                  <details class="fig-node" data-kind="user" data-seq="USER">
+                  <details class="fig-node" data-kind="user" data-seq="User">
                     <summary>
                       <i class="fig-mark"></i>
                       <span class="fig-node-text">
                         <em>person</em>
-                        <strong>USER</strong>
+                        <strong>User</strong>
                         <span>Opens one tenant’s blocks page three different ways.</span>
                       </span>
                     </summary>
@@ -300,7 +300,7 @@
                       </span>
                     </summary>
                     <div class="fig-node-panel">
-                      <p>That default is why USER’s script can still be slow on the same tenant whose HTML page is now cheap.</p>
+                      <p>That default is why User’s script can still be slow on the same tenant whose HTML page is now cheap.</p>
                     </div>
                   </details>
                   <details class="fig-node" data-kind="scan" data-seq="Scan bucket">
@@ -316,23 +316,23 @@
                       <p>Use this to find newly uploaded blocks. The in-memory shrink does not run.</p>
                     </div>
                   </details>
-                  <div class="fig-mermaid-wrap" data-label="Three requests from USER">
+                  <div class="fig-mermaid-wrap" data-label="Three requests from User">
                     <pre class="fig-mermaid">sequenceDiagram
     autonumber
-    participant USER
+    participant User
     participant Page
     participant Index as Index file
     participant Files as Extra files
-    USER->>Page: Open the usual table
+    User->>Page: Open the usual table
     Page->>Index: Reads one file
     Index-->>Page: 12k matching rows
-    Page-->>USER: Return 100 rows
-    USER->>Page: Select sizes and All
+    Page-->>User: Return 100 rows
+    User->>Page: Select sizes and All
     Page->>Files: 1k extra files not 12k
-    Page-->>USER: Return one bounded page
-    USER->>Page: Request full export
+    Page-->>User: Return one bounded page
+    User->>Page: Request full export
     Page->>Files: All 50k extra files
-    Note over USER,Files: Same tenant. This request is not cheaper.
+    Note over User,Files: Same tenant. This request is not cheaper.
                     </pre>
                   </div>
                   <div class="fig-seq-inspect">
@@ -343,7 +343,7 @@
             </div>
           </section>
 
-          <section class="fig-scene">
+          <section class="fig-scene" data-tab="How it works">
             <div class="fig-stage">
               <nav class="fig-nav">
                 <label class="fig-btn" for="s2">Back</label>
@@ -359,7 +359,7 @@
                 <div class="fig-index">03</div>
                 <div>
                   <h2>Each step from the previous scene is a specific edit.</h2>
-                  <p>USER’s cheap requests shrink the list, then fetch extra files only for the page. The JSON or scan request skips that path. Those beats are the edits below.</p>
+                  <p>User’s cheap requests shrink the list, then fetch extra files only for the page. The JSON or scan request skips that path. Those beats are the edits below.</p>
                 </div>
               </div>
               <div class="fig-canvas">
@@ -530,7 +530,7 @@
             </div>
           </section>
 
-          <section class="fig-scene">
+          <section class="fig-scene" data-tab="Blast radius">
             <div class="fig-stage">
               <nav class="fig-nav">
                 <label class="fig-btn" for="s3">Back</label>

@@ -1,6 +1,104 @@
-/* Prompt composer for inspectable nodes. Lazy-loads mermaid for .fig-mermaid. Next stays CSS-only. */
+/* Scene tabs, prompt composer, and lazy-loaded Mermaid diagrams. */
 (function () {
   var MERMAID_CDN = "https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js";
+
+  function buildSceneTabs() {
+    document.querySelectorAll(".fig-shell").forEach(function (shell) {
+      var existingWalk = shell.querySelector(":scope > .fig-walk");
+      if (existingWalk) {
+        bindSceneTabs(shell, existingWalk.querySelector(".fig-scene-tabs"));
+        return;
+      }
+
+      var directScenes = shell.querySelector(":scope > .fig-scenes");
+      var views = Array.from(shell.querySelectorAll(":scope > .fig-view"));
+      if (!directScenes && !views.length) return;
+
+      var oldViewTabs = shell.querySelector(":scope > .fig-view-tabs");
+      var walk = document.createElement("div");
+      walk.className = "fig-walk";
+      var tabs = document.createElement("nav");
+      tabs.className = "fig-scene-tabs";
+      tabs.setAttribute("aria-label", "Walk views");
+      tabs.innerHTML = '<p class="fig-scene-tabs-title">Views</p>';
+      var content = document.createElement("div");
+      content.className = "fig-walk-content";
+
+      shell.insertBefore(walk, oldViewTabs || directScenes || views[0]);
+      walk.appendChild(tabs);
+      walk.appendChild(content);
+      if (oldViewTabs) content.appendChild(oldViewTabs);
+      if (directScenes) content.appendChild(directScenes);
+      views.forEach(function (view) {
+        content.appendChild(view);
+      });
+
+      var scenes = Array.from(content.querySelectorAll(".fig-scene"));
+      scenes.forEach(function (scene, index) {
+        var dot = scene.querySelector(".fig-dot.is-current");
+        var sceneId = dot && dot.getAttribute("for");
+        var sceneRadio = sceneId && shell.querySelector("#" + CSS.escape(sceneId));
+        if (!sceneRadio) return;
+
+        var view = scene.closest(".fig-view");
+        var viewRadio = null;
+        var group = "";
+        if (view) {
+          group = view.getAttribute("data-view") || "";
+          viewRadio = shell.querySelector("#view-" + CSS.escape(group));
+        }
+
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "fig-scene-tab";
+        button.dataset.scene = sceneId;
+        if (group) button.dataset.view = group;
+        var number = (scene.querySelector(".fig-index")?.textContent || String(index + 1).padStart(2, "0")).trim();
+        var fullTitle = (scene.querySelector("h2")?.textContent || "View " + (index + 1)).trim();
+        var title = (scene.getAttribute("data-tab") || abridgeTabTitle(fullTitle)).trim();
+        button.innerHTML = '<span class="fig-scene-tab-index"></span><strong></strong>';
+        button.querySelector("span").textContent = number;
+        button.querySelector("strong").textContent = title;
+        button.addEventListener("click", function () {
+          if (viewRadio) {
+            viewRadio.checked = true;
+            viewRadio.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+          sceneRadio.checked = true;
+          sceneRadio.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+        tabs.appendChild(button);
+      });
+
+      bindSceneTabs(shell, tabs);
+    });
+  }
+
+  function abridgeTabTitle(title) {
+    var words = (title || "").replace(/\s+/g, " ").trim().split(" ");
+    if (words.length <= 6) return words.join(" ");
+    return words.slice(0, 6).join(" ").replace(/[.,;:!?]+$/, "") + "…";
+  }
+
+  function bindSceneTabs(shell, tabs) {
+    if (!tabs) return;
+    function sync() {
+      var selectedView = shell.querySelector('input[name="view"]:checked');
+      var selectedViewName = selectedView ? selectedView.id.replace(/^view-/, "") : "";
+      tabs.querySelectorAll(".fig-scene-tab").forEach(function (tab) {
+        var radio = shell.querySelector("#" + CSS.escape(tab.dataset.scene || tab.getAttribute("for") || ""));
+        var inSelectedView = !tab.dataset.view || tab.dataset.view === selectedViewName;
+        var current = Boolean(radio && radio.checked && inSelectedView);
+        tab.classList.toggle("is-current", current);
+        if (current) tab.setAttribute("aria-current", "page");
+        else tab.removeAttribute("aria-current");
+      });
+    }
+    shell.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+      radio.addEventListener("change", sync);
+    });
+    sync();
+  }
 
   function figureDir() {
     var el = document.querySelector('script[src*="figure.js"]');
@@ -86,7 +184,7 @@
         noteBkgColor: "#f6e3b8",
         noteTextColor: "#1a1714",
         noteBorderColor: "#9a5b00",
-        sequenceNumberColor: "#f3efe6",
+        sequenceNumberColor: "#fffaf2",
       },
       flowchart: {
         htmlLabels: false,
@@ -114,11 +212,37 @@
       try {
         var out = await mermaid.render("fig-mmd-" + i, src);
         el.innerHTML = out.svg;
+        var svg = el.querySelector("svg");
+        if (svg) namespaceSvgIds(svg, "fig-mmd-" + i);
         var wrap = el.closest(".fig-mermaid-wrap");
-        if (wrap && el.querySelector("svg")) wrap.classList.add("is-ready");
+        if (wrap && svg) wrap.classList.add("is-ready");
         bindMermaidClicks(el, src);
       } catch (e) {}
     }
+  }
+
+  function namespaceSvgIds(svg, prefix) {
+    var ids = {};
+    svg.querySelectorAll("[id]").forEach(function (node) {
+      var oldId = node.id;
+      var newId = prefix + "-" + oldId;
+      ids[oldId] = newId;
+      node.id = newId;
+    });
+    if (!Object.keys(ids).length) return;
+
+    var refAttrs = ["marker-start", "marker-mid", "marker-end", "clip-path", "mask", "filter", "fill", "stroke", "href", "xlink:href"];
+    svg.querySelectorAll("*").forEach(function (node) {
+      refAttrs.forEach(function (attr) {
+        var value = node.getAttribute(attr);
+        if (!value) return;
+        Object.keys(ids).forEach(function (oldId) {
+          value = value.replaceAll("url(#" + oldId + ")", "url(#" + ids[oldId] + ")");
+          if (value === "#" + oldId) value = "#" + ids[oldId];
+        });
+        node.setAttribute(attr, value);
+      });
+    });
   }
 
   function normLabel(s) {
@@ -230,6 +354,7 @@
     });
   }
 
+  buildSceneTabs();
   renderMermaid();
   function text(el, sel) {
     return (el.querySelector(sel)?.textContent || "").replace(/\s+/g, " ").trim();

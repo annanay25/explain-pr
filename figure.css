@@ -81,9 +81,10 @@ body.fig-page { min-height: 100vh; }
 
 .fig-deck {
   display: block;
-  max-width: 1120px;
+  width: 90%;
+  max-width: none;
   margin: 32px auto;
-  padding: 0 20px 48px;
+  padding: 0 0 48px;
   position: relative;
 }
 .fig-deck input[type="radio"] {
@@ -139,6 +140,12 @@ body.fig-page { min-height: 100vh; }
   margin-top: 8px;
 }
 .fig-repo a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--fig-rule); }
+.fig-repo .fig-original-diff {
+  margin-left: 12px;
+  color: var(--fig-ink);
+  font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+  font-weight: 600;
+}
 .fig-mast-side { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 .fig-stat {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
@@ -191,6 +198,67 @@ body.fig-page { min-height: 100vh; }
   opacity: 0.72;
   margin-top: 1px;
 }
+
+.fig-walk {
+  display: grid;
+  grid-template-columns: minmax(190px, 240px) minmax(0, 1fr);
+  align-items: stretch;
+}
+.fig-walk-content { min-width: 0; }
+.fig-scene-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 20px 12px;
+  border-right: 1px solid var(--fig-rule);
+  background: #faf6ee;
+}
+.fig-scene-tabs-title {
+  margin: 0 10px 7px;
+  color: var(--fig-muted);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.fig-scene-tab {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--fig-muted);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.fig-scene-tab:hover {
+  border-color: var(--fig-rule);
+  background: #fff;
+  color: var(--fig-ink);
+}
+.fig-scene-tab.is-current,
+.fig-scene-tab[aria-current="page"] {
+  border-color: var(--fig-ink);
+  background: var(--fig-ink);
+  color: var(--fig-paper);
+}
+.fig-scene-tab-index {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  opacity: 0.68;
+}
+.fig-scene-tab strong {
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.25;
+}
+.fig-walk .fig-view-tabs { display: none; }
 
 .fig-scene {
   display: none;
@@ -274,6 +342,20 @@ body.fig-page { min-height: 100vh; }
   line-height: 1.45;
   max-width: 68ch;
 }
+.fig-gloss {
+  display: inline;
+  margin: 0;
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 1.5px dotted currentColor;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--fig-changed-bg) 80%, white);
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  cursor: pointer;
+}
+.fig-gloss-dock { display: none; }
 .fig-canvas {
   flex: 1;
   display: flex;
@@ -283,8 +365,7 @@ body.fig-page { min-height: 100vh; }
   padding: 12px 0 12px;
 }
 .fig-nav {
-  order: -1;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -468,6 +549,27 @@ label.fig-btn { cursor: pointer; }
 .fig-mermaid svg .edge-animation-fast {
   animation: none;
 }
+.fig-mermaid svg .messageLine0,
+.fig-mermaid svg .messageLine1 {
+  stroke: var(--fig-ink) !important;
+  stroke-width: 1.75px !important;
+}
+.fig-mermaid svg marker path {
+  fill: var(--fig-ink) !important;
+  stroke: var(--fig-ink) !important;
+}
+.fig-mermaid svg .sequenceNumber {
+  fill: #fffaf2 !important;
+  font-family: "IBM Plex Mono", ui-monospace, monospace !important;
+  font-size: 12px !important;
+  font-weight: 600;
+}
+.fig-mermaid svg marker[id$="-sequencenumber"] circle {
+  r: 7px;
+  fill: var(--fig-focus) !important;
+  stroke: #fffaf2 !important;
+  stroke-width: 1px;
+}
 .fig-seq {
   display: flex;
   flex-direction: column;
@@ -507,6 +609,21 @@ label.fig-btn { cursor: pointer; }
 .fig-pane > .fig-node,
 .fig-pane > .fig-enclose {
   width: 100%;
+}
+.fig-pane .fig-code {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+.fig-pane .fig-line {
+  white-space: pre-wrap;
+}
+.fig-pane .fig-callout {
+  max-width: none;
+  margin: 0;
+}
+.fig-compare > .fig-pane:has(.fig-code) {
+  flex: 1.55 1 360px;
 }
 .fig-pane::before {
   content: attr(data-label);
@@ -1558,8 +1675,18 @@ label.fig-btn { cursor: pointer; }
   .fig-nav { margin-left: -16px; margin-right: -16px; }
   .fig-scene { min-height: 320px; }
   .fig-btn { min-width: 84px; }
-  .fig-deck { margin-top: 16px; }
+  .fig-deck { width: calc(100% - 24px); margin-top: 16px; }
   .fig-node { width: 100%; }
   .fig-node.tight { width: 100%; }
   .fig-view-tabs { padding-left: 16px; padding-right: 16px; }
+  .fig-walk { grid-template-columns: 1fr; }
+  .fig-scene-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 10px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--fig-rule);
+  }
+  .fig-scene-tabs-title { display: none; }
+  .fig-scene-tab { min-width: 180px; }
 }

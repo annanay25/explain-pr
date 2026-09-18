@@ -143,6 +143,8 @@ Take the logical steps the previous scene already established. For each importan
 
 Show the hunks that change behavior or data/request flow. Skip cosmetics: HTML/CSS polish, formatting-only edits, changelog wording, and tests that only lock behavior already shown. Elide uninteresting lines with a context `.fig-line`; do not dump the whole file.
 
+When `.fig-repo a` points to a GitHub-style pull request, `figure.js` adds one **View original diff ↗** link beside the PR reference in the page header. The link opens the pull request's Files Changed view. Keep `data-caption` as the real repository-relative file path when the preview represents a specific file; use a short descriptive caption only when the snippet combines or abstracts multiple files.
+
 ```html
 <div class="fig-compare">
   <div class="fig-pane" data-label="Logical change">
@@ -287,6 +289,7 @@ Before stopping, verify all of the following:
 - The what-changed scene includes one sequence, or a Before/After pair. An included why scene has exactly one sequence. These use `sequenceDiagram` when the PR changes behavior or flow.
 - The how scene maps each logical change from the previous scene to the important git hunks; it has no Mermaid diagram and no function-name card tree.
 - Cosmetic hunks are omitted from the how scene; the remaining diffs are the ones that change behavior.
+- A GitHub-backed walk exposes the original Files Changed view from the page header, and specific-file previews use the repository-relative path as `data-caption`.
 - Every Mermaid participant has a matching `data-seq` component.
 - Every type, function, and field card shows whether it existed, changed, was added, or was removed.
 - The last scene uses **Not in the blast** and **In the blast** panes.

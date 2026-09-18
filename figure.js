@@ -100,6 +100,32 @@
     sync();
   }
 
+  function addOriginalDiffLinks() {
+    var repoLink = document.querySelector(".fig-repo a[href]");
+    if (!repoLink) return;
+
+    var pull;
+    try {
+      pull = new URL(repoLink.href);
+    } catch (e) {
+      return;
+    }
+    if (!/^\/[^/]+\/[^/]+\/pull\/\d+\/?$/.test(pull.pathname)) return;
+
+    pull.pathname = pull.pathname.replace(/\/$/, "") + "/files";
+    pull.search = "";
+    pull.hash = "";
+    if (repoLink.parentElement.querySelector(".fig-original-diff")) return;
+    var link = document.createElement("a");
+    link.className = "fig-original-diff";
+    link.href = pull.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "View original diff ↗";
+    link.setAttribute("aria-label", "View the original pull request diff on GitHub");
+    repoLink.after(link);
+  }
+
   function figureDir() {
     var el = document.querySelector('script[src*="figure.js"]');
     if (!el) return "";
@@ -326,6 +352,7 @@
   }
 
   buildSceneTabs();
+  addOriginalDiffLinks();
   renderMermaid();
   function text(el, sel) {
     return (el.querySelector(sel)?.textContent || "").replace(/\s+/g, " ").trim();
